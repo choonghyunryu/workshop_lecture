@@ -1,0 +1,33 @@
+---
+title: "학습 리소스"
+description: |
+  R 패키지를 생성하고 유지보수하는데 도움일 되는 R 패키지 관련 학습 리소스  
+site: distill::distill_website
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# R 패키지 관련 기술 학습을 위한 리소스
+     
+##  R 패키지 학습을 위한 리소스
+
+* **R Packages 홈페이지 :** 
+     + [https://r-pkgs.org/index.html](https://r-pkgs.org/index.html){target="_blank"}
+     + Hadley Wickham의 R Packages Second edition
+
+##  R 패키지 관련 Youtube 리소스
+* Creating Your First R Package in 2 Minutes in RStudio :
+     + [https://www.youtube.com/watch?v=47PN2VG3RmI](https://www.youtube.com/watch?v=47PN2VG3RmI){target="_blank"}
+     + Creating Your First R Package in 2 Minutes in RStudio!
+* Why and how to build an R package:
+     + [https://www.youtube.com/watch?v=qmTaAIEXxSQ](https://www.youtube.com/watch?v=qmTaAIEXxSQ){target="_blank"}
+     + Why and how to build an R package
+* Your first R package in 1 hour :
+     + [https://www.youtube.com/watch?v=xcXzaEmZ-m4](https://www.youtube.com/watch?v=xcXzaEmZ-m4){target="_blank"}
+     + "Your first R package in 1 hour: Tools that make R package development easy" with Shannon Pileggi

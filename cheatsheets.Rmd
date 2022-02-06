@@ -1,0 +1,48 @@
+---
+title: "Tidyverse Cheatsheets"
+description: |
+  재현가능한 연구 관련 Cheatsheets 모음 
+site: distill::distill_website
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# RStudio 사용에 날개를 달다
+
+## RStudio
+RStudio IDE 사용 방법을 정리한 **RStudio**의 cheatsheet
+
+<a href="materials/rstudio-ide.pdf" target="_blank">
+  <img src="img/rstudio.jpg" alt="RStudio cheatsheet" width="95" height="100"/>
+</a>
+
+# 정적 문서와 웹앱을 만들어 보자
+## rmarkdown
+동적 데이터분석 문서 작성을 지원하는 **rmarkdown 패키지**의 cheatsheet
+
+<a href="materials/rmarkdown.pdf" target="_blank">
+  <img src="img/rmarkdown.png" alt="rmarkdown cheatsheet" width="95" height="100"/>
+</a>
+
+## shiny
+반응형 웹 앱을 개발하는 **shiny 패키지**의 cheatsheet
+
+<a href="materials/shiny.pdf" target="_blank">
+  <img src="img/shiny.png" alt="shiny cheatsheet" width="95" height="100"/>
+</a>
+
+
+# 논문을 작성한다면 
+
+## LaTeX
+조판 전문 시스템인 **LaTeX**의 cheatsheet
+
+<a href="materials/latexsheet-a4.pdf" target="_blank">
+  <img src="img/latex_logo.png" alt="shiny cheatsheet" width="95" height="100"/>
+</a>

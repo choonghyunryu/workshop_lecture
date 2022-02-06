@@ -1,0 +1,54 @@
+---
+title: "R 워크샾 개요"
+description: |
+  본 R 워크샾은 정기적으로 데이터를 수집하고 이를 Shiny 서버를 통해서 통계 어플리케이션 서비스를 제공하는 방법을 익히는 것을 목적으로 합니다. 
+site: distill::distill_website
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 3  
+author:
+  - name: 유충현 
+    url: https://choonghyunryu.github.io/
+    affiliation: 한화생명
+date: 2022-02-02    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 워크샾 일정
+* 일시:
+  - 2022-02-12 10:00 ~ 12:00, 13:00 ~ 14:00
+* 장소:
+  - Zoom 온라인 
+  
+## 워크샾 내용
+* **distill 패키지의 활용**
+  - 아젠다
+      - R Markdown의 이해  
+      - distill 패키지를 이용한 웹 사이트의 구축
+  - 목적
+      - 재현가능한 연구나 개인과 조직의 Knowledge Base 구축의 자신감 고취하기
+  
+* **데이터 수집을 위한 패키지 개발**
+  - 아젠다
+      - Open API를 이용한 데이터 수집 로직 구현
+      - 데이터 수집 로직을 위한 R 패키지 개발
+  - 목적
+      - Open API 기반 데이터 수집의 이해와 패키지 개발을 위한 기초 지식 확보하기 
+
+* **Shiny 애플리케이션 개발의 ABC**
+  - 아젠다
+      - Shiny 애플리케이션의 이해
+      - 간단한 애플리케이션 개발하기
+  - 목적
+      - 수집한 데이터의 통계 분석을 위한 Shiny 애플리케이션 개발의 여정 지원하기
+      
+* **docker 기반의 Shiny 서버 구축**
+  - 아젠다
+      - docker 기반의 Shiny 서버 구축
+      - docker 환경에서의 스케줄링을 통한 데이터 수집
+  - 목적
+      - Shiny 서버를 구축하고, 서비스를 위한 데이터 수집 자동화 설정 방법 이해하기
