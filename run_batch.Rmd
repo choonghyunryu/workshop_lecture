@@ -1,0 +1,278 @@
+---
+title: "배치 처리하기"
+description: |
+  R 스크립트를 배치 작업으로 수행해 봅니다. 이 방법은 정기적으로 데이터를 수집할 때 유용한 기법입니다.
+author:
+  - name: 유충현
+    url: https://choonghyunryu.github.io
+    affiliation: 한화생명
+citation_url: https://choonghyunryu.github.io/workshop_lecture/run_batch
+date: 2022-02-07
+output:
+  distill::distill_article:
+    self_contained: false  
+    toc: true
+    toc_depth: 3    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      collapse = FALSE,
+                      fig.align = "center")
+
+library(shiny)
+library(htmltools)
+```
+
+```{r news-app, echo=FALSE, out.width = "50%"}
+knitr::include_graphics("img/batch_job.jpeg")
+```
+
+```{r, preface, echo=FALSE}
+div(class = "preface", 
+    h3("들어가기"),
+    "주기적으로 자주 실행되는 코드가 있습니다.", strong("한번이 아니라 여러번 실행될 작업"), "입니다.", br(),
+    "귀찮을 수 있는 성가신 작업을, 안전하고 쉽게 수행할 방법은 없을까요? 여기 그 해답을 알려 줍니다.",
+    style = "margin-bottom: 40px;")
+```
+
+## 배치 처리의 이해
+
+### 배치 처리의 정의
+
+다음은 위키백과에 실린 배치 처리의 정의입니다.
+
+"일괄 처리(batch processing)란 최종 **사용자의 개입 없이** 또는 (자원이 허가한다면) 실행을 **스케줄링할 수 있는 작업(job)**의 실행을 의미합니다.[^1] 컴퓨터 **프로그램 흐름에 따라 순차적으로 자료를 처리하는 방식**입니다."
+
+[^1]: https://ko.wikipedia.org/wiki/일괄_처리 발췌
+     
+여기서 중요한 의미는 다음과 같습니다.
+
+* 프로그램 흐름에 따라 순차적으로 자료를 처리
+* 사용자의 개입 없이 스케줄링할 수 있는 작업
+
+### 배치 처리의 활용
+
+아파트 실거래 상세 정보를 수집하기 위해서는 여러 번 API를 호출해야 합니다. 이 API는 2006년 1월부터의 데이터를 제공합니다. 그러므로 2006년 1월 이후의 모든 데이터를 수집하기 위해서는 여러 번이 아니라, 여러 날의 작업이 필요합니다. 왜냐하면 API 호출이 하루에 1,000회로 제한되어 있기 때문입니다.
+
+여기서는 국토교통부의 **아파트매매 실거래 상세 자료를 배치 작업으로 수집하는 방법을 소개**합니다.
+
+
+## 배치 프로그램 작성
+
+### 대상 지역 데이터 생성
+
+SQLite DBMS에 실거래 상세 자료를 수집할 대상 지역 정보를 저장합니다. koscrap 패키지의 행정구역 코드 정보 데이터인 legal_divisions을 이용합니다. 
+
+```{r, eval=FALSE}
+################################################################################
+## 01.  Create meta datas
+################################################################################
+JOB_LAWD_INFO <- koscrap::legal_divisions %>% 
+  filter(MAINTAIN %in% "Y") %>% 
+  select(MEGA_CD, MEGA_NM, CTY_CD, CTY_NM) %>% 
+  unique() %>% 
+  mutate(DEAL_YM = NA)
+  
+################################################################################
+## 02.  Export to DBMS
+################################################################################
+db_name <- here::here("collect_data", "data", "TRADE.sqlite")
+
+con <- DBI::dbConnect(RSQLite::SQLite(), db_name)
+DBI::dbWriteTable(con, "TB_JOB_LAWD_INFO", JOB_LAWD_INFO, overwrite = TRUE)
+DBI::dbDisconnect(con)
+```
+
+
+### 배치 프로그램 생성
+02_import_trade_apt.R 파일에 실거래 상세 자료를 수집하는 메인 프로그램을 다음과 같이 만듭니다.
+
+```{r, eval=FALSE}
+################################################################################
+## 01. Prepare
+################################################################################
+
+cat(glue::glue("Start Job - {lubridate::now()}\n\n"))
+
+##==============================================================================
+## 01.01. Load library
+##==============================================================================
+library("dbplyr")
+library("dplyr")
+
+##==============================================================================
+## 01.02. Set parameters
+##==============================================================================
+auth_key <- "qhsUf6N2sxleUCslMfvPymlechknww5sKxAKf2Wrabp2e6gHNcXZ3tl%2FTfBahx%2FOcV5FTlquUu9RDijxdGaF2g%3D%3D"
+
+DEAL_YMD <- "20060101" %>% 
+  as.Date(format = "%Y%m%d") %>% 
+  seq(to = as.Date("20211201", format = "%Y%m%d"),  by = "month") %>% 
+  format("%Y%m")
+
+##==============================================================================
+## 01.03. Connect DBMS 
+##==============================================================================
+db_name <- here::here("collect_data", "data", "TRADE.sqlite")
+con <- DBI::dbConnect(RSQLite::SQLite(), db_name)
+
+################################################################################
+## 02. Scrap data from REST API server
+################################################################################
+##==============================================================================
+## 02.01. 대상 지역코드 선정
+##==============================================================================
+LAWD_CD <- con %>% 
+  tbl("TB_JOB_LAWD_INFO") %>% 
+  filter(is.na(DEAL_YM)) %>% 
+  filter(row_number() <= 4) %>% 
+  select(CTY_CD) %>% 
+  pull()
+
+##==============================================================================
+## 02.02. 작업 대상 파라미터 선정
+##==============================================================================
+conditions <- tidyr::expand_grid(DEAL_YMD, LAWD_CD)
+
+##==============================================================================
+## 02.03. Scrap from 국토교통부_아파트매매 실거래 상세 자료 REST server
+##==============================================================================
+trade_list <- NROW(conditions) %>%
+  seq() %>% 
+  purrr::map_df({
+    function(x) {
+      koscrap::trade_apt(auth_key, 
+                LAWD_CD = conditions$LAWD_CD[x], 
+                DEAL_YMD = conditions$DEAL_YMD[x],
+                chunk = 1000,
+                do_done = TRUE
+      )
+    }
+  }) %>% 
+  mutate(CREATE_DT = as.POSIXlt(date(), format = "%a %b %d %H:%M:%S %Y")) %>% 
+  mutate(CREATE_DT = as.character(CREATE_DT))
+
+cat(glue::glue("{NROW(trade_list)} cases of data were collected.\n\n"))
+
+##==============================================================================
+## 02.04. 작업 정보 업데이트
+##==============================================================================
+TB_JOB_LAWD_INFO <- con %>% 
+  tbl("TB_JOB_LAWD_INFO") %>% 
+  left_join(
+    trade_list %>% 
+      mutate(DEAL_DATE = substr(DEAL_DATE, 1, 7)) %>%
+      mutate(DEAL_DATE = stringr::str_remove(DEAL_DATE, "-")) %>%
+      group_by(LAWD_CD) %>% 
+      summarise(DEAL_DATE = max(DEAL_DATE)),
+    by = c("CTY_CD" = "LAWD_CD"),
+    copy = TRUE
+  ) %>% 
+  mutate(DEAL_YM = ifelse(is.na(DEAL_YM), DEAL_DATE, DEAL_YM)) %>% 
+  select(-DEAL_DATE) %>% 
+  collect()
+
+##==============================================================================
+## 02.05. 작업 정보와 수집 데이터 DB 저장
+##==============================================================================
+DBI::dbWriteTable(con, "TB_TRADE_APT", trade_list, append = TRUE)
+DBI::dbWriteTable(con, "TB_JOB_LAWD_INFO", TB_JOB_LAWD_INFO, overwrite = TRUE)
+DBI::dbDisconnect(con)
+
+cat(glue::glue("Finsh Job - {lubridate::now()}\n\n"))
+```
+
+## 배치 프로그램 실행
+
+### RStudio 이용한 실행
+
+RStudio의 "Tools > Jobs > Start Local Job..." 메뉴를 선택합니다.
+
+![Jobs 실행 메뉴](img/start_job.png)
+
+
+다음과 같은 메뉴 다이얼로그에서 **"R Script"**와 **"Working Directory"**를 선택한 다음, **"Start"** 버튼을 누르면 해당 스크립트인 02_import_trade_apt.R 파일이 실행됩니다.
+
+![실행 대상의 선택](img/excute_job.png)
+
+프로그램이 실행되는 과정에서는 우측 상단처럼 프로그레스 바에서 작업의 진행상태를 확인할 수 있습니다.
+
+![Jobs 실행 상태](img/running_job.png)
+
+프로그램의 실행이 종료되면 다음처럼 프로그레스 바 위치에 작업이 끝났음을 알려주는 정보가 표시됩니다.
+
+![Jobs 실행 종류](img/finish_job.png)
+
+
+### Shell Script를 이용한 실행
+
+Linux나 Mac의 콘솔에서도 배치 작업을 실행할 수 있습니다.
+
+먼저 다음과 같은 **"excute_trade_apt.sh"**이라는 파일의 Shell Script를 작성합니다. 이 스크립트는 R 스크립트가 아닌 쉘 스크립트입니다.
+
+이 스크립트를 실행하기 앞서서 로그를 쌓을 디렉토리를 만들어야 합니다. "./collect_data"가 작업 경로로 가정한다면,
+"./collect_data/log" 디렉토리를 미리 생성해 놓습니다.
+
+```{r, eval=FALSE}
+#!/bin/sh
+
+# 오늘 날짜
+YMD=`date "+%Y-%m-%d"`
+# 포르젝트 ㄹ디렉토리
+project_dir='/Users/choonghyunryu/Documents/01_Personal/00_bitr/02_documents/stats_public_data'
+# 작업 디렉토리
+work_dir=`expr $project_dir/collect_data`
+
+# 로그 파일경로 및 이름
+log_file=`expr $work_dir/log/trade_apt_$YMD_.log`
+
+/usr/local/bin/Rscript $work_dir/R/02_import_trade_apt.R > $log_file
+```
+
+그리고 콘솔에서 해당 파일에 실행 권한을 부여합니다.
+
+```{r, eval=FALSE}
+chmod +x excute_trade_apt.sh
+```
+
+콘솔에서 스크립트를 실행해 봅니다. 다음은 필자의 Mac 콘솔에서 실행한 결과입니다. 패키지가 로딩될 때, 메시지가 콘솔에 출력되었습다.
+
+```{r, eval=FALSE}
+(base) choonghyunryu@myWorld R % ./excute_trade_apt.sh 
+
+다음의 패키지를 부착합니다: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+```
+
+이 메시지는 작업에 영향을 주지 않습니다만, 보기 싫다면 다음처럼 배치파일을 수정해서 메시지의 출력을 없애줄 수도 있습니다. library() 함수에 warn.conflicts 인수를 사용해서 메시지 출력을 제거합니다.
+
+```{r, eval=FALSE}
+library("dbplyr", warn.conflicts = FALSE)
+library("dplyr", warn.conflicts = FALSE)
+```
+
+
+작업 실행 중에 생성된 로그를 확인해 봅니다.
+
+```{r, eval=FALSE}
+(base) choonghyunryu@myWorld R % cat ../log/trade_apt_.log 
+Start Job - NA211974 cases of data were collected.Finsh Job - NA%                                                                                     (base) choonghyunryu@myWorld R % 
+```
+
+## 배치작업 스케줄링하기
+배치작업의 스케줄링에서 가장 일반적인 것은 **Unix-like 시스템의 cron**일 것입이다. 여기서는 cron에 대해서 알아보려 합니다.
+

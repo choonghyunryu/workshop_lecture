@@ -70,6 +70,9 @@ navbar:
         - text: "docker 이미지 만들기"
           href: custom_image.html 
         - text: "---"
+        - text: "배치 처리하기"
+          href: run_batch.html          
+        - text: "---"
         - text: "Resources"        
           href: docker_resources.html            
 output: 
