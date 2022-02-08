@@ -227,7 +227,7 @@ project_dir='/Users/choonghyunryu/Documents/01_Personal/00_bitr/02_documents/sta
 work_dir=`expr $project_dir/collect_data`
 
 # 로그 파일경로 및 이름
-log_file=`expr $work_dir/log/trade_apt_$YMD_.log`
+log_file=`expr $work_dir/log/trade_apt_$YMD.log`
 
 /usr/local/bin/Rscript $work_dir/R/02_import_trade_apt.R > $log_file
 ```
@@ -269,10 +269,23 @@ library("dplyr", warn.conflicts = FALSE)
 작업 실행 중에 생성된 로그를 확인해 봅니다.
 
 ```{r, eval=FALSE}
-(base) choonghyunryu@myWorld R % cat ../log/trade_apt_.log 
-Start Job - NA211974 cases of data were collected.Finsh Job - NA%                                                                                     (base) choonghyunryu@myWorld R % 
+(base) choonghyunryu@myWorld R % cat ../log/trade_apt_2022-02-09.log
+Start Job - 2022-02-09 07:42:52
+253602 cases of data were collected.
+Finsh Job - 2022-02-09 08:05:38
 ```
 
 ## 배치작업 스케줄링하기
 배치작업의 스케줄링에서 가장 일반적인 것은 **Unix-like 시스템의 cron**일 것입이다. 여기서는 cron에 대해서 알아보려 합니다.
+
+cron 스케줄링은 cron table에 정의합니다. cron table에 정의된 스케줄 목록은 터미널에서 **crontab -l** 명령어로 조회합니다.
+아직 정의된 cron 스케줄링이 없기 때문에 스케줄이 없다는 메시지가 출력되었습니다.
+
+```{r, eval=FALSE}
+(base) choonghyunryu@myWorld R % crontab -l
+crontab: no crontab for choonghyunryu
+```
+
+이제 스케줄을 정의해 보겠습니다.
+
 

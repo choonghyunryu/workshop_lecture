@@ -2820,7 +2820,7 @@ docker Hands-on
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>work_dir<span class="ot">=</span><span class="st">`</span><span class="at">expr $project_dir/collect_data</span><span class="st">`</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 로그 파일경로 및 이름</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>log_file<span class="ot">=</span><span class="st">`</span><span class="at">expr $work_dir/log/trade_apt_$YMD_.log</span><span class="st">`</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>log_file<span class="ot">=</span><span class="st">`</span><span class="at">expr $work_dir/log/trade_apt_$YMD.log</span><span class="st">`</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span>Rscript <span class="sc">$</span>work_dir<span class="sc">/</span>R<span class="sc">/</span>02_import_trade_apt.R <span class="sc">&gt;</span> <span class="er">$</span>log_file</span></code></pre></div>
 </div>
@@ -2856,12 +2856,20 @@ docker Hands-on
 </div>
 <p>작업 실행 중에 생성된 로그를 확인해 봅니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % cat ..<span class="sc">/</span>log<span class="sc">/</span>trade_apt_.log </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Start Job <span class="sc">-</span> NA211974 cases of data were collected.Finsh Job <span class="sc">-</span> <span class="cn">NA</span><span class="sc">%                                                                                     (base) choonghyunryu@myWorld R %</span> </span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % cat ..<span class="sc">/</span>log<span class="sc">/</span>trade_apt_2022<span class="dv">-02</span><span class="fl">-09.</span>log</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Start Job <span class="sc">-</span> <span class="dv">2022-02-09</span> <span class="dv">07</span><span class="sc">:</span><span class="dv">42</span><span class="sc">:</span><span class="dv">52</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dv">253602</span> cases of data were collected.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>Finsh Job <span class="sc">-</span> <span class="dv">2022-02-09</span> <span class="dv">08</span><span class="sc">:</span><span class="dv">05</span><span class="sc">:</span><span class="dv">38</span></span></code></pre></div>
 </div>
 <h2 id="배치작업-스케줄링하기">배치작업 스케줄링하기</h2>
 <p>배치작업의 스케줄링에서 가장 일반적인 것은 <strong>Unix-like 시스템의 cron</strong>일 것입이다. 여기서는 cron에 대해서 알아보려 합니다.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>cron 스케줄링은 cron table에 정의합니다. cron table에 정의된 스케줄 목록은 터미널에서 <strong>crontab -l</strong> 명령어로 조회합니다. 아직 정의된 cron 스케줄링이 없기 때문에 스케줄이 없다는 메시지가 출력되었습니다.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % crontab <span class="sc">-</span>l</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>crontab<span class="sc">:</span> no crontab <span class="cf">for</span> choonghyunryu</span></code></pre></div>
+</div>
+<p>이제 스케줄을 정의해 보겠습니다.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
