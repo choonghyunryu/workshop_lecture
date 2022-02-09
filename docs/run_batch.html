@@ -2672,10 +2672,10 @@ docker Hands-on
 <span class='co'>## 01.  Create meta datas</span>
 <span class='co'>################################################################################</span>
 <span class='va'>JOB_LAWD_INFO</span> <span class='op'>&lt;-</span> <span class='fu'>koscrap</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/koscrap/man/legal_divisions.html'>legal_divisions</a></span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>MAINTAIN</span> <span class='op'>%in%</span> <span class='st'>"Y"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>select</span><span class='op'>(</span><span class='va'>MEGA_CD</span>, <span class='va'>MEGA_NM</span>, <span class='va'>CTY_CD</span>, <span class='va'>CTY_NM</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>MAINTAIN</span> <span class='op'>%in%</span> <span class='st'>"Y"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>MEGA_CD</span>, <span class='va'>MEGA_NM</span>, <span class='va'>CTY_CD</span>, <span class='va'>CTY_NM</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>mutate</span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
   
 <span class='co'>################################################################################</span>
 <span class='co'>## 02.  Export to DBMS</span>
