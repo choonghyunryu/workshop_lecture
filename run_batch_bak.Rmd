@@ -7,7 +7,7 @@ author:
     url: https://choonghyunryu.github.io
     affiliation: 한화생명
 citation_url: https://choonghyunryu.github.io/workshop_lecture/run_batch
-date: 2022-02-11
+date: 2022-02-011
 output:
   distill::distill_article:
     self_contained: false  
@@ -568,7 +568,7 @@ Backtrace:
  12. ├─dplyr::select(., -년, -월, -일)
  13. ├─dplyr::mutate(., 건축년도 = as.integer(건축년도))
  14. ├─dplyr::mutate(., 층 = as.integer(층))
- 15. ├─dplyr::mutate(., DEAL_DATE = glue::glue("{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}"))
+ 15. ├─dplyr::mutate(., DEAL_DATE = glue::glue("{년}-{str_pad(월, width = 2, pad = '0')}-{\n                                  str_pad(일, width = 2, pad = '0')}"))
  16. ├─dplyr::mutate(...)
  17. ├─dplyr:::mutate.data.frame(...)
  18. │ └─dplyr:::mutate_cols(.data, ..., caller_env = caller_env())
@@ -586,19 +586,16 @@ Backtrace:
 
 koscape 패키지의 trade_apt() 함수 내에서의 get_list() 함수를 다음과 같이 수정하였습니다. 
 
-::: {.panelset}
+#### 이전 코드 
 
-::: {.panel}
-#### 이전 코드 {.panel-name}
-
-```{r, eval=FALSE, echo=TRUE}
+```{r, eval=FALSE}
   get_list <- function(doc) {
     doc %>%
       XML::getNodeSet("//item") %>%
       XML::xmlToDataFrame() %>%
       mutate(거래금액 = as.integer(stringr::str_remove(거래금액, ","))) %>%
-      mutate(DEAL_DATE =
-               glue::glue("{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}")) %>%
+      mutate(DEAL_DATE = glue::glue("{년}-{str_pad(월, width = 2, pad = '0')}-{
+                                  str_pad(일, width = 2, pad = '0')}")) %>%
       mutate(층 = as.integer(층)) %>%
       mutate(건축년도 = as.integer(건축년도)) %>%
       select(-년, -월, -일) %>%
@@ -629,12 +626,9 @@ koscape 패키지의 trade_apt() 함수 내에서의 get_list() 함수를 다음
   }
 ```
 
-:::
+#### 수정 코드
 
-::: {.panel}
-#### 수정 코드 {.panel-name}
-
-```{r, eval=FALSE, echo=TRUE}
+```{r, eval=FALSE}
   get_list <- function(doc) {
     dframe <- doc %>%
       XML::getNodeSet("//item") %>%
@@ -659,18 +653,11 @@ koscape 패키지의 trade_apt() 함수 내에서의 get_list() 함수를 다음
              "BASEMENT_FLAG", "LAND_NO", "DONG_NM", "DONG_MAJOR", "DONG_MINOR",
              "EUBMYNDONG_CD", "DONG_LAND_NO", "DEALER_ADDR", "CANCEL_DEAL",
              "CANCEL_DATE") %>%
-      mutate(DEAL_DATE = 
-               glue::glue("{YEAR}-{str_pad(MONTH, width = 2, pad = '0')}-{str_pad(DAY, width = 2, pad = '0')}")) %>%
+      mutate(DEAL_DATE = glue::glue("{YEAR}-{str_pad(MONTH, width = 2, pad = '0')}-{
+                                  str_pad(DAY, width = 2, pad = '0')}")) %>%
       mutate(AMOUNT = as.integer(stringr::str_remove(AMOUNT, ","))) %>%
       mutate(FLOOR = as.integer(FLOOR)) %>%
       mutate(BUILD_YEAR = as.integer(BUILD_YEAR)) %>%
       select(LAWD_CD, DEAL_DATE, SERIAL:CANCEL_DATE)
   }
 ```
-
-:::
-
-:::
-
-
- 
