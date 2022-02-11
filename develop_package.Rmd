@@ -1248,3 +1248,29 @@ result <- trade_apt(auth_key, LAWD_CD = "11290", DEAL_YMD = "202006", chunk = 10
 
 이상으로 koscrap 패키지의 간단한 사용을 통해서 패키지가 이상없이 만들어졌음을 파악했습니다.
 
+
+## koscrap 패키지 설치하기
+koscrap 패키지는 github의 public repository에 올려 놓았습니다. github은 CRAN과 더불어 많은 R 패키지를 배포하는 채널이기도 합니다.
+CRAN은 까다로운 조건 때문에 R 패키지를 submit하기 쉽지 않습니다. 어떤 경우에는 제약을 해결하지 못하는 관계로 github에만 패키지를 등록하는 경우도 있습니다.
+
+여기서는 github에 올려 놓은 패키지를 설치하는 방법을 다룹니다.
+
+### devtools 패키지 설치
+
+먼저 devtools 패키지를 설치합니다.
+
+```{r, echo=TRUE, eval=FALSE}
+install.packages("devtools")
+```
+
+### koscrap 패키지 설치
+
+devtools 패키지의 install_github() 함수로 koscrap 패키지를 설치합니다.
+
+koscrap 패키지의 리파지토리 URL이 **https://github.com/choonghyunryu/koscrap**이므로 뒷 자리의 정보 **사용자/리파지토리이름**을 기술하려 설치합니다. 
+
+```{r, echo=TRUE, eval=FALSE}
+devtools::install_github("choonghyunryu/koscrap")
+```
+
+

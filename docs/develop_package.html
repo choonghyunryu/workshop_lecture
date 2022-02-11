@@ -2656,6 +2656,11 @@ docker Hands-on
 <li><a href="#r-패키지-설치하기">R 패키지 설치하기</a></li>
 </ul></li>
 <li><a href="#koscrap-패키지-사용하기">koscrap 패키지 사용하기</a></li>
+<li><a href="#koscrap-패키지-설치하기-1">koscrap 패키지 설치하기</a>
+<ul>
+<li><a href="#devtools-패키지-설치">devtools 패키지 설치</a></li>
+<li><a href="#koscrap-패키지-설치">koscrap 패키지 설치</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -2975,14 +2980,14 @@ LazyData: true</code></pre>
     <span class='va'>doc</span> <span class='op'>%&gt;%</span>
       <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
       <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
+      <span class='fu'>rename</span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='fu'>mutate</span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
                                        format <span class='op'>=</span> <span class='st'>"%a, %d %b %Y %H:%M:%S %z"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
         <span class='va'>title</span>, <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
         <span class='va'>title_text</span>, <span class='st'>"[[:punct:]]*"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+      <span class='fu'>mutate</span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
         <span class='va'>description</span>,
         <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;|[“”]"</span><span class='op'>)</span><span class='op'>)</span>
   <span class='op'>}</span>
@@ -3059,7 +3064,7 @@ LazyData: true</code></pre>
       <span class='op'>}</span><span class='op'>)</span>
 
     <span class='va'>search_list</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
+      <span class='fu'>bind_rows</span><span class='op'>(</span>
         <span class='va'>add_list</span>
       <span class='op'>)</span> <span class='op'>%&gt;%</span>
       <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>)</span>
@@ -3869,6 +3874,26 @@ Figure 9: koscrap vignette 화면
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span>            <span class="dv">1</span>                                     </span></code></pre></div>
 </div>
 <p>이상으로 koscrap 패키지의 간단한 사용을 통해서 패키지가 이상없이 만들어졌음을 파악했습니다.</p>
+<h2 id="koscrap-패키지-설치하기-1">koscrap 패키지 설치하기</h2>
+<p>koscrap 패키지는 github의 public repository에 올려 놓았습니다. github은 CRAN과 더불어 많은 R 패키지를 배포하는 채널이기도 합니다. CRAN은 까다로운 조건 때문에 R 패키지를 submit하기 쉽지 않습니다. 어떤 경우에는 제약을 해결하지 못하는 관계로 github에만 패키지를 등록하는 경우도 있습니다.</p>
+<p>여기서는 github에 올려 놓은 패키지를 설치하는 방법을 다룹니다.</p>
+<h3 id="devtools-패키지-설치">devtools 패키지 설치</h3>
+<p>먼저 devtools 패키지를 설치합니다.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"devtools"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="koscrap-패키지-설치">koscrap 패키지 설치</h3>
+<p>devtools 패키지의 install_github() 함수로 koscrap 패키지를 설치합니다.</p>
+<p>koscrap 패키지의 리파지토리 URL이 <strong><a href="https://github.com/choonghyunryu/koscrap" class="uri">https://github.com/choonghyunryu/koscrap</a></strong>이므로 뒷 자리의 정보 <strong>사용자/리파지토리이름</strong>을 기술하려 설치합니다.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>devtools</span><span class='fu'>::</span><span class='fu'><a href='https://devtools.r-lib.org/reference/remote-reexports.html'>install_github</a></span><span class='op'>(</span><span class='st'>"choonghyunryu/koscrap"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
