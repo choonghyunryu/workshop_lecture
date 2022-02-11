@@ -52,3 +52,21 @@ knitr::opts_chunk$set(echo = FALSE)
       - docker 환경에서의 스케줄링을 통한 데이터 수집
   - 목적
       - Shiny 서버를 구축하고, 서비스를 위한 데이터 수집 자동화 설정 방법 이해하기
+
+## 사전 준비 사항
+
+### 국토교통부 아파트매매 실거래 상세 자료 활용 신청
+1. 공공데이터포털 회원가입
+  - [공공데이터포털](https://www.data.go.kr/index.do){target="_blank"}에 접속해서 회원가입
+2. 국토교통부 아파트매매 실거래 상세 자료 활용 신청   
+  - [오픈API 상세](https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511){target="_blank"} 페이지에서 활용신청
+
+### 네이버 검색 API 이용을 위해 애플리케이션 등록
+1. 네이버 회원가입과 개발자센터 접속
+  - [네이버 개발자센터](https://developers.naver.com/){target="_blank"} 접속
+2. 애플리케이션등록 신청
+  - [애플리케이션 등록](https://developers.naver.com/apps/#/register){target="_blank"} 화면 이동 후,
+  - 사용 API로 **검색** 선택 후
+  - 비로그인 오픈 API 서비스 환경으로 **WEB 설정** 선택 후 등록하기
+
+
