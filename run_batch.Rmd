@@ -107,7 +107,7 @@ library("dplyr")
 ##==============================================================================
 ## 01.02. Set parameters
 ##==============================================================================
-auth_key <- "qhsUf6N2sxleUCslMfvPymlechknww5sKxAKf2Wrabp2e6gHNcXZ3tl%2FTfBahx%2FOcV5FTlquUu9RDijxdGaF2g%3D%3D"
+auth_key <- "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 DEAL_YMD <- "20060101" %>% 
   as.Date(format = "%Y%m%d") %>% 
