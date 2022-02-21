@@ -2637,6 +2637,7 @@ docker Hands-on
 <li><a href="#애플리케이션-실행">애플리케이션 실행</a>
 <ul>
 <li><a href="#애플리케이션-실행-화면">애플리케이션 실행 화면</a></li>
+<li><a href="#뉴스링크-원문-조회하기">뉴스링크 원문 조회하기</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2758,7 +2759,7 @@ docker Hands-on
                          choices <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"날짜순"</span> <span class='op'>=</span> <span class='st'>"date"</span>, <span class='st'>"유사도순"</span> <span class='op'>=</span> <span class='st'>"sim"</span><span class='op'>)</span>, 
                          selected <span class='op'>=</span> <span class='st'>"date"</span><span class='op'>)</span>,           
             <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sliderInput.html'>sliderInput</a></span><span class='op'>(</span><span class='st'>"max_record"</span>, label <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>h4</a></span><span class='op'>(</span><span class='st'>"검색 건수:"</span><span class='op'>)</span>, min <span class='op'>=</span> <span class='fl'>0</span>, 
-                        max <span class='op'>=</span> <span class='fl'>500</span>, value <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>,
+                        max <span class='op'>=</span> <span class='fl'>500</span>, value <span class='op'>=</span> <span class='fl'>100</span>, step <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>,
             <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"search_keyword"</span>, label <span class='op'>=</span> <span class='st'>"뉴스 검색"</span>, 
                          icon <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/icon.html'>icon</a></span><span class='op'>(</span><span class='st'>"newspaper"</span><span class='op'>)</span><span class='op'>)</span>,
             width <span class='op'>=</span> <span class='fl'>3</span>
@@ -2779,18 +2780,69 @@ docker Hands-on
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Server Side</span>
 <span class='va'>server</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>output</span><span class='op'>$</span><span class='va'>news_list</span> <span class='op'>&lt;-</span> <span class='fu'>renderReactable</span><span class='op'>(</span><span class='op'>{</span>
-        <span class='co'># 뉴스 검색 리스트의 초기화 출력</span>
-        <span class='va'>init_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
+    <span class='va'>newsList</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/reactiveValues.html'>reactiveValues</a></span><span class='op'>(</span>
+        list <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
             title <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             description <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             link <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span>
-        <span class='op'>)</span>
-        
+        <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+            <span class='fu'>reactable</span><span class='op'>(</span>
+                defaultColDef <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
+                    align <span class='op'>=</span> <span class='st'>"left"</span>
+                <span class='op'>)</span>,
+                columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+                    title <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
+                        name <span class='op'>=</span> <span class='st'>"타이틀"</span>,
+                        width <span class='op'>=</span> <span class='fl'>250</span>,
+                    <span class='op'>)</span>,
+                    description <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>name <span class='op'>=</span> <span class='st'>"뉴스내용 요약"</span><span class='op'>)</span>,
+                    publish_date <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
+                        name <span class='op'>=</span> <span class='st'>"뉴스 계시시간"</span>,
+                        width <span class='op'>=</span> <span class='fl'>150</span>,
+                    <span class='op'>)</span>,
+                    link <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
+                        name <span class='op'>=</span> <span class='st'>"뉴스 링크"</span>,
+                        width <span class='op'>=</span> <span class='fl'>250</span>,
+                        html <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                        cell <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'>{</span>
+                            <span class='fu'>htmltools</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>tags</a></span><span class='op'>$</span><span class='fu'>a</span><span class='op'>(</span>href <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>, target <span class='op'>=</span> <span class='st'>"_blank"</span>, <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span><span class='op'>)</span>
+                        <span class='op'>}</span>
+                    <span class='op'>)</span>    
+                <span class='op'>)</span>,
+                showPageSizeOptions <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                pageSizeOptions <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>10</span>, <span class='fl'>15</span><span class='op'>)</span>, 
+                defaultPageSize <span class='op'>=</span> <span class='fl'>5</span>,
+                bordered <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                highlight <span class='op'>=</span> <span class='cn'>TRUE</span>
+            <span class='op'>)</span>    
+    <span class='op'>)</span>
+    
+    <span class='va'>output</span><span class='op'>$</span><span class='va'>news_list</span> <span class='op'>&lt;-</span> <span class='fu'>renderReactable</span><span class='op'>(</span><span class='op'>{</span>
+        <span class='va'>newsList</span><span class='op'>$</span><span class='va'>list</span>
+    <span class='op'>}</span><span class='op'>)</span>
+    
+    <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>search_keyword</span>, <span class='op'>{</span>
+        <span class='co'># 3개의 텍스트는 반드시 입력해야 함</span>
+        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>keyword</span><span class='op'>)</span>
+        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>client_id</span><span class='op'>)</span>
+        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span>
+
+        <span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>koscrap</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/koscrap/man/search_naver.html'>search_naver</a></span><span class='op'>(</span>
+                query <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>keyword</span>,
+                sort  <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>sort</span>,
+                chunk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>max_record</span>, <span class='fl'>100</span><span class='op'>)</span>,
+                max_record <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>max_record</span>,
+                do_done <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                client_id <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_id</span>,
+                client_secret <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                <span class='fu'>mutate</span><span class='op'>(</span>title <span class='op'>=</span> <span class='va'>title_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                <span class='fu'>mutate</span><span class='op'>(</span>description <span class='op'>=</span> <span class='va'>description_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                <span class='fu'>mutate</span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
+                                                              <span class='st'>"[[:alpha:]]"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                <span class='fu'>select</span><span class='op'>(</span><span class='va'>title</span>, <span class='va'>description</span>, <span class='va'>publish_date</span>, <span class='va'>link</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
         <span class='fu'>reactable</span><span class='op'>(</span>
-            <span class='va'>init_data</span>,
             defaultColDef <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
                 align <span class='op'>=</span> <span class='st'>"left"</span>
             <span class='op'>)</span>,
@@ -2806,12 +2858,11 @@ docker Hands-on
                 <span class='op'>)</span>,
                 link <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
                     name <span class='op'>=</span> <span class='st'>"뉴스 링크"</span>,
-                    width <span class='op'>=</span> <span class='fl'>250</span><span class='co'>#,</span>
-                    <span class='co'># cell = function(value) {</span>
-                    <span class='co'>#     print(value)</span>
-                    <span class='co'>#     cat(value)</span>
-                    <span class='co'>#     htmltools::tags$a(href = value, target = "_blank", value)</span>
-                    <span class='co'># }</span>
+                    width <span class='op'>=</span> <span class='fl'>250</span>,
+                    html <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                    cell <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'>{</span>
+                        <span class='fu'>htmltools</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>tags</a></span><span class='op'>$</span><span class='fu'>a</span><span class='op'>(</span>href <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>, target <span class='op'>=</span> <span class='st'>"_blank"</span>, <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span><span class='op'>)</span>
+                    <span class='op'>}</span>
                 <span class='op'>)</span>    
             <span class='op'>)</span>,
             showPageSizeOptions <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -2820,31 +2871,8 @@ docker Hands-on
             bordered <span class='op'>=</span> <span class='cn'>TRUE</span>,
             highlight <span class='op'>=</span> <span class='cn'>TRUE</span>
         <span class='op'>)</span>
-    <span class='op'>}</span><span class='op'>)</span>
-    
-    <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>search_keyword</span>, <span class='op'>{</span>
-        <span class='co'># 3개의 텍스트는 반드시 입력해야 함</span>
-        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>keyword</span><span class='op'>)</span>
-        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>client_id</span><span class='op'>)</span>
-        <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/req.html'>req</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span>
         
-        <span class='co'># 네이버 오픈 API 호출</span>
-        <span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='fu'>koscrap</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/koscrap/man/search_naver.html'>search_naver</a></span><span class='op'>(</span>
-            query <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>keyword</span>, 
-            sort  <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>sort</span>,
-            chunk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>max_record</span>, <span class='fl'>100</span><span class='op'>)</span>,
-            max_record <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>max_record</span>,
-            do_done <span class='op'>=</span> <span class='cn'>TRUE</span>,
-            client_id <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_id</span>, 
-            client_secret <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-            <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='va'>title_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-            <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>description <span class='op'>=</span> <span class='va'>description_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-            <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='va'>publish_date</span>, 
-                                                          <span class='st'>"[[:alpha:]]"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-            <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>title</span>, <span class='va'>description</span>, <span class='va'>publish_date</span>, <span class='va'>link</span><span class='op'>)</span>
-            
-        <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"news_list"</span>, 
-                        data <span class='op'>=</span> <span class='va'>search_list</span><span class='op'>)</span>
+        <span class='va'>newsList</span><span class='op'>$</span><span class='va'>list</span> <span class='op'>&lt;-</span> <span class='va'>result</span>
     <span class='op'>}</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
@@ -2875,6 +2903,11 @@ docker Hands-on
 <p>애플리케이션을 실행하면 다음과 같의 화면을 얻을 수 있습니다.</p>
 <figure>
 <img src="img/news_app.png" alt="네이버 뉴스 검색 애플리케이션" /><figcaption aria-hidden="true">네이버 뉴스 검색 애플리케이션</figcaption>
+</figure>
+<h2 id="뉴스링크-원문-조회하기">뉴스링크 원문 조회하기</h2>
+<p>네번째 컬럼인 뉴스링크는 뉴스 원문의 URL 정보입니다. 이 URL을 클릭하면, 뉴스의 원문을 읽을 수 있습니다. 다음은 특정 페이지의 뉴스를 링크를 클릭하여 열린 웹 페이지입니다. 네이버 뉴스 검색 애플리케이션에서 <strong>불평등</strong>이라는 키워드로 검색하였기 때문에, <strong>불평등</strong>이란 단어를 검색하였더니 1개 단어가 매칭되었습니다.</p>
+<figure>
+<img src="img/news_link.png" alt="네이버 뉴스 링크의 뉴스 원문" /><figcaption aria-hidden="true">네이버 뉴스 링크의 뉴스 원문</figcaption>
 </figure>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
