@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 마크다운 태그 이해하기</title>
@@ -458,7 +460,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1865,7 +1867,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2483,11 +2488,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
-  <link href="site_libs/font-awesome-5.13.0/css/all.min.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.13.0/css/v4-shims.min.css" rel="stylesheet" />
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
+  <link href="site_libs/font-awesome-5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="site_libs/font-awesome-5.15.3/css/v4-shims.min.css" rel="stylesheet" />
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2507,7 +2512,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"마크다운 태그 이해하기","description":"마크다운 태그로 다양한 서식의 문서를 문들 수 있습니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-11-12T00:00:00.000+00:00","citationText":"유충현, 2021"}
+{"title":"마크다운 태그 이해하기","description":"마크다운 태그로 다양한 서식의 문서를 문들 수 있습니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-11-12T00:00:00.000+09:00","citationText":"유충현, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2606,7 +2611,8 @@ docker Hands-on
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io/" class="uri">https://choonghyunryu.github.io/</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io/"
+class="uri">https://choonghyunryu.github.io/</a> (한화생명)
   
 <br/>2021-11-12
 </div>
@@ -2637,23 +2643,28 @@ docker Hands-on
 <ul>
 <li><a href="#헤더">헤더</a></li>
 <li><a href="#인용구">인용구</a></li>
-<li><a href="#글머리-기호와-번호-매기기">글머리 기호와 번호 매기기</a></li>
+<li><a href="#글머리-기호와-번호-매기기">글머리 기호와 번호
+매기기</a></li>
 <li><a href="#수식-편집">수식 편집</a></li>
 </ul></li>
-<li><a href="#테이블-태그와-수평선의-이해">테이블 태그와 수평선의 이해</a>
+<li><a href="#테이블-태그와-수평선의-이해">테이블 태그와 수평선의
+이해</a>
 <ul>
 <li><a href="#테이블-그리기">테이블 그리기</a></li>
 <li><a href="#수평선-그리기">수평선 그리기</a></li>
 </ul></li>
-<li><a href="#이미지와-링크-삽입-태그의-이해">이미지와 링크 삽입 태그의 이해</a>
+<li><a href="#이미지와-링크-삽입-태그의-이해">이미지와 링크 삽입 태그의
+이해</a>
 <ul>
 <li><a href="#이미지-삽입">이미지 삽입</a></li>
 <li><a href="#링크-삽입">링크 삽입</a></li>
 </ul></li>
 <li><a href="#마크다운-튜토리얼">마크다운 튜토리얼</a>
 <ul>
-<li><a href="#글자-형식-문장-서식-태그-설정하기">글자 형식, 문장 서식 태그 설정하기</a></li>
-<li><a href="#테이블-그리고-이미지-넣기">테이블 그리고 이미지 넣기</a></li>
+<li><a href="#글자-형식-문장-서식-태그-설정하기">글자 형식, 문장 서식
+태그 설정하기</a></li>
+<li><a href="#테이블-그리고-이미지-넣기">테이블 그리고 이미지
+넣기</a></li>
 </ul></li>
 <li><a href="#요약">요약</a>
 <ul>
@@ -2680,7 +2691,9 @@ docker Hands-on
 <h3 id="r-마크다운-문서의-분해">R 마크다운 문서의 분해</h3>
 <p>앞서 만들었던 첫 R 마크다운 문서를 분해하면 다음과 같습니다.</p>
 <figure>
-<img src="img/decompose_rmarkdown.png" style="width:90.0%;height:100.0%" alt="R 마크다운 문서의 분해" /><figcaption aria-hidden="true">R 마크다운 문서의 분해</figcaption>
+<img src="img/decompose_rmarkdown.png" style="width:90.0%;height:100.0%"
+alt="R 마크다운 문서의 분해" />
+<figcaption aria-hidden="true">R 마크다운 문서의 분해</figcaption>
 </figure>
 <ul>
 <li>YAML 헤더
@@ -2697,17 +2710,28 @@ docker Hands-on
 </ul></li>
 </ul>
 <h3 id="튜토리얼의-범위">튜토리얼의 범위</h3>
-<p>이 튜토리얼은 R 마크다운 문서의 분해 중에서의 <strong>마크다운 태그를 이해할 목적</strong>으로 진행합니다. 동일한 마크다운 문서로 어떻게 서식이 적용된 그럴싸한 문서를 만들 수 있는지, 실습을 통해 편집자가 되어보세요.</p>
+<p>이 튜토리얼은 R 마크다운 문서의 분해 중에서의 <strong>마크다운 태그를
+이해할 목적</strong>으로 진행합니다. 동일한 마크다운 문서로 어떻게
+서식이 적용된 그럴싸한 문서를 만들 수 있는지, 실습을 통해 편집자가
+되어보세요.</p>
 <h2 id="마크다운의-이해">마크다운의 이해</h2>
 <h3 id="마크다운은-무엇인가요">마크다운은 무엇인가요?</h3>
-<p>마크다운(Markdown)은 일반 텍스트 기반의 경량 <strong>마크업 언어</strong>입니다. 일반 텍스트로 <strong>서식이 있는 문서를 작성</strong>하는 데 사용됩니다.</p>
+<p>마크다운(Markdown)은 일반 텍스트 기반의 경량 <strong>마크업
+언어</strong>입니다. 일반 텍스트로 <strong>서식이 있는 문서를
+작성</strong>하는 데 사용됩니다.</p>
 <h3 id="마크다운-태크-예제">마크다운 태크 예제</h3>
 <p>이미 우리는 마크다운 태크를 경험했습니다.</p>
 <pre><code>## R Markdown</code></pre>
-<p>앞에서 우리는 샾(#)을 두개 사용해서 “R Markdown”을 텍스트가 아니라 타이틀로 출력했었습니다.</p>
+<p>앞에서 우리는 샾(#)을 두개 사용해서 “R Markdown”을 텍스트가 아니라
+타이틀로 출력했었습니다.</p>
 <h3 id="마크다운-에디터">마크다운 에디터</h3>
-<p>마크다운은 R 마크다운에서만 사용하는 R 전유물이 아닙니다. 많은 영역에서 마크다운을 사용하며, 별도로 마크다운 문서를 작성하거나 결과를 표현해주는 에디터들도 많습니다. R 환경에서도 마크다운을 사용하는 여러 패키지들이 있습니다.</p>
-<p>그런데 마크다운은 마크다운을 인식하는 에디터마다 조금씩 문법이 상이합니다. 또한 관련 패키지마다 세부적으로 문법이 조금씩 차이가 나며, 표현되는 문서도 다소 차이가 있을 수 있습니다.</p>
+<p>마크다운은 R 마크다운에서만 사용하는 R 전유물이 아닙니다. 많은
+영역에서 마크다운을 사용하며, 별도로 마크다운 문서를 작성하거나 결과를
+표현해주는 에디터들도 많습니다. R 환경에서도 마크다운을 사용하는 여러
+패키지들이 있습니다.</p>
+<p>그런데 마크다운은 마크다운을 인식하는 에디터마다 조금씩 문법이
+상이합니다. 또한 관련 패키지마다 세부적으로 문법이 조금씩 차이가 나며,
+표현되는 문서도 다소 차이가 있을 수 있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="bg-orange" style="margin-right: 5px; padding-top: 10px; margin-top: 15px;">
 <h3 style="margin-bottom: 10px; margin-top: 0px;">
@@ -2732,7 +2756,9 @@ R 마크다운에서 차이가 나는 가장 큰 이유는 테마때문입니다
 </ul></li>
 </ol>
 <blockquote>
-<p><strong>볼드체와 이탤릭체를 표현할 때, 언더라인 형식은 사용하지 않는 것이 좋습니다. 경우에 따라서 부작용으로 작동되지 않을 수 있습니다. 이 문서를 만든 distill에서는 동작하지 않았습니다.</strong></p>
+<p><strong>볼드체와 이탤릭체를 표현할 때, 언더라인 형식은 사용하지 않는
+것이 좋습니다. 경우에 따라서 부작용으로 작동되지 않을 수 있습니다. 이
+문서를 만든 distill에서는 동작하지 않았습니다.</strong></p>
 </blockquote>
 <div class="panelset">
 <section id="마크다운-예제" class="panel-name panel">
@@ -2743,8 +2769,10 @@ __마크다운(Markdown)__은 일반 _텍스트 기반_의 경량 __마크업 �
 </section>
 <section id="출력-결과" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
-<p><strong>마크다운(Markdown)</strong>은 일반 <em>텍스트 기반</em>의 경량 <strong>마크업 언어</strong>입니다.</p>
-<p>__마크다운(Markdown)__은 일반 _텍스트 기반_의 경량 __마크업 언어__입니다.</p>
+<p><strong>마크다운(Markdown)</strong>은 일반 <em>텍스트 기반</em>의
+경량 <strong>마크업 언어</strong>입니다.</p>
+<p>__마크다운(Markdown)__은 일반 _텍스트 기반_의 경량 __마크업
+언어__입니다.</p>
 </section>
 </div>
 <p><br></p>
@@ -2775,8 +2803,8 @@ Y~i~ = X~i~ + 3 </code></pre>
 <section id="마크다운-예제-2" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
 <pre><code>~~하루에 30분 달리기~~
-일주일에 ~~5번~~ 산책하기
-</code></pre>
+
+일주일에 ~~5번~~ 산책하기</code></pre>
 </section>
 <section id="출력-결과-2" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
@@ -2787,12 +2815,21 @@ Y~i~ = X~i~ + 3 </code></pre>
 <p><br></p>
 <h2 id="문장-서식-태그의-이해">문장 서식 태그의 이해</h2>
 <h3 id="헤더">헤더</h3>
-<p>헤더는 주제목 및 부제목 등 제목을 설정할 때 사용합니다. 한글 문서에서의 <strong>장</strong>, <strong>절</strong> 등을, 영문 문서에는 <strong>chapter</strong>, <strong>subject</strong>, <strong>sub-subject</strong> 등을 구분하기 위한 조판 형식입니다.</p>
-<p>문서를 주제별로 계층적인 구조로 나누는 분류 체계라 할 수 있습니다.</p>
-<p>마크다운에서는 헤더(header)라고 부릅니다. header 1 부터 header 6까지 있으며, 숫자가 작을 수록 글자의 크기가 큰 헤더가 됩니다. 헤더를 조판하기 위해서는 숫자에 해당하는 개수만큼의 ’#’을 사용합니다.</p>
-<p>R 마크다운에서는 통상적으로 제일 큰 타이틀인 chapter(장)에 해당하는 헤더에 header 2를 사용합니다. 즉 ’##’를 사용합니다.</p>
+<p>헤더는 주제목 및 부제목 등 제목을 설정할 때 사용합니다. 한글
+문서에서의 <strong>장</strong>, <strong>절</strong> 등을, 영문 문서에는
+<strong>chapter</strong>, <strong>subject</strong>,
+<strong>sub-subject</strong> 등을 구분하기 위한 조판 형식입니다.</p>
+<p>문서를 주제별로 계층적인 구조로 나누는 분류 체계라 할 수
+있습니다.</p>
+<p>마크다운에서는 헤더(header)라고 부릅니다. header 1 부터 header 6까지
+있으며, 숫자가 작을 수록 글자의 크기가 큰 헤더가 됩니다. 헤더를 조판하기
+위해서는 숫자에 해당하는 개수만큼의 ’#’을 사용합니다.</p>
+<p>R 마크다운에서는 통상적으로 제일 큰 타이틀인 chapter(장)에 해당하는
+헤더에 header 2를 사용합니다. 즉 ’##’를 사용합니다.</p>
 <blockquote>
-<p><strong>본 튜토리얼에서는 몇몇 개의 헤더에 CSS로 서식을 변경했습니다. 모양과 색상 및 대소문자의 형식이 다를 수 있으니, 글자의 크기만 비교하세요.</strong></p>
+<p><strong>본 튜토리얼에서는 몇몇 개의 헤더에 CSS로 서식을 변경했습니다.
+모양과 색상 및 대소문자의 형식이 다를 수 있으니, 글자의 크기만
+비교하세요.</strong></p>
 </blockquote>
 <p><br></p>
 <div class="panelset">
@@ -2817,7 +2854,8 @@ Y~i~ = X~i~ + 3 </code></pre>
 </div>
 <p><br></p>
 <h3 id="인용구">인용구</h3>
-<p>인용구는 블록 쿼트 (blockquote)로 부르며, 인용문을 별도로 강조하기 위해서 사용합니다.</p>
+<p>인용구는 블록 쿼트 (blockquote)로 부르며, 인용문을 별도로 강조하기
+위해서 사용합니다.</p>
 <p>마크다운에서 인용구는 ‘&gt;’ 문자로 정의합니다.</p>
 <p><br></p>
 <div class="panelset">
@@ -2837,9 +2875,17 @@ Y~i~ = X~i~ + 3 </code></pre>
 </div>
 <p><br></p>
 <h3 id="글머리-기호와-번호-매기기">글머리 기호와 번호 매기기</h3>
-<p>목록을 표현하기 위한 글머리 문자는 불릿(bullet)이라 부르며, 주목도를 높이기 위해서 텍스트 앞에 삽입하는 기호입니다. 기호 대신에 숫자를 넣는 방법도 있습니다. 이 경우에는 순서의 의미가 부여되기도 합니다.</p>
-<p>글머리 문자는 라인의 맨 앞에 ’*’를 삽입하고 텍스트를 기술합니다. 엔터로 줄바꿈하여, 둘째, 셋째 글머리를 기술합니다.</p>
-<p>기호 대신에 숫자를 넣는 번호 매기기는 ’*’ 대신에 <strong>숫자 + “.”</strong>로 표현합니다. 숫자는 순서에 맞게 1, 2, 3과 같이 실제 순번을 기술할 수도 있고 임의의 한 숫자로 동일하게 사용할 수도 있습니다. <strong>중요한 것은 번호는 첫째 글머리에 기술한 숫자부터 시작해서 1씩 증가한다는 점입니다.</strong> 그래서 통상적으로 임의의 한 숫자로 1을 사용합니다.</p>
+<p>목록을 표현하기 위한 글머리 문자는 불릿(bullet)이라 부르며, 주목도를
+높이기 위해서 텍스트 앞에 삽입하는 기호입니다. 기호 대신에 숫자를 넣는
+방법도 있습니다. 이 경우에는 순서의 의미가 부여되기도 합니다.</p>
+<p>글머리 문자는 라인의 맨 앞에 ’*’를 삽입하고 텍스트를 기술합니다.
+엔터로 줄바꿈하여, 둘째, 셋째 글머리를 기술합니다.</p>
+<p>기호 대신에 숫자를 넣는 번호 매기기는 ’*’ 대신에 <strong>숫자 +
+“.”</strong>로 표현합니다. 숫자는 순서에 맞게 1, 2, 3과 같이 실제 순번을
+기술할 수도 있고 임의의 한 숫자로 동일하게 사용할 수도 있습니다.
+<strong>중요한 것은 번호는 첫째 글머리에 기술한 숫자부터 시작해서 1씩
+증가한다는 점입니다.</strong> 그래서 통상적으로 임의의 한 숫자로 1을
+사용합니다.</p>
 <p><br></p>
 <div class="panelset">
 <section id="마크다운-예제-5" class="panel-name panel">
@@ -2880,14 +2926,17 @@ Y~i~ = X~i~ + 3 </code></pre>
 <ol type="1">
 <li>새파일 작성 메뉴를 이용해서 R 마크다운 템플리트를 생성한다.</li>
 <li>R 코드 청크에 R 코드를 작성한다.</li>
-<li>코드의 설명과 실행 결과의 설명을 마크다운 태그를 이용해서 작성한다.</li>
+<li>코드의 설명과 실행 결과의 설명을 마크다운 태그를 이용해서
+작성한다.</li>
 <li>YAML 헤더를 수정하여 생성한 조판 서식을 조정한다.</li>
 <li>“knit”를 눌러 문서를 생성한다.</li>
 </ol>
 </section>
 </div>
 <p><br></p>
-<p>불릿이 있다면, 서브 불릿(sub bullet)이 있겠죠. 서브 불릿은 탭이나 스페이스 두어개로 들여쓰기하면 됩니다. 서브 불릿으로는 ’*’ 대신에 ’+’를 사용합니다.</p>
+<p>불릿이 있다면, 서브 불릿(sub bullet)이 있겠죠. 서브 불릿은 탭이나
+스페이스 두어개로 들여쓰기하면 됩니다. 서브 불릿으로는 ’*’ 대신에 ’+’를
+사용합니다.</p>
 <div class="panelset">
 <section id="마크다운-예제-7" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
@@ -2899,8 +2948,7 @@ Y~i~ = X~i~ + 3 </code></pre>
 * markdown
   + 마크다운 문서를 조판함
 * pandoc
-  + PDF나 HTML 등 다른 문서로 변환함
-</code></pre>
+  + PDF나 HTML 등 다른 문서로 변환함</code></pre>
 </section>
 <section id="출력-결과-7" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
@@ -2968,33 +3016,39 @@ Y~i~ = X~i~ + 3 </code></pre>
 </div>
 <p><br></p>
 <h3 id="수식-편집">수식 편집</h3>
-<p>LaTeX에서 지원하는 수식의 출력을 지원합니다. ’$’로 수식의 시작과 종료를 알려줘야 합니다.</p>
-<p>LaTeX의 수식 태그를 모를 경우 <a href="https://ko.wikipedia.org/wiki/위키백과:TeX_문법">위키백과:TeX 문법</a>을 참고해서 작성합니다.</p>
+<p>LaTeX에서 지원하는 수식의 출력을 지원합니다. ’$’로 수식의 시작과
+종료를 알려줘야 합니다.</p>
+<p>LaTeX의 수식 태그를 모를 경우 <a
+href="https://ko.wikipedia.org/wiki/위키백과:TeX_문법">위키백과:TeX
+문법</a>을 참고해서 작성합니다.</p>
 <p><br></p>
 <div class="panelset">
 <section id="마크다운-예제-9" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
 <pre><code>$E = m \times c^{2}$에 의하면 에너지는 질량에 비례한다.
 
-$\sigma = \sqrt{ \frac{1}{N} \sum_{i=1}^N (x_i -\mu)^2}$
-</code></pre>
+$\sigma = \sqrt{ \frac{1}{N} \sum_{i=1}^N (x_i -\mu)^2}$</code></pre>
 </section>
 <section id="출력-결과-9" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
-<p><span class="math inline">\(E = m \times c^{2}\)</span>에 의하면 에너지는 질량에 비례한다.</p>
-<p><span class="math inline">\(\sigma = \sqrt{ \frac{1}{N} \sum_{i=1}^N (x_i -\mu)^2}\)</span></p>
+<p><span class="math inline">\(E = m \times c^{2}\)</span>에 의하면
+에너지는 질량에 비례한다.</p>
+<p><span class="math inline">\(\sigma = \sqrt{ \frac{1}{N} \sum_{i=1}^N
+(x_i -\mu)^2}\)</span></p>
 </section>
 </div>
 <p><br></p>
 <h2 id="테이블-태그와-수평선의-이해">테이블 태그와 수평선의 이해</h2>
 <h3 id="테이블-그리기">테이블 그리기</h3>
-<p>도표(테이블)을 그리는 것은 다소 성가십니다. 텍스트로 도표의 모양을 그려줘야 하기 때문입니다.</p>
+<p>도표(테이블)을 그리는 것은 다소 성가십니다. 텍스트로 도표의 모양을
+그려줘야 하기 때문입니다.</p>
 <p>다음의 형식으로 도표를 그립니다.</p>
 <pre><code>First Header  | Second Header
 --------------|-------------
 Cell 1-1      | Cell 1-2
 Cell 2-1      | Cell 2-2 </code></pre>
-<p>파이프 문자 ’|’는 세로 줄을 의미합니다. 컬럼을 구분하는 구분자로 위 형식에서는 두 컬럼을 분리했습니다.</p>
+<p>파이프 문자 ’|’는 세로 줄을 의미합니다. 컬럼을 구분하는 구분자로 위
+형식에서는 두 컬럼을 분리했습니다.</p>
 <p><br></p>
 <div class="panelset">
 <section id="마크다운-예제-10" class="panel-name panel">
@@ -3028,7 +3082,10 @@ Cell 2-1      | Cell 2-2 </code></pre>
 </div>
 <p><br></p>
 <p>컬럼의 문자열을 정렬할 수 도 있습니다.</p>
-<p>기본값은 좌측 정렬이며, 정렬을 위해서는 헤더를 구분하는 하이픈(-)에 콜론(:)을 사용합니다. 다음의 사례는 첫 컬럼부터 각각 우측 정렬, 좌측 정렬, 가운데 정렬을 의미합니다. 콜론의 위치를 주의깊게 살펴 보시기 바랍니다.</p>
+<p>기본값은 좌측 정렬이며, 정렬을 위해서는 헤더를 구분하는 하이픈(-)에
+콜론(:)을 사용합니다.</p>
+<p>다음의 사례는 첫 컬럼부터 각각 우측 정렬, 좌측 정렬, 가운데 정렬을
+의미합니다. 콜론의 위치를 주의깊게 살펴 보시기 바랍니다.</p>
 <pre><code>First Header  | Second Header | Third Header
 -------------:|:--------------|:------------:
 Cell 1-1      | Cell 1-2      | Cell 1-3  
@@ -3047,8 +3104,7 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 우측 정렬     | 좌측 정렬     | 가운데 정렬
 -------------:|:--------------|:------------:
 Cell 1-1      | Cell 1-2      | Cell 1-3  
-Cell 2-1      | Cell 2-2      | Cell 2-3  
-</code></pre>
+Cell 2-1      | Cell 2-2      | Cell 2-3  </code></pre>
 </section>
 <section id="출력-결과-11" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
@@ -3099,8 +3155,10 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 </div>
 <p><br></p>
 <h3 id="수평선-그리기">수평선 그리기</h3>
-<p>경우에 따라서 수평선을 그려 앞 부분과 뒷 부분을 명확이 구분할 필요가 있습니다.</p>
-<p>아스터리스크(*)이나 하이픈(-) 문자를 3개 이상을 연속으로 기술하면 수평선이 만들어 집니다.</p>
+<p>경우에 따라서 수평선을 그려 앞 부분과 뒷 부분을 명확이 구분할 필요가
+있습니다.</p>
+<p>아스터리스크(*)이나 하이픈(-) 문자를 3개 이상을 연속으로 기술하면
+수평선이 만들어 집니다.</p>
 <pre><code>***
 ---</code></pre>
 <p><br></p>
@@ -3128,7 +3186,8 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 </section>
 </div>
 <p><br></p>
-<h2 id="이미지와-링크-삽입-태그의-이해">이미지와 링크 삽입 태그의 이해</h2>
+<h2 id="이미지와-링크-삽입-태그의-이해">이미지와 링크 삽입 태그의
+이해</h2>
 <h3 id="이미지-삽입">이미지 삽입</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="bg-orange" style="margin-right: 5px; padding-top: 10px; margin-top: 15px;">
@@ -3149,16 +3208,20 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 <div class="panelset">
 <section id="마크다운-예제-13" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
-<p>img 디렉토리에 markdwon.png 파일이 위치합니다. 이 파일은 마크다운의 로고입니다. 이 파일을 문서에 포함하기 위해서는 다음 태그를 사용합니다.</p>
+<p>img 디렉토리에 markdwon.png 파일이 위치합니다. 이 파일은 마크다운의
+로고입니다.</p>
+<p>이 파일을 문서에 포함하기 위해서는 다음 태그를 사용합니다.</p>
 <p><br></p>
 <pre><code>![마크다운 로고](img/markdown.png)</code></pre>
 </section>
 <section id="출력-결과-13" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
 <figure>
-<img src="img/markdown.png" alt="마크다운 로고" /><figcaption aria-hidden="true">마크다운 로고</figcaption>
+<img src="img/markdown.png" alt="마크다운 로고" />
+<figcaption aria-hidden="true">마크다운 로고</figcaption>
 </figure>
-<p>마크다운 로고 이미지가 제법 큽니다. 깜짝 놀랐습니다. 이미 파일에 저장된 원 사이즈대로 출력되었습니다. 조금 줄여볼까요?</p>
+<p>마크다운 로고 이미지가 제법 큽니다. 깜짝 놀랐습니다. 이미 파일에
+저장된 원 사이즈대로 출력되었습니다. 조금 줄여볼까요?</p>
 </section>
 </div>
 <p><br></p>
@@ -3186,19 +3249,25 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 </section>
 <section id="출력-결과-14" class="panel-name panel">
 <h4 class="panel-name">출력 결과</h4>
-<p><img src="img/markdown.png" alt="마크다운 로고" />{: width=“100” height=“100”}</p>
-<p>옵션이 적용되지 않았습니다. 당연히 옵션에 대한 태그가 해석되지 않았기에 화면에 출력됩니다. 그런데, 왜 이미지 사이즈가 작아졌을까요?</p>
-<p>표현할 화면에 이미지와 태그가 한 줄에 출력되어야해서 이미지가 태그 텍스트의 범위만큼 줄어든 것입니다.</p>
+<p><img src="img/markdown.png" alt="마크다운 로고" />{: width=“100”
+height=“100”}</p>
+<p>옵션이 적용되지 않았습니다. 당연히 옵션에 대한 태그가 해석되지
+않았기에 화면에 출력됩니다. 그런데, 왜 이미지 사이즈가 작아졌을까요?</p>
+<p>표현할 화면에 이미지와 태그가 한 줄에 출력되어야해서 이미지가 태그
+텍스트의 범위만큼 줄어든 것입니다.</p>
 <p><strong>마크다운 문법의 호환성 불일치가 발생하였습니다.</strong></p>
 </section>
 </div>
 <p><br></p>
 <blockquote>
-<p>부작용 없이 사이즈를 조절하기 위해서는 마크다운 태그가 아닌, 다음의 HTML 태그를 사용합니다.</p>
+<p>부작용 없이 사이즈를 조절하기 위해서는 마크다운 태그가 아닌, 다음의
+HTML 태그를 사용합니다.</p>
 </blockquote>
 <pre><code>&lt;img src=&quot;이미지 파일의 경로&quot; width=&quot;&quot; height=&quot;&quot;&gt;</code></pre>
 <p><br></p>
-<p>다시 너비와 높이를 각각 100 픽셀의 크기로 이미지 사이지를 조정합니다. 로고가 길죽한 모양이기 때문에, 이 옵션으로는 이상한 모양의 이미지가 출력될 것입니다.</p>
+<p>다시 너비와 높이를 각각 100 픽셀의 크기로 이미지 사이지를 조정합니다.
+로고가 길죽한 모양이기 때문에, 이 옵션으로는 이상한 모양의 이미지가
+출력될 것입니다.</p>
 <div class="panelset">
 <section id="마크다운-예제-15" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
@@ -3210,12 +3279,15 @@ Cell 2-1      | Cell 2-2      | Cell 2-3
 </section>
 </div>
 <p><br></p>
-<p><strong>궁극의 방법을 소개합니다. R 소스 청크를 이용하는 방법입니다.</strong> 그러나 이 방법은 아쉽게도 캡션을 사용하면 충돌이 발생합니다.</p>
+<p><strong>궁극의 방법을 소개합니다. R 소스 청크를 이용하는
+방법입니다.</strong> 그러나 이 방법은 아쉽게도 캡션을 사용하면 충돌이
+발생합니다.</p>
 <p><br></p>
 <div class="panelset">
 <section id="마크다운-예제-16" class="panel-name panel">
 <h4 class="panel-name">마크다운 예제</h4>
-<p>너비와 높이 비율을 고정하고 크기를 화면 영역의 50%로 사이즈를 조정합니다. 또한 이미지를 가운데 정렬합니다.</p>
+<p>너비와 높이 비율을 고정하고 크기를 화면 영역의 50%로 사이즈를
+조정합니다. 또한 이미지를 가운데 정렬합니다.</p>
 <pre><code>```{r, echo=FALSE, out.width = &quot;50%&quot;, fig.align=&quot;center&quot;}
 knitr::include_graphics(&quot;img/markdown.png&quot;)
 ```</code></pre>
@@ -3243,11 +3315,14 @@ knitr::include_graphics(&quot;img/markdown.png&quot;)
 </div>
 <p><br></p>
 <h2 id="마크다운-튜토리얼">마크다운 튜토리얼</h2>
-<h3 id="글자-형식-문장-서식-태그-설정하기">글자 형식, 문장 서식 태그 설정하기</h3>
-<h4 id="다음-마크다운-출력물을-만들-마크다운-문서를-작성해-보세요.">1. 다음 마크다운 출력물을 만들 마크다운 문서를 작성해 보세요.</h4>
+<h3 id="글자-형식-문장-서식-태그-설정하기">글자 형식, 문장 서식 태그
+설정하기</h3>
+<h4 id="다음-마크다운-출력물을-만들-마크다운-문서를-작성해-보세요.">1.
+다음 마크다운 출력물을 만들 마크다운 문서를 작성해 보세요.</h4>
 <blockquote>
 <ol type="1">
-<li><a href="https://ko.wikipedia.org/wiki/마크다운">위키백과 마크다운</a> 페이지를 일부 차용했습니다.</li>
+<li><a href="https://ko.wikipedia.org/wiki/마크다운">위키백과
+마크다운</a> 페이지를 일부 차용했습니다.</li>
 <li>서식은 임의로 편집하였습니다.</li>
 </ol>
 </blockquote>
@@ -3278,6 +3353,7 @@ knitr::include_graphics(&quot;img/markdown.png&quot;)
 &gt; 마크다운은 일반 텍스트 기반의 경량 마크업 언어다. - 위키피디아
 
 ## 역사
+
 존 그루버는 2004년에 문법 면에서 에런 스워츠와 중대한 협업을 통해 마크다운 언어를 만들었으며, 
 사람들이 읽기 쉽고 쓰기 쉬운 플레인 텍스트 포맷을 사용하여 쓸 수 있으면서 구조적으로 유효한 
 XHTML(또는 HTML)로 선택적 변환이 가능하게 하는 것이 목표이다.</code></pre>
@@ -3374,9 +3450,11 @@ XHTML(또는 HTML)로 선택적 변환이 가능하게 하는 것이 목표이�
 </ul>
 <h3 id="i-can-do-it">I can do it</h3>
 <ul>
-<li>마크다운 문서를 작성할 수 있어, R 마크다운 문서에 여러 서식을 지정할 수 있습니다.</li>
+<li>마크다운 문서를 작성할 수 있어, R 마크다운 문서에 여러 서식을 지정할
+수 있습니다.</li>
 </ul>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

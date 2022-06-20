@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 위젯 추가하기</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,7 +2495,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2510,7 +2515,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"위젯 추가하기","description":"위젯을 이해합니다. **입력 위젯**을 패널에 추가하는 방법을 숙지해야 합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-05T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"위젯 추가하기","description":"위젯을 이해합니다. **입력 위젯**을 패널에 추가하는 방법을 숙지해야 합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-05T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2605,11 +2610,13 @@ docker Hands-on
 <h1>위젯 추가하기</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>위젯을 이해합니다. <strong>입력 위젯</strong>을 패널에 추가하는 방법을 숙지해야 합니다.</p></p>
+<p><p>위젯을 이해합니다. <strong>입력 위젯</strong>을 패널에 추가하는
+방법을 숙지해야 합니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-05
 </div>
@@ -2626,8 +2633,10 @@ docker Hands-on
 <li><a href="#위젯을-추가한-예제">위젯을 추가한 예제</a></li>
 <li><a href="#tutorial">tutorial</a>
 <ul>
-<li><a href="#입력-위젯-완성하기-tutorial">입력 위젯 완성하기 tutorial</a></li>
-<li><a href="#shiny-공식-tutorial-페이지">Shiny 공식 tutorial 페이지</a></li>
+<li><a href="#입력-위젯-완성하기-tutorial">입력 위젯 완성하기
+tutorial</a></li>
+<li><a href="#shiny-공식-tutorial-페이지">Shiny 공식 tutorial
+페이지</a></li>
 <li><a href="#추가-예제-실행해-보기">추가 예제 실행해 보기</a></li>
 </ul></li>
 </ul>
@@ -2651,10 +2660,17 @@ docker Hands-on
 </div>
 </div>
 <h1 id="위젯을-아시나요">위젯을 아시나요?</h1>
-<p>“위젯(widget)은 컴퓨터 프로그래밍에서 위젯(widget) 또는 컨트롤(control)은 컴퓨터 사용자가 상호 작용하는 인터페이스 요소입니다.” - <a href="https://ko.wikipedia.org/wiki/GUI_위젯" class="uri">https://ko.wikipedia.org/wiki/GUI_위젯</a> 중에서</p>
+<p>“위젯(widget)은 컴퓨터 프로그래밍에서 위젯(widget) 또는
+컨트롤(control)은 컴퓨터 사용자가 상호 작용하는 인터페이스 요소입니다.”
+- <a href="https://ko.wikipedia.org/wiki/GUI_위젯"
+class="uri">https://ko.wikipedia.org/wiki/GUI_위젯</a> 중에서</p>
 <h2 id="입력-위젯">입력 위젯</h2>
-<p>Shiny에서는 입력 위젯을 컨트롯 위젯(control widgets)이라 부릅니다. 즉, 위젯을 통해서 앱을 컨트롤하기 때문입니다. 굳이 입력 위젯이라고 불렀던 것은 입력된 값을 통해서 기능이 컨트롤되고, 중요한 대부분 컨트롤 위젯 이름의 접미사가 “Input”이기 때문입니다.</p>
-<p>shiny 패키지의 입력 위젯은 버튼을 포함해서 다음과 같은 종류가 있습니다.</p>
+<p>Shiny에서는 입력 위젯을 컨트롯 위젯(control widgets)이라 부릅니다.
+즉, 위젯을 통해서 앱을 컨트롤하기 때문입니다. 굳이 입력 위젯이라고
+불렀던 것은 입력된 값을 통해서 기능이 컨트롤되고, 중요한 대부분 컨트롤
+위젯 이름의 접미사가 “Input”이기 때문입니다.</p>
+<p>shiny 패키지의 입력 위젯은 버튼을 포함해서 다음과 같은 종류가
+있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://shiny.rstudio.com/'>shiny</a></span><span class='op'>)</span>
@@ -2678,7 +2694,8 @@ docker Hands-on
 </div>
 <p>기본 입력 위젯은 다음 그림과 같습니다.</p>
 <figure>
-<img src="img/basic-widgets.png" alt="기본 입력 위젯" /><figcaption aria-hidden="true">기본 입력 위젯</figcaption>
+<img src="img/basic-widgets.png" alt="기본 입력 위젯" />
+<figcaption aria-hidden="true">기본 입력 위젯</figcaption>
 </figure>
 <h1 id="위젯을-추가한-예제">위젯을 추가한 예제</h1>
 <p>다음 예제는 레이아웃과 패널에 입력 위젯을 출력한 예제입니다.</p>
@@ -2686,12 +2703,12 @@ docker Hands-on
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/titlePanel.html'>titlePanel</a></span><span class='op'>(</span><span class='st'>"censusVis"</span><span class='op'>)</span>,
-  
+
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarLayout</a></span><span class='op'>(</span>
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/helpText.html'>helpText</a></span><span class='op'>(</span><span class='st'>"Create demographic maps with 
                information from the 2010 US Census."</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"var"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Choose a variable to display"</span>,
                   choices <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Percent White"</span>, 
@@ -2699,12 +2716,12 @@ docker Hands-on
                                  <span class='st'>"Percent Hispanic"</span>, 
                                  <span class='st'>"Percent Asian"</span><span class='op'>)</span>,
                   selected <span class='op'>=</span> <span class='st'>"Percent White"</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sliderInput.html'>sliderInput</a></span><span class='op'>(</span><span class='st'>"range"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Range of interest:"</span>,
                   min <span class='op'>=</span> <span class='fl'>0</span>, max <span class='op'>=</span> <span class='fl'>100</span>, value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
     <span class='op'>)</span>,
-    
+
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>mainPanel</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>)</span>
 <span class='op'>)</span>
@@ -2713,28 +2730,33 @@ docker Hands-on
 </div>
 <p>위의 예제의 결과는 다음과 같습니다.</p>
 <figure>
-<img src="img/censusviz.png" alt="입력 위젯들" /><figcaption aria-hidden="true">입력 위젯들</figcaption>
+<img src="img/censusviz.png" alt="입력 위젯들" />
+<figcaption aria-hidden="true">입력 위젯들</figcaption>
 </figure>
-<p>그리고 위 그림에서 selectInput은 이름처럼 여러 값 중에서 하나의 값을 선택하는 입력 위젯입니다. 다음처럼 마우스를 올려 놓으면 네 개의 값이 출력되고, 사용자는 하나의 값을 선택하면 됩니다.</p>
+<p>그리고 위 그림에서 selectInput은 이름처럼 여러 값 중에서 하나의 값을
+선택하는 입력 위젯입니다. 다음처럼 마우스를 올려 놓으면 네 개의 값이
+출력되고, 사용자는 하나의 값을 선택하면 됩니다.</p>
 <figure>
-<img src="img/select-box.png" alt="selectInput 위젯" /><figcaption aria-hidden="true">selectInput 위젯</figcaption>
+<img src="img/select-box.png" alt="selectInput 위젯" />
+<figcaption aria-hidden="true">selectInput 위젯</figcaption>
 </figure>
 <h1 id="tutorial">tutorial</h1>
 <h2 id="입력-위젯-완성하기-tutorial">입력 위젯 완성하기 tutorial</h2>
-<p>다음 코드를 입력한 후, app.R이라는 이름의 파일로 저장하고 실행해 보세요. 완성된 입력 위젯의 기능을 확인할 수 있습니다. 여러분은 UI 파트를 완성하였습니다.</p>
+<p>다음 코드를 입력한 후, app.R이라는 이름의 파일로 저장하고 실행해
+보세요. 완성된 입력 위젯의 기능을 확인할 수 있습니다. 여러분은 UI 파트를
+완성하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://shiny.rstudio.com/'>shiny</a></span><span class='op'>)</span>
-
 <span class='co'># Define UI ----</span>
 <span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/titlePanel.html'>titlePanel</a></span><span class='op'>(</span><span class='st'>"censusVis"</span><span class='op'>)</span>,
-  
+
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarLayout</a></span><span class='op'>(</span>
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/helpText.html'>helpText</a></span><span class='op'>(</span><span class='st'>"Create demographic maps with 
                information from the 2010 US Census."</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"var"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Choose a variable to display"</span>,
                   choices <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Percent White"</span>, 
@@ -2742,19 +2764,19 @@ docker Hands-on
                                  <span class='st'>"Percent Hispanic"</span>, 
                                  <span class='st'>"Percent Asian"</span><span class='op'>)</span>,
                   selected <span class='op'>=</span> <span class='st'>"Percent White"</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sliderInput.html'>sliderInput</a></span><span class='op'>(</span><span class='st'>"range"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Range of interest:"</span>,
                   min <span class='op'>=</span> <span class='fl'>0</span>, max <span class='op'>=</span> <span class='fl'>100</span>, value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
     <span class='op'>)</span>,
-    
+
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>mainPanel</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>)</span>
 <span class='op'>)</span>
 
 <span class='co'># Define server logic ----</span>
 <span class='va'>server</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span> <span class='op'>{</span>
-  
+
 <span class='op'>}</span>
 
 <span class='co'># Run the app ----</span>
@@ -2763,17 +2785,22 @@ docker Hands-on
 </div>
 </div>
 <h2 id="shiny-공식-tutorial-페이지">Shiny 공식 tutorial 페이지</h2>
-<p>Shiny 공식 tutorial 페이지를 살펴보고, 입력 위젯의 종류와 설정하는 방법을 이해하세요.</p>
-<p><a href="https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/" target="_blank">https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/</a></p>
+<p>Shiny 공식 tutorial 페이지를 살펴보고, 입력 위젯의 종류와 설정하는
+방법을 이해하세요.</p>
+<p><a
+href="https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/"
+target="_blank">https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/</a></p>
 <h2 id="추가-예제-실행해-보기">추가 예제 실행해 보기</h2>
-<p>예제를 실행시켜 보고, 다양한 입력 위젯과 출력 위젯을 경험해 보세요.</p>
+<p>예제를 실행시켜 보고, 다양한 입력 위젯과 출력 위젯을 경험해
+보세요.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>shiny</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/shiny/man/runExample.html'>runExample</a></span><span class='op'>(</span><span class='st'>"07_widgets"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

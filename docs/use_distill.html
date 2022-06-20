@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,12 +77,34 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+<style>
+  div.csl-bib-body { }
+  div.csl-entry {
+    clear: both;
+    }
+  .hanging div.csl-entry {
+    margin-left:2em;
+    text-indent:-2em;
+  }
+  div.csl-left-margin {
+    min-width:2em;
+    float:left;
+  }
+  div.csl-right-inline {
+    margin-left:2em;
+    padding-left:1em;
+  }
+  div.csl-indent {
+    margin-left: 2em;
+  }
 </style>
 
   <!--radix_placeholder_meta_tags-->
@@ -467,7 +490,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1874,7 +1897,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2492,9 +2518,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2514,7 +2540,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"distill 패키지의 활용","description":"distill 패키지를 사용해서 Knowledge Base 구축을 위한 홈페이지를 만듭니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-01T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"distill 패키지의 활용","description":"distill 패키지를 사용해서 Knowledge Base 구축을 위한 홈페이지를 만듭니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-01T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2609,11 +2635,13 @@ docker Hands-on
 <h1>distill 패키지의 활용</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>distill 패키지를 사용해서 Knowledge Base 구축을 위한 홈페이지를 만듭니다.</p></p>
+<p><p>distill 패키지를 사용해서 Knowledge Base 구축을 위한 홈페이지를
+만듭니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io/" class="uri">https://choonghyunryu.github.io/</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io/"
+class="uri">https://choonghyunryu.github.io/</a> (한화생명)
   
 <br/>2022-02-01
 </div>
@@ -2632,7 +2660,8 @@ docker Hands-on
 </ul></li>
 <li><a href="#설정-최적화하기">설정 최적화하기</a>
 <ul>
-<li><a href="#웹-페이지-출력-경로의-변경">웹 페이지 출력 경로의 변경</a></li>
+<li><a href="#웹-페이지-출력-경로의-변경">웹 페이지 출력 경로의
+변경</a></li>
 <li><a href="#테마-변경하기">테마 변경하기</a></li>
 <li><a href="#footer-적용하기">footer 적용하기</a></li>
 <li><a href="#bibliography-적용하기">bibliography 적용하기</a></li>
@@ -2656,14 +2685,40 @@ R Markdown은 재현가능한 연구나 개인과 조직의 Knowledge Base 구�
 </div>
 </div>
 <h2 id="들어가기">들어가기</h2>
-<p>재현가능한 연구(Reproducible Research)라는 용어가 생소할 수 있으나 R world에서는 제법 회자되는 용어입니다. 공개한 연구의 결과물이 재현되고 검증될 수 있도록 하는 것을 의미합니다. 이 방법은 결국 연구가 발전하는 방향으로 재창조되는 결실을 가져옵니다. 이를 위해서는 데이터 분석의 방법을 실험 데이터에 연결하여 재현 검증될 수 있는 체계를 구축해야 합니다.</p>
-<p>재현가능한 연구를 이해하기 쉬운 사례로 설명하겠습니다. 데이터 입출력 및 분석 방법의 로직과 분석 결과를 표현하는 R 스크립트를 R 마크다운 문서에 정리합니다. 물론 연구에 대한 자세한 설명과 결과 해석이 문서에 포함되어 있고, 원시 데이터도 별도로 포함합니다. 이 연구 결과를 RStudio 프로젝트나 R 패키지로 배포하면 누구나 동일한 결과를 재현할 수 있게 됩니다.</p>
-<p>공개한 연구 자료에는 데이터, 분석을 위한 R 코드 및 과정의 설명과 결과의 해석 모두 포함되어야 합니다. 그러므로 재현가능한 연구는 오픈소스 정신이 깃들여 있는 셈입니다.</p>
-<p><a href="https://cran.r-project.org/web/views/ReproducibleResearch.html" target="_blank">CRAN Task View: Reproducible Research</a> 페이지를 보면 R에서 재현가능한 연구를 지원하는 에코 시스템이 어마어마하게 많고 다양한 기능을 가지고 있음에 놀랄 것입니다. 다수의 R 패키지가 여러 기능을 통해서 재현가능한 연구를 지원합니다만, R 마크다운 문서가 정적이거나 동적인 HTML 문서의 보고서로 만들어지거나 혹은 LaTeX을 이용해서 PDF 문서로 만들어지는 것이 눈에 잡히는 재현가능한 연구의 도구입니다.</p>
-<p>광의적으로는 rmarkdown, knitr, blogdown, bookdown, distill도 재현가능한 연구를 지원하는 패키지입니다.</p>
+<p>재현가능한 연구(Reproducible Research)라는 용어가 생소할 수 있으나 R
+world에서는 제법 회자되는 용어입니다. 공개한 연구의 결과물이 재현되고
+검증될 수 있도록 하는 것을 의미합니다. 이 방법은 결국 연구가 발전하는
+방향으로 재창조되는 결실을 가져옵니다. 이를 위해서는 데이터 분석의
+방법을 실험 데이터에 연결하여 재현 검증될 수 있는 체계를 구축해야
+합니다.</p>
+<p>재현가능한 연구를 이해하기 쉬운 사례로 설명하겠습니다. 데이터 입출력
+및 분석 방법의 로직과 분석 결과를 표현하는 R 스크립트를 R 마크다운
+문서에 정리합니다. 물론 연구에 대한 자세한 설명과 결과 해석이 문서에
+포함되어 있고, 원시 데이터도 별도로 포함합니다. 이 연구 결과를 RStudio
+프로젝트나 R 패키지로 배포하면 누구나 동일한 결과를 재현할 수 있게
+됩니다.</p>
+<p>공개한 연구 자료에는 데이터, 분석을 위한 R 코드 및 과정의 설명과
+결과의 해석 모두 포함되어야 합니다. 그러므로 재현가능한 연구는 오픈소스
+정신이 깃들여 있는 셈입니다.</p>
+<p><a
+href="https://cran.r-project.org/web/views/ReproducibleResearch.html"
+target="_blank">CRAN Task View: Reproducible Research</a> 페이지를 보면
+R에서 재현가능한 연구를 지원하는 에코 시스템이 어마어마하게 많고 다양한
+기능을 가지고 있음에 놀랄 것입니다. 다수의 R 패키지가 여러 기능을 통해서
+재현가능한 연구를 지원합니다만, R 마크다운 문서가 정적이거나 동적인 HTML
+문서의 보고서로 만들어지거나 혹은 LaTeX을 이용해서 PDF 문서로 만들어지는
+것이 눈에 잡히는 재현가능한 연구의 도구입니다.</p>
+<p>광의적으로는 rmarkdown, knitr, blogdown, bookdown, distill도
+재현가능한 연구를 지원하는 패키지입니다.</p>
 <h2 id="distill">distill</h2>
-<p>distill 홈페이지인 <a href="https://rstudio.github.io/distill/" target="&quot;_blank">https://rstudio.github.io/distill/</a> <span class="citation" data-cites="allaire2018distill">(<a href="#ref-allaire2018distill" role="doc-biblioref">Allaire et al. 2018</a>)</span>를 방문하면, distill의 기능을 익힐 수 있습니다. 헥스로고는 다음과 같이 물방울 이미지를 포함하고 있습니다.</p>
-<p>다음에 distill의 재현가능한 연구에 최적화된 대표적인 기능을 정리해 봅니다.</p>
+<p>distill 홈페이지인 <a href="https://rstudio.github.io/distill/"
+target="&quot;_blank">https://rstudio.github.io/distill/</a> <span
+class="citation" data-cites="allaire2018distill">(<a
+href="#ref-allaire2018distill" role="doc-biblioref">Allaire et al.
+2018</a>)</span>를 방문하면, distill의 기능을 익힐 수 있습니다.
+헥스로고는 다음과 같이 물방울 이미지를 포함하고 있습니다.</p>
+<p>다음에 distill의 재현가능한 연구에 최적화된 대표적인 기능을 정리해
+봅니다.</p>
 <ul>
 <li>Refrences의 표시
 <ul>
@@ -2676,13 +2731,17 @@ R Markdown은 재현가능한 연구나 개인과 조직의 Knowledge Base 구�
 <li>페이지 YAML 헤더를 읽어 Citation을 만들어줍니다.</li>
 </ul></li>
 </ul>
-<p>이 포스트는 기술적인 노하우나 경험을 담고 있지는 않지만, 이해의 측면에서 distill의 재현가능한 연구에 최적화된 대표적인 기능을 표현해 보았습니다.</p>
+<p>이 포스트는 기술적인 노하우나 경험을 담고 있지는 않지만, 이해의
+측면에서 distill의 재현가능한 연구에 최적화된 대표적인 기능을 표현해
+보았습니다.</p>
 <h2 id="r-마크다운-문서의-이해">R 마크다운 문서의 이해</h2>
 <h3 id="웹-사이트-만들기">웹 사이트 만들기</h3>
-<p>distill 패키지의 create_website() 함수로 웹 사이트의 골격(skeleton) 만듧니다.</p>
+<p>distill 패키지의 create_website() 함수로 웹 사이트의 골격(skeleton)
+만듧니다.</p>
 <ul>
-<li>디렉토리 경로는 “./workshop_lecture”</li>
-<li>웹사이트의 타이틀은 “애플리케이션 서버 구축을 위한 R 워크샾”</li>
+<li><p>디렉토리 경로는 “./workshop_lecture”</p></li>
+<li><p>웹사이트의 타이틀은 “애플리케이션 서버 구축을 위한 R
+워크샾”</p></li>
 </ul>
 <p>다음 스크립트로 웹 사이트 구축을 위한 골격을 만듧니다.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2695,12 +2754,14 @@ R Markdown은 재현가능한 연구나 개인과 조직의 Knowledge Base 구�
 </div>
 </div>
 <h3 id="template-파일의-이해">Template 파일의 이해</h3>
-<p>create_website() 함수를 실행하면 다음처럼 몇 개의 파일과 디렉토리가 만들어집니다.</p>
+<p>create_website() 함수를 실행하면 다음처럼 몇 개의 파일과 디렉토리가
+만들어집니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/templates.png" width="85%" style="display: block; margin: auto;" /></p>
 </div>
 <p><br></p>
-<p>대표적인 파일의 내용은 다음과 같습니다. 이제 여러분은 이 파일을 기초로 해서, 기능을 확장하고 내용을 채워나가야 합니다.</p>
+<p>대표적인 파일의 내용은 다음과 같습니다. 이제 여러분은 이 파일을
+기초로 해서, 기능을 확장하고 내용을 채워나가야 합니다.</p>
 <div class="panelset">
 <section id="site.yml" class="panel-name panel">
 <h4 class="panel-name">_site.yml</h4>
@@ -2731,6 +2792,7 @@ site: distill::distill_website
 knitr::opts_chunk$set(echo = FALSE)
 
 # Learn more about creating websites with Distill at:
+
 # https://rstudio.github.io/distill/website.html
 
 ```</code></pre>
@@ -2751,14 +2813,20 @@ knitr::opts_chunk$set(echo = FALSE)
 <h2 id="설정-최적화하기">설정 최적화하기</h2>
 <p>기본 템플리트를 사용자 환경에 최적화하는 몇 가지 방법을 다룹니다.</p>
 <h3 id="웹-페이지-출력-경로의-변경">웹 페이지 출력 경로의 변경</h3>
-<p>무료로 정적 웹 페이지를 온라인에 배포하는 대표적인 두 가지 방법이 있습니다.</p>
+<p>무료로 정적 웹 페이지를 온라인에 배포하는 대표적인 두 가지 방법이
+있습니다.</p>
 <ul>
 <li><a href="https://www.netlify.com/" target="_blank">netlify</a></li>
 <li><a href="https://github.com/" target="_blank">github</a></li>
 </ul>
-<p>두 서비스는 각각 서로 다른 웹 페이지 출력 경로의 이름을 사용합니다.</p>
-<p><strong>netlify</strong>는 <strong>_site</strong>를 사용하고, <strong>github</strong>는 <strong>docs</strong>를 사용합니다.</p>
-<p>distill은 기본 netlify에 서비스를 배포하는 것을 염두에 두고 “_site”를 웹 페이지 출력 경로로 사용합니다. 그러므로 github에 배포하기 위해서는 다음처럼 _site.yml 파일에서 <strong>output_dir</strong>을 수정합니다.</p>
+<p>두 서비스는 각각 서로 다른 웹 페이지 출력 경로의 이름을
+사용합니다.</p>
+<p><strong>netlify</strong>는 <strong>_site</strong>를 사용하고,
+<strong>github</strong>는 <strong>docs</strong>를 사용합니다.</p>
+<p>distill은 기본 netlify에 서비스를 배포하는 것을 염두에 두고 “_site”를
+웹 페이지 출력 경로로 사용합니다. 그러므로 github에 배포하기 위해서는
+다음처럼 _site.yml 파일에서 <strong>output_dir</strong>을
+수정합니다.</p>
 <div class="panelset">
 <section id="netlify" class="panel-name panel">
 <h4 class="panel-name">netlify</h4>
@@ -2794,14 +2862,23 @@ output: distill::distill_article
 </section>
 </div>
 <h3 id="테마-변경하기">테마 변경하기</h3>
-<p>웹 페이지의 테마(theme)를 변경할 수 있습니다. 본 웹 페이지는 테마를 위한 CSS<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 파일로 <strong>theme.css</strong> 를 만들었습니다.</p>
-<p>이 파일을 적용하기 위해서는 R Markdown 파일인 _site.yml를 변경해야 합니다.</p>
-<p>YAML 헤더는 <a href="https://choonghyunryu.github.io/BitStat_Help_Handson/rmarkdown_yaml.html" target="_blank">YAML 이해하기</a>를 참고하세요.</p>
+<p>웹 페이지의 테마(theme)를 변경할 수 있습니다. 본 웹 페이지는 테마를
+위한 CSS<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a> 파일로 <strong>theme.css</strong> 를
+만들었습니다.</p>
+<p>이 파일을 적용하기 위해서는 R Markdown 파일인 _site.yml를 변경해야
+합니다.</p>
+<p>YAML 헤더는 <a
+href="https://choonghyunryu.github.io/BitStat_Help_Handson/rmarkdown_yaml.html"
+target="_blank">YAML 이해하기</a>를 참고하세요.</p>
 <h3 id="footer-적용하기">footer 적용하기</h3>
-<p>footer는 웹 페이지에 공통적으로 적용되는 페이지 하단의 컨텐츠입니다.</p>
-<p>footer를 <strong>footer.html</strong> HTML 파일로 만들어서 _site.yml에 설정합니다.</p>
+<p>footer는 웹 페이지에 공통적으로 적용되는 페이지 하단의
+컨텐츠입니다.</p>
+<p>footer를 <strong>footer.html</strong> HTML 파일로 만들어서
+_site.yml에 설정합니다.</p>
 <h3 id="bibliography-적용하기">bibliography 적용하기</h3>
-<p>Reference를 정의하기 위한 bibliography는 <strong>biblio.bib</strong> 파일에 정의하고 *.Rmd의 YAML 헤더에 설정합니다.</p>
+<p>Reference를 정의하기 위한 bibliography는 <strong>biblio.bib</strong>
+파일에 정의하고 *.Rmd의 YAML 헤더에 설정합니다.</p>
 <h3 id="이-페이지의-yaml-헤더">이 페이지의 YAML 헤더</h3>
 <p>이 페이지의 YAML 헤더는 다음과 같습니다.</p>
 <pre><code>---
@@ -2824,17 +2901,30 @@ bibliography: biblio.bib
 date: 2022-02-01     
 ---</code></pre>
 <h2 id="r-markdown의-이해">R Markdown의 이해</h2>
-<p>R Markdown을 이해하기 위해서 <a href="https://choonghyunryu.github.io/BitStat_Help_Handson/rmarkdown.html" target="_blank">R Markdown의 이해</a>를 학습하기 바랍니다.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
-<div id="ref-allaire2018distill" class="csl-entry" role="doc-biblioentry">
-Allaire, JJ, Rich Iannone, Alison Presmanes Hill, and Yihui Xie. 2018. <span>“Distill for r Markdown.”</span> <a href="https://rstudio.github.io/distill">https://rstudio.github.io/distill</a>.
+<p>R Markdown을 이해하기 위해서 <a
+href="https://choonghyunryu.github.io/BitStat_Help_Handson/rmarkdown.html"
+target="_blank">R Markdown의 이해</a>를 학습하기 바랍니다.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="doc-bibliography">
+<div id="ref-allaire2018distill" class="csl-entry"
+role="doc-biblioentry">
+Allaire, JJ, Rich Iannone, Alison Presmanes Hill, and Yihui Xie. 2018.
+<span>“Distill for r Markdown.”</span> <a
+href="https://rstudio.github.io/distill">https://rstudio.github.io/distill</a>.
 </div>
 </div>
-<section class="footnotes" role="doc-endnotes">
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>캐스케이딩 스타일 시트(Cascading Style Sheets, CSS)는 마크업 언어가 실제 표시되는 방법을 기술하는 스타일 언어(style sheet language)이다. <a href="https://ko.wikipedia.org/wiki/CSS" target="_blank">https://ko.wikipedia.org/wiki/CSS</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p>캐스케이딩 스타일 시트(Cascading
+Style Sheets, CSS)는 마크업 언어가 실제 표시되는 방법을 기술하는 스타일
+언어(style sheet language)이다. <a
+href="https://ko.wikipedia.org/wiki/CSS"
+target="_blank">https://ko.wikipedia.org/wiki/CSS</a><a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

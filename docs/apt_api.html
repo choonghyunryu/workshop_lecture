@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 공공데이터포털 오픈 API를 이용한 데이터 수집</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,9 +2495,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2512,7 +2517,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"공공데이터포털 오픈 API를 이용한 데이터 수집","description":"공공데이터포털 오픈 API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-03T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"공공데이터포털 오픈 API를 이용한 데이터 수집","description":"공공데이터포털 오픈 API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-03T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2607,11 +2612,13 @@ docker Hands-on
 <h1>공공데이터포털 오픈 API를 이용한 데이터 수집</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>공공데이터포털 오픈 API를 이용한 데이터 수집 로직을 구현해 봅니다.</p></p>
+<p><p>공공데이터포털 오픈 API를 이용한 데이터 수집 로직을 구현해
+봅니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-03
 </div>
@@ -2622,14 +2629,17 @@ docker Hands-on
 <h3>Contents</h3>
 <ul>
 <li><a href="#공공데이터포털">공공데이터포털</a></li>
-<li><a href="#아파트매매-실거래-상세-자료-수집">아파트매매 실거래 상세 자료 수집</a>
+<li><a href="#아파트매매-실거래-상세-자료-수집">아파트매매 실거래 상세
+자료 수집</a>
 <ul>
 <li><a href="#api-기본-정보">API 기본 정보</a></li>
-<li><a href="#요청-변수-request-parameter">요청 변수 (request parameter)</a></li>
+<li><a href="#요청-변수-request-parameter">요청 변수 (request
+parameter)</a></li>
 <li><a href="#출력-결과">출력 결과</a></li>
 <li><a href="#준비사항">준비사항</a></li>
 </ul></li>
-<li><a href="#아파트매매-실거래-상세-자료-조회-프로그램-개발">아파트매매 실거래 상세 자료 조회 프로그램 개발</a>
+<li><a href="#아파트매매-실거래-상세-자료-조회-프로그램-개발">아파트매매
+실거래 상세 자료 조회 프로그램 개발</a>
 <ul>
 <li><a href="#요청-url-생성">요청 URL 생성</a></li>
 <li><a href="#법정동-코드-준비하기">법정동 코드 준비하기</a></li>
@@ -2656,24 +2666,48 @@ docker Hands-on
 </div>
 </div>
 <h2 id="공공데이터포털">공공데이터포털</h2>
-<p><a href="https://www.data.go.kr/index.do" target="_blank"><strong>공공데이터포털</strong></a>은 정부/지자체의 공공 데이터 제공을 목적으로 행정안전부에서 운영하는 사이트입니다.</p>
-<p>2022-02-03일 기준으로 68,323건의 데이터를 공개하고 있으며, 오픈 API로는 8,745건을 공개하고 있습니다. 모든 데이터가 질적으로 우수하다고 단언하기는 어렵지만 몇몇 데이터는 인기가 많습니다.</p>
-<p>데이터를 사용하기 위해서는 회원가입이 필수이며, <strong>오픈 API를 사용하기 위해서는 활용신청 후 승인</strong>을 받아야 합니다.</p>
-<h2 id="아파트매매-실거래-상세-자료-수집">아파트매매 실거래 상세 자료 수집</h2>
-<p>우리는 이제 국토교통부의 <strong>아파트매매 실거래 상세 자료</strong>를 수집하는 방법을 살펴봅니다. 별도의 <strong>아파트매매 실거래 자료</strong> API가 있으므로 주의해야 합니다.</p>
+<p><a href="https://www.data.go.kr/index.do"
+target="_blank"><strong>공공데이터포털</strong></a>은 정부/지자체의 공공
+데이터 제공을 목적으로 행정안전부에서 운영하는 사이트입니다.</p>
+<p>2022-02-03일 기준으로 68,323건의 데이터를 공개하고 있으며, 오픈
+API로는 8,745건을 공개하고 있습니다. 모든 데이터가 질적으로 우수하다고
+단언하기는 어렵지만 몇몇 데이터는 인기가 많습니다.</p>
+<p>데이터를 사용하기 위해서는 회원가입이 필수이며, <strong>오픈 API를
+사용하기 위해서는 활용신청 후 승인</strong>을 받아야 합니다.</p>
+<h2 id="아파트매매-실거래-상세-자료-수집">아파트매매 실거래 상세 자료
+수집</h2>
+<p>우리는 이제 국토교통부의 <strong>아파트매매 실거래 상세
+자료</strong>를 수집하는 방법을 살펴봅니다. 별도의 <strong>아파트매매
+실거래 자료</strong> API가 있으므로 주의해야 합니다.</p>
 <h3 id="api-기본-정보">API 기본 정보</h3>
-<p><a href="https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511" target="_blank">국토교통부_아파트매매 실거래 상세 자료 상세 페이지</a>에서 여러 정보를 확인할 수 있습니다.</p>
+<p><a
+href="https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511"
+target="_blank">국토교통부_아파트매매 실거래 상세 자료 상세
+페이지</a>에서 여러 정보를 확인할 수 있습니다.</p>
 <p>출력 포맷이 XML인 API이며, API 서비스 주소는 다음과 같습니다.</p>
 <ul>
 <li>서비스 URL
 <ul>
-<li><a href="http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev" class="uri">http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev</a></li>
+<li><a
+href="http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev"
+class="uri">http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev</a></li>
 </ul></li>
 </ul>
 <h3 id="요청-변수-request-parameter">요청 변수 (request parameter)</h3>
-<p>요청 변수는 다음과 같습니다. 역시 인증을 위한 서비스키가 필요합니다.</p>
-<p>영문명의 일관성이 떨어집니다. 대문자로만 구성된 영문명과 대소문자로 구성된 영문명이 혼재합니다. 단어의 결합 방법도 다릅니다. 언더라인(_) 사용한 것과 캡문자로 구분하는 방법이 섞여있습니다.</p>
+<p>요청 변수는 다음과 같습니다. 역시 인증을 위한 서비스키가
+필요합니다.</p>
+<p>영문명의 일관성이 떨어집니다. 대문자로만 구성된 영문명과 대소문자로
+구성된 영문명이 혼재합니다. 단어의 결합 방법도 다릅니다. 언더라인(_)
+사용한 것과 캡문자로 구분하는 방법이 섞여있습니다.</p>
 <table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 12%" />
+<col style="width: 32%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">항목명(국문)</th>
@@ -2728,10 +2762,25 @@ docker Hands-on
 </tbody>
 </table>
 <h3 id="출력-결과">출력 결과</h3>
-<p><strong>출력 결과</strong> 정보는 너무 실망스럽습니다. 영문명은 일부 헤더 데이터만 제공하고, 실 데이터는 영문명없이 한글명으로 이루어져 있습니다. 이것은 한글사랑, 애국의 문제가 아닙니다.</p>
-<p>API 프로그래밍을 위해서 변수명(영문명)은 영문으로 정의되어야 합니다. 변수명은 아스키(ASCII)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 문자 안에서의 알파벳, 숫자와 르포그램언어에서 지원하는 몇개의 문자로 구성해야 합니다.</p>
-<p>더욱 심각한 문제는 이 정보가 현행화되어 있지 않습니다. 아마도 항목이 늘어난 것 같은데, 일부 데이터 항목이 이 상세 페이지의 출력결과에 누락되어 있습니다.</p>
+<p><strong>출력 결과</strong> 정보는 너무 실망스럽습니다. 영문명은 일부
+헤더 데이터만 제공하고, 실 데이터는 영문명없이 한글명으로 이루어져
+있습니다. 이것은 한글사랑, 애국의 문제가 아닙니다.</p>
+<p>API 프로그래밍을 위해서 변수명(영문명)은 영문으로 정의되어야 합니다.
+변수명은 아스키(ASCII)<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a> 문자 안에서의 알파벳, 숫자와
+르포그램언어에서 지원하는 몇개의 문자로 구성해야 합니다.</p>
+<p>더욱 심각한 문제는 이 정보가 현행화되어 있지 않습니다. 아마도 항목이
+늘어난 것 같은데, 일부 데이터 항목이 이 상세 페이지의 출력결과에
+누락되어 있습니다.</p>
 <table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">항목명(국문)</th>
@@ -2977,43 +3026,59 @@ docker Hands-on
 </tr>
 </tbody>
 </table>
-<p><a href="https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511" target="_blank">오픈API 상세</a> 화면에서 참고문서인 <strong>아파트 매매 상세자료 조회 기술문서.hwp</strong> 파일을 다운로드하면 유용하게 활용할 수 있습니다.</p>
+<p><a
+href="https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057511"
+target="_blank">오픈API 상세</a> 화면에서 참고문서인 <strong>아파트 매매
+상세자료 조회 기술문서.hwp</strong> 파일을 다운로드하면 유용하게 활용할
+수 있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:detail-info"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:detail-info"></span>
 <img src="img/detail_info.png" alt="오픈API 상세 화면" width="100%" />
 <p class="caption">
 Figure 1: 오픈API 상세 화면
 </p>
 </div>
 </div>
-<p>이 파일에는 홈페이지에서 누락된 출력 결과가 기술되어 있습니다. 다음은 파일에서의 출력결과 정보의 일부입니다.</p>
+<p>이 파일에는 홈페이지에서 누락된 출력 결과가 기술되어 있습니다. 다음은
+파일에서의 출력결과 정보의 일부입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:spec"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:spec"></span>
 <img src="img/spec_hwp.png" alt="출력결과 정보의 일부" width="100%" />
 <p class="caption">
 Figure 2: 출력결과 정보의 일부
 </p>
 </div>
 </div>
-<p>파일의 정보에는 영문명이 있으나, 이것은 프로그래밍을 위한 변수 이름으로 사용할 수 없겠습니다. 결국은 API 프로그램 개발자가 변수 이름을 정의해야할 것 같습니다. 아쉬운 점이 많습니다.</p>
+<p>파일의 정보에는 영문명이 있으나, 이것은 프로그래밍을 위한 변수
+이름으로 사용할 수 없겠습니다. 결국은 API 프로그램 개발자가 변수 이름을
+정의해야할 것 같습니다. 아쉬운 점이 많습니다.</p>
 <h3 id="준비사항">준비사항</h3>
-<p><strong>국토교통부_아파트매매 실거래 상세 자료 상세</strong> 오픈 API를 사용하기 위해서는 <strong>활용신청</strong>을 통해서 미리 승인을 받아야 합니다.</p>
-<p>승인이 되면 마이페이지에서 개발계정 상세보기에서 다음과 같은 정보를 확인할 수 있습니다. 일반 인증키 역시 외부로 노출되지 않도록 주의해야 합니다. 이 서비스는 일일 트래픽이 1000회로 제한되어 있습니다.</p>
+<p><strong>국토교통부_아파트매매 실거래 상세 자료 상세</strong> 오픈
+API를 사용하기 위해서는 <strong>활용신청</strong>을 통해서 미리 승인을
+받아야 합니다.</p>
+<p>승인이 되면 마이페이지에서 개발계정 상세보기에서 다음과 같은 정보를
+확인할 수 있습니다. 일반 인증키 역시 외부로 노출되지 않도록 주의해야
+합니다. 이 서비스는 일일 트래픽이 1000회로 제한되어 있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:account"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:account"></span>
 <img src="img/devlop_account.png" alt="개발계정 상세보기 화면" width="100%" />
 <p class="caption">
 Figure 3: 개발계정 상세보기 화면
 </p>
 </div>
 </div>
-<h2 id="아파트매매-실거래-상세-자료-조회-프로그램-개발">아파트매매 실거래 상세 자료 조회 프로그램 개발</h2>
+<h2 id="아파트매매-실거래-상세-자료-조회-프로그램-개발">아파트매매
+실거래 상세 자료 조회 프로그램 개발</h2>
 <h3 id="요청-url-생성">요청 URL 생성</h3>
 <p>XML 출력 포맷을 사용하기 때문에 다음 요청 URL을 사용합니다.</p>
 <ul>
-<li><a href="http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev" class="uri">http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev</a></li>
+<li><a
+href="http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev"
+class="uri">http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev</a></li>
 </ul>
-<p>GET 방식의 호출 URL이기 때문에 요청변수 영역을 <strong>?</strong>로 구분하고, 요청 변수들은 <strong>&amp;</strong>로 구분합니다. 요청변수는 다음과 같습니다.</p>
+<p>GET 방식의 호출 URL이기 때문에 요청변수 영역을 <strong>?</strong>로
+구분하고, 요청 변수들은 <strong>&amp;</strong>로 구분합니다. 요청변수는
+다음과 같습니다.</p>
 <ul>
 <li>ServiceKey : 공공데이터포털에서 받은 인증키</li>
 <li>pageNo : 페이지번호</li>
@@ -3030,39 +3095,52 @@ Figure 3: 개발계정 상세보기 화면
 </code></pre>
 </div>
 </div>
-<p>여기서 한가지 문제가 발생합니다. 서비스를 위해서는 <strong>지역코드가 필요합니다.</strong> 그나마 <strong>아파트 매매 상세자료 조회 기술문서.hwp</strong> 파일의 요청 메시지 명세 섹션에 <strong>“각 지역별 코드 행정표준코드관리시스템(www.code.go.kr)의 법정동코드 10자리 중 앞 5자리”</strong>라고 설명되어 있습니다.</p>
+<p>여기서 한가지 문제가 발생합니다. 서비스를 위해서는 <strong>지역코드가
+필요합니다.</strong> 그나마 <strong>아파트 매매 상세자료 조회
+기술문서.hwp</strong> 파일의 요청 메시지 명세 섹션에 <strong>“각 지역별
+코드 행정표준코드관리시스템(www.code.go.kr)의 법정동코드 10자리 중 앞
+5자리”</strong>라고 설명되어 있습니다.</p>
 <h3 id="법정동-코드-준비하기">법정동 코드 준비하기</h3>
-<p>만약에 서울특별시 노원구의 아파트매매 실거래 상세 자료를 조회하기 위해서는 노원구의 지역코드를 알아야 합니다.</p>
-<p><a href="https://www.code.go.kr/etc/index_iframe.do" target="_blank">행정표준코드관리시스템</a>에서 아주 어렵게 법정동 코드를 조회하는 <a href="https://www.code.go.kr/stdcode/regCodeL.do" target="_blank">법정동코드목록조회</a> 화면을 찾았습니다.</p>
+<p>만약에 서울특별시 노원구의 아파트매매 실거래 상세 자료를 조회하기
+위해서는 노원구의 지역코드를 알아야 합니다.</p>
+<p><a href="https://www.code.go.kr/etc/index_iframe.do"
+target="_blank">행정표준코드관리시스템</a>에서 아주 어렵게 법정동 코드를
+조회하는 <a href="https://www.code.go.kr/stdcode/regCodeL.do"
+target="_blank">법정동코드목록조회</a> 화면을 찾았습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:code-view"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:code-view"></span>
 <img src="img/code_view.png" alt="법정동코드목록조회 화면" width="100%" />
 <p class="caption">
 Figure 4: 법정동코드목록조회 화면
 </p>
 </div>
 </div>
-<p>노원구의 법정동코드가 “1135000000”임을 알았습니다. 그리고 API를 이용하기 위해서는 이 코드의 앞 다섯자리인 “11350”을 사용해야 합니다. 그런데 매번 특정 지역의 정보를 확인하기 위해서 행정표준코드관리시스템에 접속해야할까요? 그래서 <strong>“법정동 코드 전체자료”를 다운로드</strong>했습니다.</p>
-<p>해당 파일의 압축을 풀고, 데이터 프레임 객체를 만든 다음 R 데이터 파일과 SQLite DBMS의 테이블에 저장해 두었습니다.</p>
+<p>노원구의 법정동코드가 “1135000000”임을 알았습니다. 그리고 API를
+이용하기 위해서는 이 코드의 앞 다섯자리인 “11350”을 사용해야 합니다.
+그런데 매번 특정 지역의 정보를 확인하기 위해서 행정표준코드관리시스템에
+접속해야할까요? 그래서 <strong>“법정동 코드 전체자료”를
+다운로드</strong>했습니다.</p>
+<p>해당 파일의 압축을 풀고, 데이터 프레임 객체를 만든 다음 R 데이터
+파일과 SQLite DBMS의 테이블에 저장해 두었습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 <span class='va'>fname</span> <span class='op'>&lt;-</span> <span class='fu'>here</span><span class='fu'>::</span><span class='fu'><a href='https://here.r-lib.org//reference/here.html'>here</a></span><span class='op'>(</span><span class='st'>"inst"</span>, <span class='st'>"meta"</span>, <span class='st'>"법정동코드 전체자료.txt"</span><span class='op'>)</span>
-<span class='va'>legal_divisions</span> <span class='op'>&lt;-</span> <span class='va'>fname</span> <span class='op'>%&gt;%</span>
+<span class='va'>legal_divisions</span> <span class='op'>&lt;-</span> <span class='va'>fname</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.table</a></span><span class='op'>(</span>sep <span class='op'>=</span> <span class='st'>"\t"</span>, header <span class='op'>=</span> <span class='cn'>TRUE</span>, fileEncoding <span class='op'>=</span> <span class='st'>"cp949"</span>,
-             col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"DIVISION_ID"</span>, <span class='st'>"DIVISION_NM"</span>, <span class='st'>"MAINTAIN"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DIVISION_ID <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, scientific <span class='op'>=</span> <span class='cn'>FALSE</span>, trim <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"DIVISION_ID"</span>, <span class='st'>"DIVISION_NM"</span>, <span class='st'>"MAINTAIN"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DIVISION_ID <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, scientific <span class='op'>=</span> <span class='cn'>FALSE</span>, trim <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>MAINTAIN <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span>
     <span class='va'>MAINTAIN</span> <span class='op'>==</span> <span class='st'>"존재"</span> <span class='op'>~</span> <span class='st'>"Y"</span>,
     <span class='va'>MAINTAIN</span> <span class='op'>==</span> <span class='st'>"폐지"</span> <span class='op'>~</span> <span class='st'>"N"</span><span class='op'>)</span>
-  <span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>MEGA_CD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substr</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, <span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>,
-         MEGA_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_extract.html'>str_extract</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>"^[\\w]+"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+         MEGA_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_extract.html'>str_extract</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>"^[\\w]+"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>CTY_CD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substr</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, <span class='fl'>1</span>, <span class='fl'>5</span><span class='op'>)</span>,
-         CTY_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_extract.html'>str_extract</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>" [\\w]+"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-           <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='st'>"\\s"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+         CTY_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_extract.html'>str_extract</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>" [\\w]+"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+           <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='st'>"\\s"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>ADMI_CD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substr</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, <span class='fl'>1</span>, <span class='fl'>8</span><span class='op'>)</span>,
-         ADMI_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>"^[\\w]+ [\\w]+ "</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+         ADMI_NM <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>DIVISION_NM</span>, <span class='st'>"^[\\w]+ [\\w]+ "</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='op'>!</span><span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_detect.html'>str_detect</a></span><span class='op'>(</span><span class='va'>DIVISION_ID</span>, <span class='st'>"000000$"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/save.html'>save</a></span><span class='op'>(</span><span class='va'>legal_divisions</span>, file <span class='op'>=</span> <span class='st'>"data/legal_divisions.rda"</span><span class='op'>)</span>
@@ -3077,18 +3155,20 @@ Figure 4: 법정동코드목록조회 화면
 </div>
 </div>
 <h3 id="api-호출">API 호출</h3>
-<p>만들어 놓은 url을 XML 패키지의 xmlParse()로 API를 호출합니다. 만약에 호출 결과가 정상이 아닐 경우에는 에러를 발생시킵니다. 이때, 결과에 대한 메시지를 보여줍니다.</p>
+<p>만들어 놓은 url을 XML 패키지의 xmlParse()로 API를 호출합니다. 만약에
+호출 결과가 정상이 아닐 경우에는 에러를 발생시킵니다. 이때, 결과에 대한
+메시지를 보여줍니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
 
-  <span class='va'>resultCode</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultCode"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>resultCode</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultCode"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='kw'>if</span> <span class='op'>(</span><span class='va'>resultCode</span> <span class='op'>!=</span> <span class='st'>"00"</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>result_msg</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultMsg"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>result_msg</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultMsg"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span>
 
     <span class='kw'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span><span class='op'>(</span><span class='va'>result_msg</span><span class='op'>)</span>
@@ -3097,32 +3177,39 @@ Figure 4: 법정동코드목록조회 화면
 </div>
 </div>
 <h3 id="xml-파싱">XML 파싱</h3>
-<p>조회된 매매정보의 건수를 가져옵니다. 지역코드에 따라 매매정보의 건수에 대한 편차가 클 것입니다. 도심의 대규모 아파트단지를 포함한 지역은 매매건수가 많을 것이고, 아파트 수가 적은 지방의 지역은 매매건수가 적을 것입니다.</p>
+<p>조회된 매매정보의 건수를 가져옵니다. 지역코드에 따라 매매정보의
+건수에 대한 편차가 클 것입니다. 도심의 대규모 아파트단지를 포함한 지역은
+매매건수가 많을 것이고, 아파트 수가 적은 지방의 지역은 매매건수가 적을
+것입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//totalCount"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//totalCount"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>XML 포멧에서는 item 태그로 개별 검색 결과를 반환합니다. 역시 getNodeSet()로 <strong>item</strong> 노드를 가져다 조작합니다. <strong>xmlToDataFrame()</strong>가 이들 개별 결과들을 데이터 프레임 객체로 변환합니다.</p>
-<p>get_list() 함수를 정의했습니다. 이 함수의 로직은 한글명을 영문 변수명으로 변경하는 로직과 필요한 항목만 가져오는 로직이 있습니다.</p>
+<p>XML 포멧에서는 item 태그로 개별 검색 결과를 반환합니다. 역시
+getNodeSet()로 <strong>item</strong> 노드를 가져다 조작합니다.
+<strong>xmlToDataFrame()</strong>가 이들 개별 결과들을 데이터 프레임
+객체로 변환합니다.</p>
+<p>get_list() 함수를 정의했습니다. 이 함수의 로직은 한글명을 영문
+변수명으로 변경하는 로직과 필요한 항목만 가져오는 로직이 있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>get_list</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>doc</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                   <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                   <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
         <span class='st'>"{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}"</span><span class='op'>)</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='st'>"LAWD_CD"</span>       <span class='op'>=</span> <span class='va'>지역코드</span>,
              <span class='va'>DEAL_DATE</span>,
              <span class='st'>"SERIAL"</span>        <span class='op'>=</span> <span class='va'>일련번호</span>,
@@ -3149,13 +3236,14 @@ Figure 4: 법정동코드목록조회 화면
              <span class='st'>"CANCEL_DATE"</span>   <span class='op'>=</span> <span class='va'>해제사유발생일</span><span class='op'>)</span>
   <span class='op'>}</span>
 
-  <span class='va'>deal_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
+  <span class='va'>deal_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <h3 id="다건-처리-로직">다건 처리 로직</h3>
-<p>다음은 chunk 사이즈보다 큰 다건의 검색 결과 처리를 위한 로직입니다. NAVER 뉴스 검색 로직과 유사합니다.</p>
+<p>다음은 chunk 사이즈보다 큰 다건의 검색 결과 처리를 위한 로직입니다.
+NAVER 뉴스 검색 로직과 유사합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>records</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>deal_list</span><span class='op'>)</span>
@@ -3163,34 +3251,35 @@ Figure 4: 법정동코드목록조회 화면
   <span class='kw'>if</span> <span class='op'>(</span><span class='op'>!</span><span class='va'>do_done</span> <span class='op'>|</span> <span class='va'>records</span> <span class='op'>&gt;=</span> <span class='va'>total_count</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>deal_list</span><span class='op'>)</span>
   <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
-    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'>%/%</span> <span class='va'>chunk</span>
-    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'>%%</span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></span> <span class='va'>chunk</span>
+    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>cnt</span> <span class='op'>-</span> <span class='fl'>1</span>
     <span class='op'>}</span>
 
-    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_df</a></span><span class='op'>(</span><span class='op'>{</span>
         <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
           <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
             <span class='st'>"{api}?ServiceKey={auth_key}&amp;pageNo={x}&amp;numOfRows={chunk}&amp;LAWD_CD={LAWD_CD}&amp;DEAL_YMD={DEAL_YMD}"</span>
           <span class='op'>)</span>
 
-          <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+          <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
         <span class='op'>}</span>
       <span class='op'>}</span><span class='op'>)</span>
 
-    <span class='va'>deal_list</span> <span class='op'>%&gt;%</span>
+    <span class='va'>deal_list</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
         <span class='va'>add_list</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>}</span>
 </code></pre>
 </div>
 </div>
 <h3 id="함수의-완성">함수의 완성</h3>
-<p>이상의 로직을 통합해서 아파트매매 실거래 상세 자료를 조회하는 함수를 다음과 같이 정의하였습니다.</p>
+<p>이상의 로직을 통합해서 아파트매매 실거래 상세 자료를 조회하는 함수를
+다음과 같이 정의하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>trade_apt</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>auth_key</span>, <span class='va'>LAWD_CD</span> <span class='op'>=</span> <span class='st'>"11110"</span>, <span class='va'>DEAL_YMD</span> <span class='op'>=</span> <span class='st'>"202112"</span>,
@@ -3198,17 +3287,17 @@ Figure 4: 법정동코드목록조회 화면
   <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 
   <span class='va'>get_list</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>doc</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                   <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                   <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
         <span class='st'>"{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}"</span><span class='op'>)</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='st'>"LAWD_CD"</span>       <span class='op'>=</span> <span class='va'>지역코드</span>,
              <span class='va'>DEAL_DATE</span>,
              <span class='st'>"SERIAL"</span>        <span class='op'>=</span> <span class='va'>일련번호</span>,
@@ -3242,24 +3331,24 @@ Figure 4: 법정동코드목록조회 화면
 
   <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
 
-  <span class='va'>resultCode</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultCode"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>resultCode</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultCode"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='kw'>if</span> <span class='op'>(</span><span class='va'>resultCode</span> <span class='op'>!=</span> <span class='st'>"00"</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>result_msg</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultMsg"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>result_msg</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//resultMsg"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span>
 
     <span class='kw'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span><span class='op'>(</span><span class='va'>result_msg</span><span class='op'>)</span>
   <span class='op'>}</span>
 
-  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//totalCount"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//totalCount"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span>
 
-  <span class='va'>deal_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
+  <span class='va'>deal_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='va'>records</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>deal_list</span><span class='op'>)</span>
@@ -3267,27 +3356,27 @@ Figure 4: 법정동코드목록조회 화면
   <span class='kw'>if</span> <span class='op'>(</span><span class='op'>!</span><span class='va'>do_done</span> <span class='op'>|</span> <span class='va'>records</span> <span class='op'>&gt;=</span> <span class='va'>total_count</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>deal_list</span><span class='op'>)</span>
   <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
-    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'>%/%</span> <span class='va'>chunk</span>
-    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'>%%</span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></span> <span class='va'>chunk</span>
+    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>cnt</span> <span class='op'>-</span> <span class='fl'>1</span>
     <span class='op'>}</span>
 
-    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_df</a></span><span class='op'>(</span><span class='op'>{</span>
         <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
           <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
             <span class='st'>"{api}?ServiceKey={auth_key}&amp;pageNo={x}&amp;numOfRows={chunk}&amp;LAWD_CD={LAWD_CD}&amp;DEAL_YMD={DEAL_YMD}"</span>
           <span class='op'>)</span>
 
-          <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+          <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
         <span class='op'>}</span>
       <span class='op'>}</span><span class='op'>)</span>
 
-    <span class='va'>deal_list</span> <span class='op'>%&gt;%</span>
+    <span class='va'>deal_list</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
         <span class='va'>add_list</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>}</span>
 <span class='op'>}</span>
@@ -3295,7 +3384,8 @@ Figure 4: 법정동코드목록조회 화면
 </div>
 </div>
 <h3 id="함수의-호출">함수의 호출</h3>
-<p>다음은 2021년 4월 서울 용산구의 아파트매매 실거래 상세 자료를 조회하는 예제입니다. 실행하면 100건의 결과를 가져옵니다.</p>
+<p>다음은 2021년 4월 서울 용산구의 아파트매매 실거래 상세 자료를
+조회하는 예제입니다. 실행하면 100건의 결과를 가져옵니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Your authorized API keys</span>
@@ -3305,18 +3395,28 @@ Figure 4: 법정동코드목록조회 화면
 </code></pre>
 </div>
 </div>
-<p>다음은 총 312건의 결과를 가져옵니다. 즉, chunk가 300이므로 함수 내부에서 2번의 API 호출이 이루어집니다.</p>
+<p>다음은 총 312건의 결과를 가져옵니다. 즉, chunk가 300이므로 함수
+내부에서 2번의 API 호출이 이루어집니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>trade_apt</span><span class='op'>(</span><span class='va'>auth_key</span>, LAWD_CD <span class='op'>=</span> <span class='st'>"11170"</span>, DEAL_YMD <span class='op'>=</span> <span class='st'>"200603"</span>, chunk <span class='op'>=</span> <span class='fl'>300</span>,  do_done <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<section class="footnotes" role="doc-endnotes">
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>미국정보교환표준부호(영어: American Standard Code for Information Interchange), 또는 줄여서 ASCII( /ˈæski/, 아스키)는 영문 알파벳을 사용하는 대표적인 문자 인코딩이다. 아스키는 컴퓨터와 통신 장비를 비롯한 문자를 사용하는 많은 장치에서 사용되며, 대부분의 문자 인코딩이 아스키에 기초를 두고 있다. 출처: <a href="https://ko.wikipedia.org/wiki/ASCII" class="uri">https://ko.wikipedia.org/wiki/ASCII</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p>미국정보교환표준부호(영어: American
+Standard Code for Information Interchange), 또는 줄여서 ASCII( /ˈæski/,
+아스키)는 영문 알파벳을 사용하는 대표적인 문자 인코딩이다. 아스키는
+컴퓨터와 통신 장비를 비롯한 문자를 사용하는 많은 장치에서 사용되며,
+대부분의 문자 인코딩이 아스키에 기초를 두고 있다. 출처: <a
+href="https://ko.wikipedia.org/wiki/ASCII"
+class="uri">https://ko.wikipedia.org/wiki/ASCII</a><a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

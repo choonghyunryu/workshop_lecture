@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 네이버 오픈 API를 이용한 데이터 수집</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,11 +2495,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
-  <link href="site_libs/font-awesome-5.13.0/css/all.min.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.13.0/css/v4-shims.min.css" rel="stylesheet" />
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
+  <link href="site_libs/font-awesome-5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="site_libs/font-awesome-5.15.3/css/v4-shims.min.css" rel="stylesheet" />
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2514,7 +2519,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"네이버 오픈 API를 이용한 데이터 수집","description":"네이버 오픈 API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-02T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"네이버 오픈 API를 이용한 데이터 수집","description":"네이버 오픈 API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-02T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2613,7 +2618,8 @@ docker Hands-on
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-02
 </div>
@@ -2628,11 +2634,13 @@ docker Hands-on
 <li><a href="#네이버-뉴스-검색">네이버 뉴스 검색</a>
 <ul>
 <li><a href="#api-기본-정보">API 기본 정보</a></li>
-<li><a href="#요청-변수-request-parameter">요청 변수 (request parameter)</a></li>
+<li><a href="#요청-변수-request-parameter">요청 변수 (request
+parameter)</a></li>
 <li><a href="#출력-결과">출력 결과</a></li>
 <li><a href="#준비사항">준비사항</a></li>
 </ul></li>
-<li><a href="#네이버-뉴스-검색-프로그램-개발">네이버 뉴스 검색 프로그램 개발</a>
+<li><a href="#네이버-뉴스-검색-프로그램-개발">네이버 뉴스 검색 프로그램
+개발</a>
 <ul>
 <li><a href="#요청-url-생성">요청 URL 생성</a></li>
 <li><a href="#api-호출">API 호출</a></li>
@@ -2658,12 +2666,20 @@ docker Hands-on
 </div>
 </div>
 <h2 id="오픈-api">오픈 API</h2>
-<p><strong>오픈 API</strong>(Open Application Programming Interface, Open API, 공개 API) 또는 <strong>공개 API</strong>는 개발자라면 누구나 사용할 수 있도록 공개된 API를 말하며, 개발자에게 사유 응용 소프트웨어나 웹 서비스의 프로그래밍 적인 권한을 제공합니다.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><strong>오픈 API</strong>(Open Application Programming Interface,
+Open API, 공개 API) 또는 <strong>공개 API</strong>는 개발자라면 누구나
+사용할 수 있도록 공개된 API를 말하며, 개발자에게 사유 응용 소프트웨어나
+웹 서비스의 프로그래밍 적인 권한을 제공합니다.<a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/Open-APIs.png" width="60%" style="display: block; margin: auto;" /></p>
 </div>
 <p><br></p>
-<p>수년 전만해도 공동 데이터의 수집과 NAVER 웹 페이지의 데이터를 수집하기 위해서는 웹 페이지를 핸들링하는 기술을 통해서 데이터를 Scraping 해야 했습니다. 그러나 이제는 해당 기관과 업체에서 오픈 API를 제공하기 때문에, 합법적인 방법으로 원하는 데이터를 수집할 수 있는 세상이 되었습니다.</p>
+<p>수년 전만해도 공동 데이터의 수집과 NAVER 웹 페이지의 데이터를
+수집하기 위해서는 웹 페이지를 핸들링하는 기술을 통해서 데이터를 Scraping
+해야 했습니다. 그러나 이제는 해당 기관과 업체에서 오픈 API를 제공하기
+때문에, 합법적인 방법으로 원하는 데이터를 수집할 수 있는 세상이
+되었습니다.</p>
 <h2 id="대상-api">대상 API</h2>
 <ul>
 <li>네이버 뉴스 검색
@@ -2676,9 +2692,14 @@ docker Hands-on
 </ul></li>
 </ul>
 <h2 id="네이버-뉴스-검색">네이버 뉴스 검색</h2>
-<p>네이버 뉴스 검색 결과를 출력해주는 REST API를 이용해서 뉴스 데이터를 수집합니다. <a href="https://developers.naver.com/docs/serviceapi/search/news/news.md" target="_blank">Documents &gt; 서비스 API &gt; 검색 &gt; 뉴스</a>에 해당 API에 대한 스팩이 설명되어 있습니다.</p>
+<p>네이버 뉴스 검색 결과를 출력해주는 REST API를 이용해서 뉴스 데이터를
+수집합니다. <a
+href="https://developers.naver.com/docs/serviceapi/search/news/news.md"
+target="_blank">Documents &gt; 서비스 API &gt; 검색 &gt; 뉴스</a>에 해당
+API에 대한 스팩이 설명되어 있습니다.</p>
 <h3 id="api-기본-정보">API 기본 정보</h3>
-<p>다음과 같은 두 가지의 API가 있습니다. 여기서는 출력 포맷이 XML인 API를 이용합니다.</p>
+<p>다음과 같은 두 가지의 API가 있습니다. 여기서는 출력 포맷이 XML인
+API를 이용합니다.</p>
 <table>
 <colgroup>
 <col style="width: 10%" />
@@ -2698,13 +2719,15 @@ docker Hands-on
 <tr class="odd">
 <td>GET</td>
 <td>-</td>
-<td><a href="https://openapi.naver.com/v1/search/news.xml" class="uri">https://openapi.naver.com/v1/search/news.xml</a></td>
+<td><a href="https://openapi.naver.com/v1/search/news.xml"
+class="uri">https://openapi.naver.com/v1/search/news.xml</a></td>
 <td>XML</td>
 </tr>
 <tr class="even">
 <td>GET</td>
 <td>-</td>
-<td><a href="https://openapi.naver.com/v1/search/news.json" class="uri">https://openapi.naver.com/v1/search/news.json</a></td>
+<td><a href="https://openapi.naver.com/v1/search/news.json"
+class="uri">https://openapi.naver.com/v1/search/news.json</a></td>
 <td><em>JSON</em></td>
 </tr>
 </tbody>
@@ -2776,12 +2799,14 @@ docker Hands-on
 <tr class="odd">
 <td style="text-align: center;">rss</td>
 <td style="text-align: center;">-</td>
-<td>디버그를 쉽게 하고 RSS 리더기만으로 이용할 수 있게 하기 위해 만든 RSS 포맷의 컨테이너이며 그 외의 특별한 의미는 없다.</td>
+<td>디버그를 쉽게 하고 RSS 리더기만으로 이용할 수 있게 하기 위해 만든
+RSS 포맷의 컨테이너이며 그 외의 특별한 의미는 없다.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">channel</td>
 <td style="text-align: center;">-</td>
-<td>검색 결과를 포함하는 컨테이너이다. 이 안에 있는 title, link, description 등의 항목은 참고용으로 무시해도 무방하다.</td>
+<td>검색 결과를 포함하는 컨테이너이다. 이 안에 있는 title, link,
+description 등의 항목은 참고용으로 무시해도 무방하다.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">lastBuildDate</td>
@@ -2806,12 +2831,15 @@ docker Hands-on
 <tr class="odd">
 <td style="text-align: center;">item/items</td>
 <td style="text-align: center;">-</td>
-<td>XML 포멧에서는 item 태그로, JSON 포멧에서는 items 속성으로 표현된다. 개별 검색 결과이며 title, originallink, link, description, pubDate를 포함한다.</td>
+<td>XML 포멧에서는 item 태그로, JSON 포멧에서는 items 속성으로 표현된다.
+개별 검색 결과이며 title, originallink, link, description, pubDate를
+포함한다.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">title</td>
 <td style="text-align: center;">string</td>
-<td>개별 검색 결과이며, title, originallink, link, description, pubDate 를 포함한다.</td>
+<td>개별 검색 결과이며, title, originallink, link, description, pubDate
+를 포함한다.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">originallink</td>
@@ -2826,7 +2854,9 @@ docker Hands-on
 <tr class="odd">
 <td style="text-align: center;">description</td>
 <td style="text-align: center;">string</td>
-<td>검색 결과 문서의 내용을 요약한 패시지 정보이다. 문서 전체의 내용은 link를 따라가면 읽을 수 있다. 패시지에서 검색어와 일치하는 부분은 <strong>태그로 감싸져 있다.</strong></td>
+<td>검색 결과 문서의 내용을 요약한 패시지 정보이다. 문서 전체의 내용은
+link를 따라가면 읽을 수 있다. 패시지에서 검색어와 일치하는 부분은
+<strong>태그로 감싸져 있다.</strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">pubDate</td>
@@ -2837,10 +2867,13 @@ docker Hands-on
 </table>
 <h3 id="준비사항">준비사항</h3>
 <ul>
-<li>애플리케이션 등록: 네이버 오픈 API로 개발하시려면 먼저 <a href="https://developers.naver.com/apps/#/register?defaultScope=search" target="_blank">‘Application-애플리케이션 등록’</a> 메뉴에서 애플리케이션을 등록하셔야 합니다.</li>
+<li>애플리케이션 등록: 네이버 오픈 API로 개발하시려면 먼저 <a
+href="https://developers.naver.com/apps/#/register?defaultScope=search"
+target="_blank">‘Application-애플리케이션 등록’</a> 메뉴에서
+애플리케이션을 등록하셔야 합니다.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:lint"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lint"></span>
 <img src="img/registration.png" alt="애플리케이션 등록 (API 이용신청) 화면" width="100%" />
 <p class="caption">
 Figure 1: 애플리케이션 등록 (API 이용신청) 화면
@@ -2848,17 +2881,21 @@ Figure 1: 애플리케이션 등록 (API 이용신청) 화면
 </div>
 </div>
 <ul>
-<li>클라이언트 ID와 secret 확인: <a href="https://developers.naver.com/appinfo" target="_blank">‘내 애플리케이션’</a>에서 등록한 애플리케이션을 선택하면 Client ID와 Client Secret 값을 확인할 수 있습니다.</li>
+<li>클라이언트 ID와 secret 확인: <a
+href="https://developers.naver.com/appinfo" target="_blank">‘내
+애플리케이션’</a>에서 등록한 애플리케이션을 선택하면 Client ID와 Client
+Secret 값을 확인할 수 있습니다.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:application"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:application"></span>
 <img src="img/application.png" alt="애플리케이션 정보 화면" width="100%" />
 <p class="caption">
 Figure 2: 애플리케이션 정보 화면
 </p>
 </div>
 </div>
-<p>이 화면은 중요한 정보를 보여줍니다. <strong>하루에 검색 API 호출이 25000회로 제한</strong>되어 있습니다.</p>
+<p>이 화면은 중요한 정보를 보여줍니다. <strong>하루에 검색 API 호출이
+25000회로 제한</strong>되어 있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="bg-orange">
 <h4 style="margin-bottom: 10px; margin-top: 0px;">
@@ -2868,19 +2905,24 @@ Figure 2: 애플리케이션 정보 화면
 클라이언트 아이디(Client ID)와  클라이언트 보안키(Client Secret)는 개인 사용자에게 발급된 정보이므로 반드시 보안에 주의해야 합니다. 타인에게 공개 및 공유하면 안된 중요한 정보이므로 사용에 주의해야 합니다.
 </div>
 </div>
-<h2 id="네이버-뉴스-검색-프로그램-개발">네이버 뉴스 검색 프로그램 개발</h2>
+<h2 id="네이버-뉴스-검색-프로그램-개발">네이버 뉴스 검색 프로그램
+개발</h2>
 <h3 id="요청-url-생성">요청 URL 생성</h3>
 <p>XML 출력 포맷을 사용하기 때문에 다음 요청 URL을 사용합니다.</p>
 <ul>
-<li><a href="https://openapi.naver.com/v1/search/news.xml" class="uri">https://openapi.naver.com/v1/search/news.xml</a></li>
+<li><a href="https://openapi.naver.com/v1/search/news.xml"
+class="uri">https://openapi.naver.com/v1/search/news.xml</a></li>
 </ul>
-<p>검색 질의어인 <strong>query는 UTF-8로 인코딩</strong>해야 하기 때문에 <strong>enc2utf8()</strong>와 <strong>URLencode()</strong>을 사용합니다. GET 방식의 호출 URL이기 때문에 요청변수 영역을 <strong>?</strong>로 구분하고, 요청 변수들은 <strong>&amp;</strong>로 구분합니다.</p>
+<p>검색 질의어인 <strong>query는 UTF-8로 인코딩</strong>해야 하기 때문에
+<strong>enc2utf8()</strong>와 <strong>URLencode()</strong>을 사용합니다.
+GET 방식의 호출 URL이기 때문에 요청변수 영역을 <strong>?</strong>로
+구분하고, 요청 변수들은 <strong>&amp;</strong>로 구분합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>searchUrl</span> <span class='op'>&lt;-</span> <span class='st'>"https://openapi.naver.com/v1/search/news.xml"</span>
 
-  <span class='va'>query</span> <span class='op'>&lt;-</span> <span class='va'>query</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/Encoding.html'>enc2utf8</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>query</span> <span class='op'>&lt;-</span> <span class='va'>query</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'><a href='https://rdrr.io/r/base/Encoding.html'>enc2utf8</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/utils/URLencode.html'>URLencode</a></span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{searchUrl}?query={query}&amp;display={chunk}&amp;start={chunk_no}&amp;sort={sort}"</span><span class='op'>)</span>
@@ -2888,33 +2930,42 @@ Figure 2: 애플리케이션 정보 화면
 </div>
 </div>
 <h3 id="api-호출">API 호출</h3>
-<p><strong>GET으로 호출</strong>할 때 <strong>HTTP Header</strong>에 애플리케이션 등록 시 발급받은 <strong>Client ID</strong>와 <strong>Client Secret</strong> 값을 같이 전송해야 합니다. 그러므로 <strong>httr 패키지를 사용</strong>합니다.</p>
+<p><strong>GET으로 호출</strong>할 때 <strong>HTTP Header</strong>에
+애플리케이션 등록 시 발급받은 <strong>Client ID</strong>와
+<strong>Client Secret</strong> 값을 같이 전송해야 합니다. 그러므로
+<strong>httr 패키지를 사용</strong>합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='va'>url</span> <span class='op'>%&gt;%</span>
+<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='va'>url</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/GET.html'>GET</a></span><span class='op'>(</span>
       <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/add_headers.html'>add_headers</a></span><span class='op'>(</span>
         <span class='st'>"X-Naver-Client-Id"</span>     <span class='op'>=</span> <span class='va'>client_id</span>,
         <span class='st'>"X-Naver-Client-Secret"</span> <span class='op'>=</span> <span class='va'>client_secret</span>
       <span class='op'>)</span>
-    <span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <h3 id="xml-파싱">XML 파싱</h3>
-<p>키워드로 검색된 뉴스의 건수를 가져옵니다. 아마도 많은 경우는 대체로 많은 건수의 뉴스가 검색될 것입니다. 검색 결과 문서의 총 개수를 의미하는 <strong>total</strong> 노드를 가져다가 정수로 변환합니다.</p>
+<p>키워드로 검색된 뉴스의 건수를 가져옵니다. 아마도 많은 경우는 대체로
+많은 건수의 뉴스가 검색될 것입니다.</p>
+<p>검색 결과 문서의 총 개수를 의미하는 <strong>total</strong> 노드를
+가져다가 정수로 변환합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//total"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//total"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>XML 포멧에서는 item 태그로 개별 검색 결과를 반환합니다. 역시 getNodeSet()로 <strong>item</strong> 노드를 가져다 조작합니다. <strong>xmlToDataFrame()</strong>가 이들 개별 결과들을 데이터 프레임 객체로 변환합니다.</p>
+<p>XML 포멧에서는 item 태그로 개별 검색 결과를 반환합니다. 역시
+getNodeSet()로 <strong>item</strong> 노드를 가져다 조작합니다.</p>
+<p><strong>xmlToDataFrame()</strong>가 이들 개별 결과들을 데이터 프레임
+객체로 변환합니다.</p>
 <p>그리고 다음과 같은 데이터 변환을 수행합니다.</p>
 <ul>
 <li>pubDate:
@@ -2934,25 +2985,32 @@ Figure 2: 애플리케이션 정보 화면
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r">    <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>rename</span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
-                                       format <span class='op'>=</span> <span class='st'>"%a, %d %b %Y %H:%M:%S %z"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
-        <span class='va'>title</span>, <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
-        <span class='va'>title_text</span>, <span class='st'>"[[:punct:]]*"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r">    <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
+                                       format <span class='op'>=</span> <span class='st'>"%a, %d %b %Y %H:%M:%S %z"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+        <span class='va'>title</span>, <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+        <span class='va'>title_text</span>, <span class='st'>"[[:punct:]]*"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
         <span class='va'>description</span>,
         <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;|[“”]"</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <h3 id="다건-처리-로직">다건 처리 로직</h3>
-<p>요청 변수의 <strong>display</strong>는 API 호출에서 가져올 결과의 건수입니다. 한번 호출에 최대 100건까지 가져올 수 있습니다. 그러므로 검색 결과가 100건이 넘는 경우에는 여러번 호출을 통해서 해당하는 모든 건을 가져올 수 있습니다. 이 경우 검색 시작 위치인 <strong>start</strong>로 분할해서 가져올 페이지 번호를 지정할 수 있습니다. 만약 100건을 가져왔다면 다음 호출의 start는 101이어야 합니다.</p>
-<p>start의 최대값은 1000으로 제한되어 있습니다. 그러므로 API로 가져올 수 있는 뉴스의 개별 결과는 100,000건입니다.</p>
+<p>요청 변수의 <strong>display</strong>는 API 호출에서 가져올 결과의
+건수입니다. 한번 호출에 최대 100건까지 가져올 수 있습니다. 그러므로 검색
+결과가 100건이 넘는 경우에는 여러번 호출을 통해서 해당하는 모든 건을
+가져올 수 있습니다.</p>
+<p>이 경우 검색 시작 위치인 <strong>start</strong>로 분할해서 가져올
+페이지 번호를 지정할 수 있습니다. 만약 100건을 가져왔다면 다음 호출의
+start는 101이어야 합니다.</p>
+<p>start의 최대값은 1000으로 제한되어 있습니다. 그러므로 API로 가져올 수
+있는 뉴스의 개별 결과는 100,000건입니다.</p>
 <ul>
 <li>Max(start) * Max(display) = 1000 * 100 = 100,000</li>
 </ul>
@@ -2967,11 +3025,14 @@ R은 눈사람을 만드는 것처럼 데이터를 키워나가면 안됩니다.
 rbind() 함수를 이용해서 API를 순차적으로 호출하면서 데이터 프레임에 결과를 붙여나가면 안됩니다. R 데이터 프레임에 관측치를 붙여나가면서 데이터를 크게 불리는 작업은 치명적인 성능 감소를 가져옵니다.
 </div>
 </div>
-<p>다음은 chunk 사이즈보다 큰 다건의 검색 결과 처리를 위한 로직입니다.</p>
-<p><strong>purrr 패키지의 map_df()</strong>의 프로그래밍 함수를 이용해서, 여러 번 API를 호출합니다. 이 로직은 <strong>주의</strong>에서 언급한 방법을 회피하는 로직입니다.</p>
+<p>다음은 chunk 사이즈보다 큰 다건의 검색 결과 처리를 위한
+로직입니다.</p>
+<p><strong>purrr 패키지의 map_df()</strong>의 프로그래밍 함수를
+이용해서, 여러 번 API를 호출합니다. 이 로직은 <strong>주의</strong>에서
+언급한 방법을 회피하는 로직입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
+<pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='va'>records</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>search_list</span><span class='op'>)</span>
@@ -2981,47 +3042,48 @@ rbind() 함수를 이용해서 API를 순차적으로 호출하면서 데이터 
   <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
     <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='va'>total_count</span>, <span class='va'>max_record</span><span class='op'>)</span>
 
-    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'>%/%</span> <span class='va'>chunk</span>
-    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'>%%</span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></span> <span class='va'>chunk</span>
+    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>cnt</span> <span class='op'>-</span> <span class='fl'>1</span>
     <span class='op'>}</span>
 
     <span class='va'>idx</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span>
 
-    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='va'>idx</span><span class='op'>[</span><span class='va'>idx</span> <span class='op'>&lt;=</span> <span class='fl'>1000</span><span class='op'>]</span> <span class='op'>%&gt;%</span>
+    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='va'>idx</span><span class='op'>[</span><span class='va'>idx</span> <span class='op'>&lt;=</span> <span class='fl'>1000</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_df</a></span><span class='op'>(</span><span class='op'>{</span>
         <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
           <span class='kw'>if</span> <span class='op'>(</span><span class='va'>verbose</span><span class='op'>)</span> <span class='op'>{</span>
-            <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk * x}/{total_count})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+            <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk * x}/{total_count})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
               <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='op'>)</span>
           <span class='op'>}</span>
 
           <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
             <span class='st'>"{searchUrl}?query={query}&amp;display={chunk}&amp;start={x}&amp;sort={sort}"</span>
-          <span class='op'>)</span> <span class='op'>%&gt;%</span>
+          <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/GET.html'>GET</a></span><span class='op'>(</span>
               <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/add_headers.html'>add_headers</a></span><span class='op'>(</span>
                 <span class='st'>"X-Naver-Client-Id"</span>     <span class='op'>=</span> <span class='va'>client_id</span>,
                 <span class='st'>"X-Naver-Client-Secret"</span> <span class='op'>=</span> <span class='va'>client_secret</span>
               <span class='op'>)</span>
-            <span class='op'>)</span> <span class='op'>%&gt;%</span>
-            <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-            <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+            <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+            <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+            <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
         <span class='op'>}</span>
       <span class='op'>}</span><span class='op'>)</span>
 
-    <span class='va'>search_list</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>bind_rows</span><span class='op'>(</span>
+    <span class='va'>search_list</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
         <span class='va'>add_list</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>}</span>
 </code></pre>
 </div>
 </div>
 <h3 id="함수의-완성">함수의 완성</h3>
-<p>이상의 로직을 통합해서 네이버 뉴스를 검색하는 함수를 다음과 같이 정의하였습니다.</p>
+<p>이상의 로직을 통합해서 네이버 뉴스를 검색하는 함수를 다음과 같이
+정의하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>search_naver</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>query</span> <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>chunk</span> <span class='op'>=</span> <span class='fl'>100</span>, <span class='va'>chunk_no</span> <span class='op'>=</span> <span class='fl'>1</span>,
@@ -3043,53 +3105,53 @@ rbind() 함수를 이용해서 API를 순차적으로 호출하면서 데이터 
   <span class='va'>sort</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/match.arg.html'>match.arg</a></span><span class='op'>(</span><span class='va'>sort</span><span class='op'>)</span>
 
   <span class='va'>get_list</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>doc</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>rename</span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
-                                       format <span class='op'>=</span> <span class='st'>"%a, %d %b %Y %H:%M:%S %z"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
-        <span class='va'>title</span>, <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
-        <span class='va'>title_text</span>, <span class='st'>"[[:punct:]]*"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>mutate</span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+    <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span><span class='st'>"publish_date"</span> <span class='op'>=</span> <span class='va'>pubDate</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
+                                       format <span class='op'>=</span> <span class='st'>"%a, %d %b %Y %H:%M:%S %z"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+        <span class='va'>title</span>, <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
+        <span class='va'>title_text</span>, <span class='st'>"[[:punct:]]*"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>description_text <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span>
         <span class='va'>description</span>,
         <span class='st'>"&amp;\\w+;|&lt;[[:punct:]]*b&gt;|[“”]"</span><span class='op'>)</span><span class='op'>)</span>
   <span class='op'>}</span>
 
   <span class='va'>searchUrl</span> <span class='op'>&lt;-</span> <span class='st'>"https://openapi.naver.com/v1/search/news.xml"</span>
 
-  <span class='va'>query</span> <span class='op'>&lt;-</span> <span class='va'>query</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/Encoding.html'>enc2utf8</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>query</span> <span class='op'>&lt;-</span> <span class='va'>query</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'><a href='https://rdrr.io/r/base/Encoding.html'>enc2utf8</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/utils/URLencode.html'>URLencode</a></span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{searchUrl}?query={query}&amp;display={chunk}&amp;start={chunk_no}&amp;sort={sort}"</span><span class='op'>)</span>
 
-  <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='va'>url</span> <span class='op'>%&gt;%</span>
+  <span class='va'>doc</span> <span class='op'>&lt;-</span> <span class='va'>url</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/GET.html'>GET</a></span><span class='op'>(</span>
       <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/add_headers.html'>add_headers</a></span><span class='op'>(</span>
         <span class='st'>"X-Naver-Client-Id"</span>     <span class='op'>=</span> <span class='va'>client_id</span>,
         <span class='st'>"X-Naver-Client-Secret"</span> <span class='op'>=</span> <span class='va'>client_secret</span>
       <span class='op'>)</span>
-    <span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span>
 
-  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//total"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//total"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+    <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlValue.html'>xmlValue</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='kw'>if</span> <span class='op'>(</span><span class='va'>verbose</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"* 검색된 총 기사 건수는 {total_count}건입니다.\n\n"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"* 검색된 총 기사 건수는 {total_count}건입니다.\n\n"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='op'>)</span>
 
-    <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk}/{min(total_count, max_record)})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk}/{min(total_count, max_record)})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>}</span>
 
-  <span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
+  <span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
     <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
 
   <span class='va'>records</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>search_list</span><span class='op'>)</span>
@@ -3099,40 +3161,41 @@ rbind() 함수를 이용해서 API를 순차적으로 호출하면서 데이터 
   <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>
     <span class='va'>total_count</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span><span class='op'>(</span><span class='va'>total_count</span>, <span class='va'>max_record</span><span class='op'>)</span>
 
-    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'>%/%</span> <span class='va'>chunk</span>
-    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'>%%</span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></span> <span class='va'>chunk</span>
+
+    <span class='kw'>if</span> <span class='op'>(</span><span class='va'>total_count</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='va'>chunk</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='va'>cnt</span> <span class='op'>&lt;-</span> <span class='va'>cnt</span> <span class='op'>-</span> <span class='fl'>1</span>
     <span class='op'>}</span>
 
     <span class='va'>idx</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>cnt</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span>
 
-    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='va'>idx</span><span class='op'>[</span><span class='va'>idx</span> <span class='op'>&lt;=</span> <span class='fl'>1000</span><span class='op'>]</span> <span class='op'>%&gt;%</span>
+    <span class='va'>add_list</span> <span class='op'>&lt;-</span> <span class='va'>idx</span><span class='op'>[</span><span class='va'>idx</span> <span class='op'>&lt;=</span> <span class='fl'>1000</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_df</a></span><span class='op'>(</span><span class='op'>{</span>
         <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
           <span class='kw'>if</span> <span class='op'>(</span><span class='va'>verbose</span><span class='op'>)</span> <span class='op'>{</span>
-            <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk * x}/{total_count})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+            <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"  - ({chunk * x}/{total_count})건 호출을 진행합니다.\n\n"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
               <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='op'>)</span>
           <span class='op'>}</span>
 
           <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span>
             <span class='st'>"{searchUrl}?query={query}&amp;display={chunk}&amp;start={x}&amp;sort={sort}"</span>
-          <span class='op'>)</span> <span class='op'>%&gt;%</span>
+          <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/GET.html'>GET</a></span><span class='op'>(</span>
               <span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/add_headers.html'>add_headers</a></span><span class='op'>(</span>
                 <span class='st'>"X-Naver-Client-Id"</span>     <span class='op'>=</span> <span class='va'>client_id</span>,
                 <span class='st'>"X-Naver-Client-Secret"</span> <span class='op'>=</span> <span class='va'>client_secret</span>
               <span class='op'>)</span>
-            <span class='op'>)</span> <span class='op'>%&gt;%</span>
-            <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-            <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+            <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+            <span class='fu'><a href='https://rdrr.io/r/base/toString.html'>toString</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+            <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlTreeParse.html'>xmlParse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
             <span class='fu'>get_list</span><span class='op'>(</span><span class='op'>)</span>
         <span class='op'>}</span>
       <span class='op'>}</span><span class='op'>)</span>
 
-    <span class='va'>search_list</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>bind_rows</span><span class='op'>(</span>
+    <span class='va'>search_list</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
         <span class='va'>add_list</span>
-      <span class='op'>)</span> <span class='op'>%&gt;%</span>
+      <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>)</span>
   <span class='op'>}</span>
 <span class='op'>}</span>
@@ -3140,34 +3203,42 @@ rbind() 함수를 이용해서 API를 순차적으로 호출하면서 데이터 
 </div>
 </div>
 <h3 id="함수의-호출">함수의 호출</h3>
-<p>다음은 불평등이라는 단어가 포함된 네이버 뉴스를 검색하는 예제입니다. 실행하면 100건의 결과를 가져옵니다.</p>
+<p>다음은 불평등이라는 단어가 포함된 네이버 뉴스를 검색하는 예제입니다.
+실행하면 100건의 결과를 가져옵니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Your authorized API keys</span>
 <span class='va'>client_id</span> <span class='op'>&lt;-</span> <span class='st'>"XXXXXXXXXXXXXXXXXXXXXXX"</span>
 <span class='va'>client_secret</span> <span class='op'>&lt;-</span> <span class='st'>"XXXXXXXXX"</span>
 
-<span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='fu'>search_naver</span><span class='op'>(</span>
+<span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/koscrap/man/search_naver.html'>search_naver</a></span><span class='op'>(</span>
   <span class='st'>"불평등"</span>, client_id <span class='op'>=</span> <span class='va'>client_id</span>, client_secret <span class='op'>=</span> <span class='va'>client_secret</span>
 <span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>다음은 불평등이라는 단어가 포함된 네이버 뉴스를 검색하는 예제입니다. 총 3000건의 결과를 가져옵니다. 그러므로 함수 내부에서 30번의 API 호출이 이루어집니다.</p>
+<p>다음은 불평등이라는 단어가 포함된 네이버 뉴스를 검색하는 예제입니다.
+총 3000건의 결과를 가져옵니다. 그러므로 함수 내부에서 30번의 API 호출이
+이루어집니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='fu'>search_naver</span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>search_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/koscrap/man/search_naver.html'>search_naver</a></span><span class='op'>(</span>
   <span class='st'>"불평등"</span>, client_id <span class='op'>=</span> <span class='va'>client_id</span>, client_secret <span class='op'>=</span> <span class='va'>client_secret</span>,
   do_done <span class='op'>=</span> <span class='cn'>TRUE</span>, max_record <span class='op'>=</span> <span class='fl'>3000</span>
 <span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<section class="footnotes" role="doc-endnotes">
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>출처: <a href="https://ko.wikipedia.org/wiki/오픈_API" class="uri">https://ko.wikipedia.org/wiki/오픈_API</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p>출처: <a
+href="https://ko.wikipedia.org/wiki/오픈_API"
+class="uri">https://ko.wikipedia.org/wiki/오픈_API</a><a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

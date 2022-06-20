@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: docker 이미지 설치하기</title>
@@ -458,7 +460,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1865,7 +1867,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2483,9 +2488,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2505,7 +2510,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"docker 이미지 설치하기","description":"docker 기반으로 Shiny 서버를 운영하기 위한 기초작업을 수행합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"Tidyverse Korea","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-01-16T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"docker 이미지 설치하기","description":"docker 기반으로 Shiny 서버를 운영하기 위한 기초작업을 수행합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"Tidyverse Korea","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-01-16T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2600,11 +2605,13 @@ docker Hands-on
 <h1>docker 이미지 설치하기</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>docker 기반으로 Shiny 서버를 운영하기 위한 기초작업을 수행합니다.</p></p>
+<p><p>docker 기반으로 Shiny 서버를 운영하기 위한 기초작업을
+수행합니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io/" class="uri">https://choonghyunryu.github.io/</a> (Tidyverse Korea)
+  유충현 <a href="https://choonghyunryu.github.io/"
+class="uri">https://choonghyunryu.github.io/</a> (Tidyverse Korea)
   
 <br/>2022-01-16
 </div>
@@ -2614,7 +2621,8 @@ docker Hands-on
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#shiny-서버를-사용하는-이유">Shiny 서버를 사용하는 이유</a></li>
+<li><a href="#shiny-서버를-사용하는-이유">Shiny 서버를 사용하는
+이유</a></li>
 <li><a href="#shiny-서버-설치하기">Shiny 서버 설치하기</a>
 <ul>
 <li><a href="#docker-이미지-가져오기">docker 이미지 가져오기</a></li>
@@ -2640,11 +2648,21 @@ docker가 설치된 환경을 전제로 설명합니다. docker 환경 구축하
 </div>
 <p><br></p>
 <h2 id="shiny-서버를-사용하는-이유">Shiny 서버를 사용하는 이유</h2>
-<p>RStudio에서 Shiny 애플리케이션을 실행하면 애플리케이션을 종료하기 전까지 RStudio를 사용할 수 없습니다. 그러나 <strong>Shiny 서버에서 Shiny 애플리케이션을 구동하면, 언제든지 웹 브라우저에서 애플리케이션을 실행할 수 있고 RStudio는 애플리케이션의 구동과 독립적으로 사용할 수 있습니다.</strong></p>
-<p>Shiny 서버를 사용하는 이유에서 눈치챘겠지만, <strong>이 글은 Shiny 애플리케이션을 호스팅할 목적의 작업이라기 보다는 개인 노트북에 Shiny 애플리케이션 데모 환경을 구축하기 위함입니다. 그러나 Shiny 애플리케이션을 호스팅할 목적으로도 활용할 수 있습니다.</strong></p>
+<p>RStudio에서 Shiny 애플리케이션을 실행하면 애플리케이션을 종료하기
+전까지 RStudio를 사용할 수 없습니다. 그러나 <strong>Shiny 서버에서 Shiny
+애플리케이션을 구동하면, 언제든지 웹 브라우저에서 애플리케이션을 실행할
+수 있고 RStudio는 애플리케이션의 구동과 독립적으로 사용할 수
+있습니다.</strong></p>
+<p>Shiny 서버를 사용하는 이유에서 눈치챘겠지만, <strong>이 글은 Shiny
+애플리케이션을 호스팅할 목적의 작업이라기 보다는 개인 노트북에 Shiny
+애플리케이션 데모 환경을 구축하기 위함입니다. 그러나 Shiny
+애플리케이션을 호스팅할 목적으로도 활용할 수 있습니다.</strong></p>
 <h2 id="shiny-서버-설치하기">Shiny 서버 설치하기</h2>
 <h3 id="docker-이미지-가져오기">docker 이미지 가져오기</h3>
-<p>Shiny 서버의 운영을 위해서 <a href="https://hub.docker.com/r/rocker/shiny-verse" target="_blank">rocker/shiny-verse</a> 이미지를 가져옵니다. 이 이미지는 Shiny 이미지와 Tidyverse 패키지를 포함하고 있습니다.</p>
+<p>Shiny 서버의 운영을 위해서 <a
+href="https://hub.docker.com/r/rocker/shiny-verse"
+target="_blank">rocker/shiny-verse</a> 이미지를 가져옵니다. 이 이미지는
+Shiny 이미지와 Tidyverse 패키지를 포함하고 있습니다.</p>
 <ul>
 <li>rocker/shiny + rocker/shiny-verse</li>
 </ul>
@@ -2657,17 +2675,24 @@ docker가 설치된 환경을 전제로 설명합니다. docker 환경 구축하
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>docker images </span></code></pre></div>
 </div>
 <h3 id="shiny-서버-실행하기">Shiny 서버 실행하기</h3>
-<p>다음 run 명령으로 docker 컨테이너를 생성하고 실행합니다. 즉, Shiny 서버를 실행합니다.</p>
+<p>다음 run 명령으로 docker 컨테이너를 생성하고 실행합니다. 즉, Shiny
+서버를 실행합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>docker run <span class="sc">--</span>rm <span class="sc">-</span>p <span class="dv">3838</span><span class="sc">:</span><span class="dv">3838</span> rocker<span class="sc">/</span>shiny<span class="sc">-</span>verse</span></code></pre></div>
 </div>
-<p>서버가 실행되면, <a href="http://localhost:3838" class="uri">http://localhost:3838</a> URL에서 Shiny 데모 애플리케이션을 실행할 수 있습니다.</p>
+<p>서버가 실행되면, <a href="http://localhost:3838"
+class="uri">http://localhost:3838</a> URL에서 Shiny 데모 애플리케이션을
+실행할 수 있습니다.</p>
 <figure>
-<img src="img/demo.png" alt="Shiny 데모 애플리케이션" /><figcaption aria-hidden="true">Shiny 데모 애플리케이션</figcaption>
+<img src="img/demo.png" alt="Shiny 데모 애플리케이션" />
+<figcaption aria-hidden="true">Shiny 데모 애플리케이션</figcaption>
 </figure>
 <h2 id="결언">결언</h2>
-<p>docker 컨테이너로 Shiny 데모 애플리케이션을 구동할 수 있습니다. 그러나 아직은 사용자가 개발한 애플리케이션을 구동하기 위한 docker 환경은 아닙니다. 추가적인 환경 설정이 필요해 보입니다.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>docker 컨테이너로 Shiny 데모 애플리케이션을 구동할 수 있습니다.
+그러나 아직은 사용자가 개발한 애플리케이션을 구동하기 위한 docker 환경은
+아닙니다. 추가적인 환경 설정이 필요해 보입니다.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

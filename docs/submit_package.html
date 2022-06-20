@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: Submit R package to CRAN</title>
@@ -466,7 +468,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1873,7 +1875,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2491,7 +2496,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2511,7 +2516,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Submit R package to CRAN","description":"몇 가지 Open API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2019-03-16T00:00:00.000+00:00","citationText":"유충현, 2019"}
+{"title":"Submit R package to CRAN","description":"몇 가지 Open API를 이용한 데이터 수집 로직을 구현해 봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2019-03-16T00:00:00.000+09:00","citationText":"유충현, 2019"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2606,11 +2611,13 @@ docker Hands-on
 <h1>Submit R package to CRAN</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>몇 가지 Open API를 이용한 데이터 수집 로직을 구현해 봅니다.</p></p>
+<p><p>몇 가지 Open API를 이용한 데이터 수집 로직을 구현해
+봅니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2019-03-16
 </div>
@@ -2636,16 +2643,20 @@ docker Hands-on
 </nav>
 </div>
 <h2 id="개요">개요</h2>
-<p>CRAN에 패키지를 submit하는 방법을 간단하게 다룹니다. 또한 CRAN에 패키지를 submit하기 위해서는 R-devel 환경에서도 무결성을 check해야 합니다. 생략할 수도 있지만, 특정 기능이 R development 버전에서 오류가 발생할 수도 있기 때문이다. 반드시 수행해야 합니다.</p>
-<p>본 note에서는 Mac OS X 버전의 R 3.5.2 환경에서 개발 버전을 설치하는 방법과 CRAN에 패키지를 submit하는 방법을 개괄적으로 다룹니다.</p>
+<p>CRAN에 패키지를 submit하는 방법을 간단하게 다룹니다. 또한 CRAN에
+패키지를 submit하기 위해서는 R-devel 환경에서도 무결성을 check해야
+합니다. 생략할 수도 있지만, 특정 기능이 R development 버전에서 오류가
+발생할 수도 있기 때문이다. 반드시 수행해야 합니다.</p>
+<p>본 note에서는 Mac OS X 버전의 R 3.5.2 환경에서 개발 버전을 설치하는
+방법과 CRAN에 패키지를 submit하는 방법을 개괄적으로 다룹니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>R version 4.0.2 (2020-06-22)
+<pre><code>R version 4.1.2 (2021-11-01)
 Platform: x86_64-apple-darwin17.0 (64-bit)
-Running under: macOS  10.16
+Running under: macOS Big Sur 10.16
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -2655,46 +2666,45 @@ attached base packages:
 [7] base     
 
 other attached packages:
-[1] ggplot2_3.3.3        htmltools_0.5.1.9005 shiny_1.6.0         
+[1] ggplot2_3.3.6   htmltools_0.5.2 shiny_1.7.1    
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.1.1         xfun_0.23               
- [3] bslib_0.2.4.9002         purrr_0.3.4             
- [5] lattice_0.20-41          splines_4.0.2           
- [7] colorspace_2.0-1         vctrs_0.3.8             
- [9] generics_0.1.0           mgcv_1.8-31             
-[11] yaml_2.2.1               utf8_1.2.1              
-[13] rlang_0.99.0.9000        jquerylib_0.1.3         
-[15] later_1.3.0              pillar_1.6.1            
-[17] glue_1.6.0               withr_2.4.2             
-[19] DBI_1.1.1                lifecycle_1.0.1         
-[21] stringr_1.4.0            munsell_0.5.0           
-[23] gtable_0.3.0             evaluate_0.14           
-[25] labeling_0.4.2           knitr_1.33              
-[27] fastmap_1.1.0            httpuv_1.6.1            
-[29] fansi_0.5.0              highr_0.9               
-[31] Rcpp_1.0.7               xtable_1.8-4            
-[33] xaringanExtra_0.2.5.9000 promises_1.2.0.1        
-[35] scales_1.1.1             jsonlite_1.7.2          
-[37] farver_2.1.0             mime_0.10               
-[39] distill_1.2              digest_0.6.27           
-[41] stringi_1.6.2            bookdown_0.22           
-[43] dplyr_1.0.6              grid_4.0.2              
-[45] cli_3.0.0                tools_4.0.2             
-[47] magrittr_2.0.1           sass_0.3.1.9001         
-[49] tibble_3.1.2             crayon_1.4.1            
-[51] pkgconfig_2.0.3          downlit_0.2.1           
-[53] Matrix_1.2-18            ellipsis_0.3.2          
-[55] xml2_1.3.2               lubridate_1.7.10        
-[57] assertthat_0.2.1         rmarkdown_2.8           
-[59] rstudioapi_0.13          R6_2.5.1                
-[61] nlme_3.1-148             compiler_4.0.2          </code></pre>
+ [1] Rcpp_1.0.8.3        lubridate_1.8.0     lattice_0.20-45    
+ [4] assertthat_0.2.1    digest_0.6.29       utf8_1.2.2         
+ [7] mime_0.12           R6_2.5.1            evaluate_0.15      
+[10] httr_1.4.2          highr_0.9           pillar_1.7.0       
+[13] rlang_1.0.2         rstudioapi_0.13     fontawesome_0.2.2  
+[16] jquerylib_0.1.4     Matrix_1.4-0        rmarkdown_2.11     
+[19] labeling_0.4.2      splines_4.1.2       reactable_0.2.3    
+[22] xaringanExtra_0.5.5 stringr_1.4.0       htmlwidgets_1.5.4  
+[25] munsell_0.5.0       compiler_4.1.2      httpuv_1.6.5       
+[28] xfun_0.30           pkgconfig_2.0.3     mgcv_1.8-39        
+[31] downlit_0.4.0       tidyselect_1.1.2    tibble_3.1.7       
+[34] bookdown_0.24       XML_3.99-0.9        fansi_1.0.3        
+[37] dbplyr_2.2.0        crayon_1.5.1        dplyr_1.0.9        
+[40] withr_2.5.0         later_1.3.0         grid_4.1.2         
+[43] nlme_3.1-155        jsonlite_1.8.0      xtable_1.8-4       
+[46] gtable_0.3.0        lifecycle_1.0.1     DBI_1.1.2          
+[49] magrittr_2.0.3      scales_1.2.0        cli_3.3.0          
+[52] stringi_1.7.6       cachem_1.0.6        farver_2.1.0       
+[55] promises_1.2.0.1    xml2_1.3.3          bslib_0.3.1        
+[58] ellipsis_0.3.2      generics_0.1.2      vctrs_0.4.1        
+[61] distill_1.3         tools_4.1.2         koscrap_0.1.1.9000 
+[64] glue_1.6.2          purrr_0.3.4         fastmap_1.1.0      
+[67] yaml_2.3.5          colorspace_2.0-3    memoise_2.0.1      
+[70] knitr_1.37          sass_0.4.1         </code></pre>
 </div>
-<p><a href="https://tomizonor.wordpress.com/2013/09/26/build-r-devel-mac/" target="_blank">Building R-devel on Mac OS X</a>를 참고하였습다.</p>
+<p><a
+href="https://tomizonor.wordpress.com/2013/09/26/build-r-devel-mac/"
+target="_blank">Building R-devel on Mac OS X</a>를 참고하였습다.</p>
 <h1 id="r-devel-환경-만들기">R-devel 환경 만들기</h1>
-<p>아마 대부분의 R 사용자는 버전 번호는 다르지만, stable 버전의 R을 사용하고 있을 것입니다. 필자도 R을 CRAN에 제출하기 위해서 R development 버전을 설치하였습니다.</p>
+<p>아마 대부분의 R 사용자는 버전 번호는 다르지만, stable 버전의 R을
+사용하고 있을 것입니다. 필자도 R을 CRAN에 제출하기 위해서 R development
+버전을 설치하였습니다.</p>
 <h2 id="downloading-r-devel">Downloading R-devel</h2>
-<p>다음처럼 <a href="https://stat.ethz.ch/R/daily" class="uri">https://stat.ethz.ch/R/daily</a> URL에서 최신 R development 버전을 다운로드 합니다.:</p>
+<p>다음처럼 <a href="https://stat.ethz.ch/R/daily"
+class="uri">https://stat.ethz.ch/R/daily</a> URL에서 최신 R development
+버전을 다운로드 합니다.:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -2706,16 +2716,22 @@ loaded via a namespace (and not attached):
 <p>conifg.site 파일의 <code>FC</code> 변수를 다음과 같이 정의합니다.</p>
 <pre><code>F77=&quot;gfortran -arch x86_64&quot;
 FC=$F77</code></pre>
-<p>소스 파일을 컴파일 합니다. CRAN에 패키지를 제출할 때 무결성 체크를 위한 목적으로만 사용하기 때문에 Gui 환경의 binary를 생성하지 않을 것입니다. configure 명령을 –without-x 옵션으로 수행하면 됩니다.</p>
+<p>소스 파일을 컴파일 합니다. CRAN에 패키지를 제출할 때 무결성 체크를
+위한 목적으로만 사용하기 때문에 Gui 환경의 binary를 생성하지 않을
+것입니다. configure 명령을 –without-x 옵션으로 수행하면 됩니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <h2 id="install-r-devel">Install R-devel</h2>
-<p>Mac OS X 환경에서 prefix 변수의 값을 지정하지 않으면, 현재 설치된 stable 버전을 엎어칩니다. 그러므로 반드시 설치할 경로를 지정해야 합니다. 필자는 <code>/usr/local/lib/R-devel</code> 경로에 개발 버전을 설치하였습니다.</p>
+<p>Mac OS X 환경에서 prefix 변수의 값을 지정하지 않으면, 현재 설치된
+stable 버전을 엎어칩니다. 그러므로 반드시 설치할 경로를 지정해야 합니다.
+필자는 <code>/usr/local/lib/R-devel</code> 경로에 개발 버전을
+설치하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>이상으로 개발 버전을 설치하였다. 그리고 개발 버전은 다음과 같이 실행합니다.:</p>
+<p>이상으로 개발 버전을 설치하였다. 그리고 개발 버전은 다음과 같이
+실행합니다.:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -2723,26 +2739,42 @@ FC=$F77</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>이제는 콘솔에서 <code>R-devel</code>만 입력하면 R 개발 버전이 실행될 것입니다. 그러므로 다음과 같이 개발 버전 환경에서 패키지를 체크할 수 있습니다.</p>
+<p>이제는 콘솔에서 <code>R-devel</code>만 입력하면 R 개발 버전이 실행될
+것입니다. 그러므로 다음과 같이 개발 버전 환경에서 패키지를 체크할 수
+있습니다.</p>
 <blockquote>
 <p>R-devel CMD check –as-cran 패키지이름.tar.gz</p>
 </blockquote>
 <h1 id="cran에-패키지-등록하기">CRAN에 패키지 등록하기</h1>
-<p>CRAN에 패키지를 등록하기 위해서는 몇 가지의 제약을 준수해야 합니다. 어쩌면 매우 까다로운 작업일 수도 있습니다. 아마 처음 패키지를 등록하는 패키지 개발자는 당황할 수도 있습니다.</p>
+<p>CRAN에 패키지를 등록하기 위해서는 몇 가지의 제약을 준수해야 합니다.
+어쩌면 매우 까다로운 작업일 수도 있습니다. 아마 처음 패키지를 등록하는
+패키지 개발자는 당황할 수도 있습니다.</p>
 <h2 id="build-package">build package</h2>
-<p>다음과 같이 패키지를 build합니다. 여기서는 dlookr 0.3.9 버전을 기준으로 설명합니다.</p>
-<p>예제에서 <code>dlookr</code>은 패키지 디렉토리를 의미합니다. <code>R CMD build</code> 명령로 패키지를 생성합니다.</p>
+<p>다음과 같이 패키지를 build합니다. 여기서는 dlookr 0.3.9 버전을
+기준으로 설명합니다.</p>
+<p>예제에서 <code>dlookr</code>은 패키지 디렉토리를 의미합니다.
+<code>R CMD build</code> 명령로 패키지를 생성합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>상기 명령이 수행되면 <code>DESCRIPTION</code> 파일에서 패키지의 버전 번호를 가져와 컴파일된 패키지 파일을 생성합니다. 그러므로 <code>dlookr_0.3.9.tar.gz</code>이라는 파일이 생성됩니다.</p>
-<p>패키지의 무결성을 진단하기 위해서 다음의 명령을 차례로 입력합니다.:</p>
+<p>상기 명령이 수행되면 <code>DESCRIPTION</code> 파일에서 패키지의 버전
+번호를 가져와 컴파일된 패키지 파일을 생성합니다. 그러므로
+<code>dlookr_0.3.9.tar.gz</code>이라는 파일이 생성됩니다.</p>
+<p>패키지의 무결성을 진단하기 위해서 다음의 명령을 차례로
+입력합니다.:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>오랜 시간동안 명령어가 수행됩니다. <code>Error</code>, <code>Warning</code>, <code>Note</code> 등이 발생된다면 원인을 찾아 수정해야 합니다. 그리고 그것들이 발생하지 않아야 CRAN에 제출할 수 있습니다.</p>
+<p>오랜 시간동안 명령어가 수행됩니다. <code>Error</code>,
+<code>Warning</code>, <code>Note</code> 등이 발생된다면 원인을 찾아
+수정해야 합니다. 그리고 그것들이 발생하지 않아야 CRAN에 제출할 수
+있습니다.</p>
 <h2 id="submit-package">submit package</h2>
-<p><code>https://cran.r-project.org/submit.html</code> URL에서 패키지를 제출합니다. 이 URL은 그림처럼 개발자 이름, 이메일 주소 등을 입력하고 패키지 파일을 업로드할 수 있는 컴포넌트로 구성됩니다.</p>
+<p><code>https://cran.r-project.org/submit.html</code> URL에서 패키지를
+제출합니다. 이 URL은 그림<span
+class="math inline">\(\ref{fig:submit_url}\)</span>처럼 개발자 이름,
+이메일 주소 등을 입력하고 패키지 파일을 업로드할 수 있는 컴포넌트로
+구성됩니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center">
 <img src="img/submit_url.png" alt="R 패키지 제출 화면" width="90%" />
@@ -2751,25 +2783,34 @@ FC=$F77</code></pre>
 </p>
 </div>
 </div>
-<p>정보를 입력하고, 파일을 업로드하면 면 단계 화면을 거치고 기술한 이메일 주소로 Submit 확인 메일이 발송됩니다. 발송된 메일의 URL에서 최종 제출 작업을 수행해야 합니다. 메일의 내용은 그림처럼 URL 링크를 포함하고 있습니다.</p>
+<p>정보를 입력하고, 파일을 업로드하면 면 단계 화면을 거치고 기술한
+이메일 주소로 Submit 확인 메일이 발송됩니다. 발송된 메일의 URL에서 최종
+제출 작업을 수행해야 합니다. 메일의 내용은 그림<span
+class="math inline">\(\ref{fig:confirm}\)</span>처럼 URL 링크를 포함하고
+있습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:confirm"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:confirm"></span>
 <img src="img/confirm.png" alt="R 패키지 제출 확인 메일" width="90%" />
 <p class="caption">
 Figure 1: R 패키지 제출 확인 메일
 </p>
 </div>
 </div>
-<p>패키지가 제출되면 몇 분 간격으로 접수되었다는 메일(그림)과 CRAN 사이트에 제출된 버전이 올라간다는 메일(그림)이 발송됩니다. 물론 제출된 패키지가 check에서 이상이 없었을 경우입니다.</p>
+<p>패키지가 제출되면 몇 분 간격으로 접수되었다는 메일(그림<span
+class="math inline">\(\ref{fig:received}\)</span>)과 CRAN 사이트에
+제출된 버전이 올라간다는 메일(그림<span
+class="math inline">\(\ref{fig:goto_cran}\)</span>)이 발송됩니다. 물론
+제출된 패키지가 check에서 이상이 없었을 경우입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span id="fig:received"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:received"></span>
 <img src="img/received.png" alt="R 패키지 접수 확인 메일" width="90%" />
 <p class="caption">
 Figure 2: R 패키지 접수 확인 메일
 </p>
 </div>
 </div>
-<p>대부분의 정보는 <code>DESCRIPTION</code> 파일에 기재된 내용의 요약입니다.</p>
+<p>대부분의 정보는 <code>DESCRIPTION</code> 파일에 기재된 내용의
+요약입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center">
 <img src="img/goto_cran.png" alt="R 패키지 등록 확인 메일" width="90%" />
@@ -2778,8 +2819,10 @@ Figure 2: R 패키지 접수 확인 메일
 </p>
 </div>
 </div>
-<p>접수 확인 메일 발송 후 정확히 30분 이후에 CRAN으로 패키지가 등록된다는 메일이 발송됨을 알 수 있습니다.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>접수 확인 메일 발송 후 정확히 30분 이후에 CRAN으로 패키지가
+등록된다는 메일이 발송됨을 알 수 있습니다.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -2787,6 +2830,15 @@ Figure 2: R 패키지 접수 확인 메일
 <div class="d-appendix">
 </div>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 <!--radix_placeholder_site_after_body-->
 <div class="distill-site-nav distill-site-footer">

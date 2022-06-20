@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 첫 R 마크다운 문서 만들기</title>
@@ -458,7 +460,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1865,7 +1867,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2483,11 +2488,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
-  <link href="site_libs/font-awesome-5.13.0/css/all.min.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.13.0/css/v4-shims.min.css" rel="stylesheet" />
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
+  <link href="site_libs/font-awesome-5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="site_libs/font-awesome-5.15.3/css/v4-shims.min.css" rel="stylesheet" />
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2507,7 +2512,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"첫 R 마크다운 문서 만들기","description":"RStudio에서 R 마크다운 문서를 활용하는 방법을 익힙니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-31T00:00:00.000+00:00","citationText":"유충현, 2021"}
+{"title":"첫 R 마크다운 문서 만들기","description":"RStudio에서 R 마크다운 문서를 활용하는 방법을 익힙니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-31T00:00:00.000+09:00","citationText":"유충현, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2606,7 +2611,8 @@ docker Hands-on
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io/" class="uri">https://choonghyunryu.github.io/</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io/"
+class="uri">https://choonghyunryu.github.io/</a> (한화생명)
   
 <br/>2021-10-31
 </div>
@@ -2619,7 +2625,8 @@ docker Hands-on
 <li><a href="#r-마크다운-문서-만들기">R 마크다운 문서 만들기</a>
 <ul>
 <li><a href="#r-마크다운-문서-만들기-1">R 마크다운 문서 만들기</a></li>
-<li><a href="#r-마크다운-문서-저장하기">R 마크다운 문서 저장하기</a></li>
+<li><a href="#r-마크다운-문서-저장하기">R 마크다운 문서
+저장하기</a></li>
 </ul></li>
 <li><a href="#html-생성하기">HTML 생성하기</a>
 <ul>
@@ -2648,27 +2655,38 @@ RStudio는 재현가능한 연구를 위한 최적의 솔루션이기 때문입�
 </div>
 </div>
 <h2 id="r-마크다운-문서-만들기">R 마크다운 문서 만들기</h2>
-<p>R 마크다운 문서를 생성하는 방법을 학습합니다. 지시에 따라 R 마크다운 파일을 생성합니다.</p>
+<p>R 마크다운 문서를 생성하는 방법을 학습합니다. 지시에 따라 R 마크다운
+파일을 생성합니다.</p>
 <h3 id="r-마크다운-문서-만들기-1">R 마크다운 문서 만들기</h3>
 <ol type="1">
-<li>RStudio에서 R 마크다운 문서를 만들어 보겠습니다. RStudio의 좌측 상단의 새로운 파일 생성 아이콘을 누른 후, 메뉴에서 “R Markdown…”을 선택합니다.</li>
+<li>RStudio에서 R 마크다운 문서를 만들어 보겠습니다. RStudio의 좌측
+상단의 새로운 파일 생성 아이콘을 누른 후, 메뉴에서 “R Markdown…”을
+선택합니다.</li>
 </ol>
 <figure>
-<img src="img/icon_newfile.png" style="width:30.0%;height:100.0%" alt="새 파일 만들기 아이콘" /><figcaption aria-hidden="true">새 파일 만들기 아이콘</figcaption>
+<img src="img/icon_newfile.png" style="width:30.0%;height:100.0%"
+alt="새 파일 만들기 아이콘" />
+<figcaption aria-hidden="true">새 파일 만들기 아이콘</figcaption>
 </figure>
 <ol start="2" type="1">
-<li>New R Markdown 다이얼로그에서 다음을 입력하고 ‘OK’ 버튼을 누르세요.</li>
+<li>New R Markdown 다이얼로그에서 다음을 입력하고 ‘OK’ 버튼을
+누르세요.</li>
 </ol>
 <ul>
 <li>제목에 ’첫 R 마크다운’을 입력합니다.</li>
-<li>저자에 당신의 이름을 입력합니다. 예시에는 ’홍길동’을 입력했습니다.</li>
+<li>저자에 당신의 이름을 입력합니다. 예시에는 ’홍길동’을
+입력했습니다.</li>
 <li>출력 포맷에서 HTML을 선택합니다. 기본값입니다.</li>
 <li>‘OK’ 버튼을 눌러, R 마크다운 문서를 생성하세요.</li>
 </ul>
 <figure>
-<img src="img/rmarkdown_dialog.png" style="width:70.0%;height:100.0%" alt="New R Markdown 다이얼로그" /><figcaption aria-hidden="true">New R Markdown 다이얼로그</figcaption>
+<img src="img/rmarkdown_dialog.png" style="width:70.0%;height:100.0%"
+alt="New R Markdown 다이얼로그" />
+<figcaption aria-hidden="true">New R Markdown 다이얼로그</figcaption>
 </figure>
-<p>다이얼로그의 왼쪽 헤더에는 R 마크다운의 종류를 선택할 수 있는 메뉴가 있습니다. 메뉴를 선택하면, 오른쪽에 해당 메뉴에 따라 R 마크다운 파일을 생성하는 옵션들이 나타납니다.</p>
+<p>다이얼로그의 왼쪽 헤더에는 R 마크다운의 종류를 선택할 수 있는 메뉴가
+있습니다. 메뉴를 선택하면, 오른쪽에 해당 메뉴에 따라 R 마크다운 파일을
+생성하는 옵션들이 나타납니다.</p>
 <ul>
 <li>Document
 <ul>
@@ -2682,12 +2700,14 @@ RStudio는 재현가능한 연구를 위한 최적의 솔루션이기 때문입�
 </ul></li>
 <li>Shiny
 <ul>
-<li>Shiny 기반의 동적 문서(dynamic documents)를 생성하기 위한 메뉴입니다.</li>
+<li>Shiny 기반의 동적 문서(dynamic documents)를 생성하기 위한
+메뉴입니다.</li>
 <li>Shiny 웹앱이나 Shiny 슬라이드를 생성합니다.</li>
 </ul></li>
 <li>Form Template
 <ul>
-<li>특정 목적을 위해서 미리 준비한 R 마크다운 문서 템플리트를 사용하는 메뉴입이다.</li>
+<li>특정 목적을 위해서 미리 준비한 R 마크다운 문서 템플리트를 사용하는
+메뉴입이다.</li>
 <li>관련 템플리트를 지원하는 R 패키지가 설치되어야 합니다.</li>
 </ul></li>
 </ul>
@@ -2701,7 +2721,9 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </div>
 </div>
 <figure>
-<img src="img/menu_newfile.png" style="width:60.0%;height:100.0%" alt="메뉴를 이용하는 방법" /><figcaption aria-hidden="true">메뉴를 이용하는 방법</figcaption>
+<img src="img/menu_newfile.png" style="width:60.0%;height:100.0%"
+alt="메뉴를 이용하는 방법" />
+<figcaption aria-hidden="true">메뉴를 이용하는 방법</figcaption>
 </figure>
 <ol start="3" type="1">
 <li>생성된 R 마크다운 템플리트 문서를 살펴보세요.</li>
@@ -2720,7 +2742,10 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </ul></li>
 </ul>
 <figure>
-<img src="img/temp_rmarkdown.png" style="width:100.0%;height:100.0%" alt="생성된 R 마크다운 템플리트 문서" /><figcaption aria-hidden="true">생성된 R 마크다운 템플리트 문서</figcaption>
+<img src="img/temp_rmarkdown.png" style="width:100.0%;height:100.0%"
+alt="생성된 R 마크다운 템플리트 문서" />
+<figcaption aria-hidden="true">생성된 R 마크다운 템플리트
+문서</figcaption>
 </figure>
 <h3 id="r-마크다운-문서-저장하기">R 마크다운 문서 저장하기</h3>
 <ol start="4" type="1">
@@ -2734,27 +2759,39 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </ul></li>
 </ul>
 <figure>
-<img src="img/save_rmarkdown.png" style="width:90.0%;height:100.0%" alt="생성된 R 마크다운 템플리트 문서" /><figcaption aria-hidden="true">생성된 R 마크다운 템플리트 문서</figcaption>
+<img src="img/save_rmarkdown.png" style="width:90.0%;height:100.0%"
+alt="생성된 R 마크다운 템플리트 문서" />
+<figcaption aria-hidden="true">생성된 R 마크다운 템플리트
+문서</figcaption>
 </figure>
 <h2 id="html-생성하기">HTML 생성하기</h2>
-<p>RStduio는 knitr을 이용해서 R 마크다운 문서를 마크다운 문서로 변환합니다. 그래서 메뉴에 <strong>‘knit’</strong>라고 표현하는 것은 지정한 포맷의 보고서 파일을 생성하라는 의미입니다.</p>
-<p>마크다운 문서로 최종 보고서 파일을 생성하는 방법을 학습합니다. 지시에 따라 보고서 파일을 생성합니다.</p>
+<p>RStduio는 knitr을 이용해서 R 마크다운 문서를 마크다운 문서로
+변환합니다. 그래서 메뉴에 <strong>‘knit’</strong>라고 표현하는 것은
+지정한 포맷의 보고서 파일을 생성하라는 의미입니다.</p>
+<p>마크다운 문서로 최종 보고서 파일을 생성하는 방법을 학습합니다. 지시에
+따라 보고서 파일을 생성합니다.</p>
 <h3 id="보고서-파일-생성하기">보고서 파일 생성하기</h3>
 <ol start="5" type="1">
-<li>좌측 상단의 뜨개실 이미지 아이콘을 눌러 보고서 파일을 생성하세요.</li>
+<li>좌측 상단의 뜨개실 이미지 아이콘을 눌러 보고서 파일을
+생성하세요.</li>
 </ol>
 <ul>
-<li>뜨개실 이미지 아이콘 옆에 ’Knit’라는 문자열과 역삼각형 이미지를 확인하세요.</li>
+<li>뜨개실 이미지 아이콘 옆에 ’Knit’라는 문자열과 역삼각형 이미지를
+확인하세요.</li>
 <li>’Knit’라는 문자열과 역삼각형 이미지를 클릭하세요.
 <ul>
-<li><strong>주의) 역삼각형 이미지가 아닌 ‘Knit’ 문자열을 클릭하면 메뉴의 팝업없이 바로 실행됩니다.</strong></li>
+<li><strong>주의) 역삼각형 이미지가 아닌 ‘Knit’ 문자열을 클릭하면 메뉴의
+팝업없이 바로 실행됩니다.</strong></li>
 </ul></li>
 <li>팝업된 메뉴에서 ’Knit to HTML’을 눌러 보고서 파일을 생성합니다.</li>
 </ul>
 <figure>
-<img src="img/knit_icon.png" style="width:90.0%;height:100.0%" alt="knit 메뉴 아이콘" /><figcaption aria-hidden="true">knit 메뉴 아이콘</figcaption>
+<img src="img/knit_icon.png" style="width:90.0%;height:100.0%"
+alt="knit 메뉴 아이콘" />
+<figcaption aria-hidden="true">knit 메뉴 아이콘</figcaption>
 </figure>
-<p>팝업 메뉴에는 최종 파일의 포맷을 선택하는 기능, 파라미터를 추가하는 메뉴 등이 포함되어 있습니다.</p>
+<p>팝업 메뉴에는 최종 파일의 포맷을 선택하는 기능, 파라미터를 추가하는
+메뉴 등이 포함되어 있습니다.</p>
 <ul>
 <li>Knit to HTML
 <ul>
@@ -2771,7 +2808,8 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </ul></li>
 <li>Knit with Parameters…
 <ul>
-<li>R 마크다운 문서에 입력 파라미터를 설정했을 경우, 파라미터의 값을 정의합니다.</li>
+<li>R 마크다운 문서에 입력 파라미터를 설정했을 경우, 파라미터의 값을
+정의합니다.</li>
 </ul></li>
 <li>Knit Directory
 <ul>
@@ -2783,7 +2821,8 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </ul></li>
 <li>Project Directory
 <ul>
-<li>R 프로젝트 안에서의 R 마크다운 파일일 경우, 프로젝트 루트에 저장합니다.<br />
+<li>R 프로젝트 안에서의 R 마크다운 파일일 경우, 프로젝트 루트에
+저장합니다.<br />
 </li>
 </ul></li>
 <li>Current Working Directory
@@ -2800,11 +2839,14 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 <li>제목과 저장 이름이 출력된 위치와 크기를 확인하세요.</li>
 <li>R 코드 청그 위치에 어떤 내용이 표시되어 있습니까?
 <ul>
-<li>HTML 본문의 <a href="https://rmarkdown.rstudio.com" target="_blank">https://rmarkdown.rstudio.com</a>을 눌러보세요.</li>
+<li>HTML 본문의 <a href="https://rmarkdown.rstudio.com"
+target="_blank">https://rmarkdown.rstudio.com</a>을 눌러보세요.</li>
 </ul></li>
 </ul>
 <figure>
-<img src="img/web_first.png" style="width:100.0%;height:100.0%" alt="브라우저에 출력된 HTML 문서" /><figcaption aria-hidden="true">브라우저에 출력된 HTML 문서</figcaption>
+<img src="img/web_first.png" style="width:100.0%;height:100.0%"
+alt="브라우저에 출력된 HTML 문서" />
+<figcaption aria-hidden="true">브라우저에 출력된 HTML 문서</figcaption>
 </figure>
 <h2 id="요약">요약</h2>
 <h3 id="핸즈온-요약">핸즈온 요약</h3>
@@ -2814,9 +2856,11 @@ New R Markdown 다이얼로그를 여는 방법은 두가지입니다. 튜토리
 </ul>
 <h3 id="i-can-do-it">I can do it</h3>
 <ul>
-<li>RStudio의 메뉴를 이용해서 R 마크다운 문서를 작성하고, R 마크다운 문서의 R 코드 청크를 실행하여 HTML 문서를 생성할 수 있습니다.</li>
+<li>RStudio의 메뉴를 이용해서 R 마크다운 문서를 작성하고, R 마크다운
+문서의 R 코드 청크를 실행하여 HTML 문서를 생성할 수 있습니다.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

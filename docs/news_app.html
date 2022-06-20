@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 네이버 뉴스 검색 애플리케이션</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,7 +2495,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2510,7 +2515,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"네이버 뉴스 검색 애플리케이션","description":"간단한 애플리케이션을 만들어 봅니다. **koscrap** 패키지를 이용해서 **네이버 뉴스 검색 애플리케이션**을 만듭니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-06T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"네이버 뉴스 검색 애플리케이션","description":"간단한 애플리케이션을 만들어 봅니다. **koscrap** 패키지를 이용해서 **네이버 뉴스 검색 애플리케이션**을 만듭니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-06T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2605,11 +2610,14 @@ docker Hands-on
 <h1>네이버 뉴스 검색 애플리케이션</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>간단한 애플리케이션을 만들어 봅니다. <strong>koscrap</strong> 패키지를 이용해서 <strong>네이버 뉴스 검색 애플리케이션</strong>을 만듭니다.</p></p>
+<p><p>간단한 애플리케이션을 만들어 봅니다. <strong>koscrap</strong>
+패키지를 이용해서 <strong>네이버 뉴스 검색 애플리케이션</strong>을
+만듭니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-06
 </div>
@@ -2628,7 +2636,8 @@ docker Hands-on
 <ul>
 <li><a href="#ui-side">UI Side</a></li>
 <li><a href="#server-side">Server Side</a></li>
-<li><a href="#사용-패키지-및-애플리케이션-호출">사용 패키지 및 애플리케이션 호출</a>
+<li><a href="#사용-패키지-및-애플리케이션-호출">사용 패키지 및
+애플리케이션 호출</a>
 <ul>
 <li><a href="#사용-패키지">사용 패키지</a></li>
 <li><a href="#애플리케이션-호출">애플리케이션 호출</a></li>
@@ -2680,7 +2689,8 @@ docker Hands-on
 <li>뉴스 게시시간</li>
 <li>뉴스 링크
 <ul>
-<li>하이퍼링크를 걸어서, 클릭하면 해당 브라우저 창을 열어 뉴스화면 이동</li>
+<li>하이퍼링크를 걸어서, 클릭하면 해당 브라우저 창을 열어 뉴스화면
+이동</li>
 </ul></li>
 </ul></li>
 </ul></li>
@@ -2787,7 +2797,7 @@ docker Hands-on
             publish_date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             link <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
             stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span>
-        <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+        <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
             <span class='fu'>reactable</span><span class='op'>(</span>
                 defaultColDef <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
                     align <span class='op'>=</span> <span class='st'>"left"</span>
@@ -2836,12 +2846,12 @@ docker Hands-on
                 max_record <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>max_record</span>,
                 do_done <span class='op'>=</span> <span class='cn'>TRUE</span>,
                 client_id <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_id</span>,
-                client_secret <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                <span class='fu'>mutate</span><span class='op'>(</span>title <span class='op'>=</span> <span class='va'>title_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                <span class='fu'>mutate</span><span class='op'>(</span>description <span class='op'>=</span> <span class='va'>description_text</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                <span class='fu'>mutate</span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
-                                                              <span class='st'>"[[:alpha:]]"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-                <span class='fu'>select</span><span class='op'>(</span><span class='va'>title</span>, <span class='va'>description</span>, <span class='va'>publish_date</span>, <span class='va'>link</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+                client_secret <span class='op'>=</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>client_secret</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='va'>title_text</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>description <span class='op'>=</span> <span class='va'>description_text</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>publish_date <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='va'>publish_date</span>,
+                                                              <span class='st'>"[[:alpha:]]"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+                <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>title</span>, <span class='va'>description</span>, <span class='va'>publish_date</span>, <span class='va'>link</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
         <span class='fu'>reactable</span><span class='op'>(</span>
             defaultColDef <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>
                 align <span class='op'>=</span> <span class='st'>"left"</span>
@@ -2878,7 +2888,8 @@ docker Hands-on
 </code></pre>
 </div>
 </div>
-<h2 id="사용-패키지-및-애플리케이션-호출">사용 패키지 및 애플리케이션 호출</h2>
+<h2 id="사용-패키지-및-애플리케이션-호출">사용 패키지 및 애플리케이션
+호출</h2>
 <h3 id="사용-패키지">사용 패키지</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2902,14 +2913,23 @@ docker Hands-on
 <h2 id="애플리케이션-실행-화면">애플리케이션 실행 화면</h2>
 <p>애플리케이션을 실행하면 다음과 같의 화면을 얻을 수 있습니다.</p>
 <figure>
-<img src="img/news_app.png" alt="네이버 뉴스 검색 애플리케이션" /><figcaption aria-hidden="true">네이버 뉴스 검색 애플리케이션</figcaption>
+<img src="img/news_app.png" alt="네이버 뉴스 검색 애플리케이션" />
+<figcaption aria-hidden="true">네이버 뉴스 검색
+애플리케이션</figcaption>
 </figure>
 <h2 id="뉴스링크-원문-조회하기">뉴스링크 원문 조회하기</h2>
-<p>네번째 컬럼인 뉴스링크는 뉴스 원문의 URL 정보입니다. 이 URL을 클릭하면, 뉴스의 원문을 읽을 수 있습니다. 다음은 특정 페이지의 뉴스를 링크를 클릭하여 열린 웹 페이지입니다. 네이버 뉴스 검색 애플리케이션에서 <strong>불평등</strong>이라는 키워드로 검색하였기 때문에, <strong>불평등</strong>이란 단어를 검색하였더니 1개 단어가 매칭되었습니다.</p>
+<p>네번째 컬럼인 뉴스링크는 뉴스 원문의 URL 정보입니다. 이 URL을
+클릭하면, 뉴스의 원문을 읽을 수 있습니다. 다음은 특정 페이지의 뉴스를
+링크를 클릭하여 열린 웹 페이지입니다. 네이버 뉴스 검색 애플리케이션에서
+<strong>불평등</strong>이라는 키워드로 검색하였기 때문에,
+<strong>불평등</strong>이란 단어를 검색하였더니 1개 단어가
+매칭되었습니다.</p>
 <figure>
-<img src="img/news_link.png" alt="네이버 뉴스 링크의 뉴스 원문" /><figcaption aria-hidden="true">네이버 뉴스 링크의 뉴스 원문</figcaption>
+<img src="img/news_link.png" alt="네이버 뉴스 링크의 뉴스 원문" />
+<figcaption aria-hidden="true">네이버 뉴스 링크의 뉴스 원문</figcaption>
 </figure>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

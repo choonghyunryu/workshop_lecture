@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 배치 처리하기</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,9 +2495,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2512,7 +2517,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"배치 처리하기","description":"R 스크립트를 배치 작업으로 수행해 봅니다. 이 방법은 정기적으로 데이터를 수집할 때 유용한 기법입니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-11T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"배치 처리하기","description":"R 스크립트를 배치 작업으로 수행해 봅니다. 이 방법은 정기적으로 데이터를 수집할 때 유용한 기법입니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-11T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2607,11 +2612,13 @@ docker Hands-on
 <h1>배치 처리하기</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>R 스크립트를 배치 작업으로 수행해 봅니다. 이 방법은 정기적으로 데이터를 수집할 때 유용한 기법입니다.</p></p>
+<p><p>R 스크립트를 배치 작업으로 수행해 봅니다. 이 방법은 정기적으로
+데이터를 수집할 때 유용한 기법입니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-11
 </div>
@@ -2634,20 +2641,27 @@ docker Hands-on
 <li><a href="#배치-프로그램-실행">배치 프로그램 실행</a>
 <ul>
 <li><a href="#rstudio-이용한-실행">RStudio 이용한 실행</a></li>
-<li><a href="#shell-script를-이용한-실행">Shell Script를 이용한 실행</a></li>
+<li><a href="#shell-script를-이용한-실행">Shell Script를 이용한
+실행</a></li>
 </ul></li>
 <li><a href="#배치작업-스케줄링하기">배치작업 스케줄링하기</a>
 <ul>
 <li><a href="#스케줄-조회하기">스케줄 조회하기</a></li>
 <li><a href="#스케줄-정의하기">스케줄 정의하기</a></li>
-<li><a href="#crontab-스케줄-정의-방법">crontab 스케줄 정의 방법</a></li>
+<li><a href="#crontab-스케줄-정의-방법">crontab 스케줄 정의
+방법</a></li>
 </ul></li>
-<li><a href="#cron-스케줄-trouble-shooting">cron 스케줄 Trouble Shooting</a>
+<li><a href="#cron-스케줄-trouble-shooting">cron 스케줄 Trouble
+Shooting</a>
 <ul>
-<li><a href="#mac에서의-trouble-shooting">Mac에서의 Trouble Shooting</a></li>
-<li><a href="#작업경로-trouble-shooting">작업경로 Trouble Shooting</a></li>
-<li><a href="#한글환경-trouble-shooting">한글환경 Trouble Shooting</a></li>
-<li><a href="#tidyverse-한글환경-trouble-shooting">tidyverse 한글환경 Trouble Shooting</a></li>
+<li><a href="#mac에서의-trouble-shooting">Mac에서의 Trouble
+Shooting</a></li>
+<li><a href="#작업경로-trouble-shooting">작업경로 Trouble
+Shooting</a></li>
+<li><a href="#한글환경-trouble-shooting">한글환경 Trouble
+Shooting</a></li>
+<li><a href="#tidyverse-한글환경-trouble-shooting">tidyverse 한글환경
+Trouble Shooting</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2668,28 +2682,40 @@ docker Hands-on
 <h2 id="배치-처리의-이해">배치 처리의 이해</h2>
 <h3 id="배치-처리의-정의">배치 처리의 정의</h3>
 <p>다음은 위키백과에 실린 배치 처리의 정의입니다.</p>
-<p>“일괄 처리(batch processing)란 최종 <strong>사용자의 개입 없이</strong> 또는 (자원이 허가한다면) 실행을 <strong>스케줄링할 수 있는 작업(job)</strong>의 실행을 의미합니다.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 컴퓨터 <strong>프로그램 흐름에 따라 순차적으로 자료를 처리하는 방식</strong>입니다.”</p>
+<p>“일괄 처리(batch processing)란 최종 <strong>사용자의 개입
+없이</strong> 또는 (자원이 허가한다면) 실행을 <strong>스케줄링할 수 있는
+작업(job)</strong>의 실행을 의미합니다.<a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>
+컴퓨터 <strong>프로그램 흐름에 따라 순차적으로 자료를 처리하는
+방식</strong>입니다.”</p>
 <p>여기서 중요한 의미는 다음과 같습니다.</p>
 <ul>
 <li>프로그램 흐름에 따라 순차적으로 자료를 처리</li>
 <li>사용자의 개입 없이 스케줄링할 수 있는 작업</li>
 </ul>
 <h3 id="배치-처리의-활용">배치 처리의 활용</h3>
-<p>아파트 실거래 상세 정보를 수집하기 위해서는 여러 번 API를 호출해야 합니다. 이 API는 2006년 1월부터의 데이터를 제공합니다. 그러므로 2006년 1월 이후의 모든 데이터를 수집하기 위해서는 여러 번이 아니라, 여러 날의 작업이 필요합니다. 왜냐하면 API 호출이 하루에 1,000회로 제한되어 있기 때문입니다.</p>
-<p>여기서는 국토교통부의 <strong>아파트매매 실거래 상세 자료를 배치 작업으로 수집하는 방법을 소개</strong>합니다.</p>
+<p>아파트 실거래 상세 정보를 수집하기 위해서는 여러 번 API를 호출해야
+합니다. 이 API는 2006년 1월부터의 데이터를 제공합니다. 그러므로 2006년
+1월 이후의 모든 데이터를 수집하기 위해서는 여러 번이 아니라, 여러 날의
+작업이 필요합니다. 왜냐하면 API 호출이 하루에 1,000회로 제한되어 있기
+때문입니다.</p>
+<p>여기서는 국토교통부의 <strong>아파트매매 실거래 상세 자료를 배치
+작업으로 수집하는 방법을 소개</strong>합니다.</p>
 <h2 id="배치-프로그램-작성">배치 프로그램 작성</h2>
 <h3 id="대상-지역-데이터-생성">대상 지역 데이터 생성</h3>
-<p>SQLite DBMS에 실거래 상세 자료를 수집할 대상 지역 정보를 저장합니다. koscrap 패키지의 행정구역 코드 정보 데이터인 legal_divisions을 이용합니다.</p>
+<p>SQLite DBMS에 실거래 상세 자료를 수집할 대상 지역 정보를 저장합니다.
+koscrap 패키지의 행정구역 코드 정보 데이터인 legal_divisions을
+이용합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>################################################################################</span>
 <span class='co'>## 01.  Create meta datas</span>
 <span class='co'>################################################################################</span>
-<span class='va'>JOB_LAWD_INFO</span> <span class='op'>&lt;-</span> <span class='fu'>koscrap</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/koscrap/man/legal_divisions.html'>legal_divisions</a></span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>MAINTAIN</span> <span class='op'>%in%</span> <span class='st'>"Y"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>select</span><span class='op'>(</span><span class='va'>MEGA_CD</span>, <span class='va'>MEGA_NM</span>, <span class='va'>CTY_CD</span>, <span class='va'>CTY_NM</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>mutate</span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+<span class='va'>JOB_LAWD_INFO</span> <span class='op'>&lt;-</span> <span class='fu'>koscrap</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/koscrap/man/legal_divisions.html'>legal_divisions</a></span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>MAINTAIN</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='st'>"Y"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>MEGA_CD</span>, <span class='va'>MEGA_NM</span>, <span class='va'>CTY_CD</span>, <span class='va'>CTY_NM</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
   
 <span class='co'>################################################################################</span>
 <span class='co'>## 02.  Export to DBMS</span>
@@ -2703,7 +2729,8 @@ docker Hands-on
 </div>
 </div>
 <h3 id="배치-프로그램-생성">배치 프로그램 생성</h3>
-<p>02_import_trade_apt.R 파일에 실거래 상세 자료를 수집하는 메인 프로그램을 다음과 같이 만듭니다.</p>
+<p>02_import_trade_apt.R 파일에 실거래 상세 자료를 수집하는 메인
+프로그램을 다음과 같이 만듭니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>################################################################################</span>
@@ -2723,9 +2750,9 @@ docker Hands-on
 <span class='co'>##==============================================================================</span>
 <span class='va'>auth_key</span> <span class='op'>&lt;-</span> <span class='st'>"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span>
 
-<span class='va'>DEAL_YMD</span> <span class='op'>&lt;-</span> <span class='st'>"20060101"</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>"%Y%m%d"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"20211201"</span>, format <span class='op'>=</span> <span class='st'>"%Y%m%d"</span><span class='op'>)</span>,  by <span class='op'>=</span> <span class='st'>"month"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+<span class='va'>DEAL_YMD</span> <span class='op'>&lt;-</span> <span class='st'>"20060101"</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>"%Y%m%d"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"20211201"</span>, format <span class='op'>=</span> <span class='st'>"%Y%m%d"</span><span class='op'>)</span>,  by <span class='op'>=</span> <span class='st'>"month"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='st'>"%Y%m"</span><span class='op'>)</span>
 
 <span class='co'>##==============================================================================</span>
@@ -2740,11 +2767,11 @@ docker Hands-on
 <span class='co'>##==============================================================================</span>
 <span class='co'>## 02.01. 대상 지역코드 선정</span>
 <span class='co'>##==============================================================================</span>
-<span class='va'>LAWD_CD</span> <span class='op'>&lt;-</span> <span class='va'>con</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/tbl.html'>tbl</a></span><span class='op'>(</span><span class='st'>"TB_JOB_LAWD_INFO"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>DEAL_YM</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/ranking.html'>row_number</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&lt;=</span> <span class='fl'>4</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>CTY_CD</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+<span class='va'>LAWD_CD</span> <span class='op'>&lt;-</span> <span class='va'>con</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/tbl.html'>tbl</a></span><span class='op'>(</span><span class='st'>"TB_JOB_LAWD_INFO"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>DEAL_YM</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/ranking.html'>row_number</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&lt;=</span> <span class='fl'>4</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>CTY_CD</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='co'>##==============================================================================</span>
@@ -2755,8 +2782,8 @@ docker Hands-on
 <span class='co'>##==============================================================================</span>
 <span class='co'>## 02.03. Scrap from 국토교통부_아파트매매 실거래 상세 자료 REST server</span>
 <span class='co'>##==============================================================================</span>
-<span class='va'>trade_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>conditions</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+<span class='va'>trade_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>conditions</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+  <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_df</a></span><span class='op'>(</span><span class='op'>{</span>
     <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='fu'>koscrap</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/koscrap/man/trade_apt.html'>trade_apt</a></span><span class='op'>(</span><span class='va'>auth_key</span>, 
@@ -2766,8 +2793,8 @@ docker Hands-on
                 do_done <span class='op'>=</span> <span class='cn'>TRUE</span>
       <span class='op'>)</span>
     <span class='op'>}</span>
-  <span class='op'>}</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>CREATE_DT <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/date.html'>date</a></span><span class='op'>(</span><span class='op'>)</span>, format <span class='op'>=</span> <span class='st'>"%a %b %d %H:%M:%S %Y"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='op'>}</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>CREATE_DT <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/date.html'>date</a></span><span class='op'>(</span><span class='op'>)</span>, format <span class='op'>=</span> <span class='st'>"%a %b %d %H:%M:%S %Y"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>CREATE_DT <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>CREATE_DT</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{NROW(trade_list)} cases of data were collected.\n\n"</span><span class='op'>)</span><span class='op'>)</span>
@@ -2775,19 +2802,19 @@ docker Hands-on
 <span class='co'>##==============================================================================</span>
 <span class='co'>## 02.04. 작업 정보 업데이트</span>
 <span class='co'>##==============================================================================</span>
-<span class='va'>TB_JOB_LAWD_INFO</span> <span class='op'>&lt;-</span> <span class='va'>con</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/tbl.html'>tbl</a></span><span class='op'>(</span><span class='st'>"TB_JOB_LAWD_INFO"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+<span class='va'>TB_JOB_LAWD_INFO</span> <span class='op'>&lt;-</span> <span class='va'>con</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/tbl.html'>tbl</a></span><span class='op'>(</span><span class='st'>"TB_JOB_LAWD_INFO"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span>
-    <span class='va'>trade_list</span> <span class='op'>%&gt;%</span> 
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substr</a></span><span class='op'>(</span><span class='va'>DEAL_DATE</span>, <span class='fl'>1</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>DEAL_DATE</span>, <span class='st'>"-"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>LAWD_CD</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='va'>trade_list</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substr</a></span><span class='op'>(</span><span class='va'>DEAL_DATE</span>, <span class='fl'>1</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>DEAL_DATE</span>, <span class='st'>"-"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>LAWD_CD</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>DEAL_DATE</span><span class='op'>)</span><span class='op'>)</span>,
     by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"CTY_CD"</span> <span class='op'>=</span> <span class='st'>"LAWD_CD"</span><span class='op'>)</span>,
     copy <span class='op'>=</span> <span class='cn'>TRUE</span>
-  <span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>DEAL_YM</span><span class='op'>)</span>, <span class='va'>DEAL_DATE</span>, <span class='va'>DEAL_YM</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>DEAL_DATE</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_YM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>DEAL_YM</span><span class='op'>)</span>, <span class='va'>DEAL_DATE</span>, <span class='va'>DEAL_YM</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>DEAL_DATE</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='co'>##==============================================================================</span>
@@ -2803,26 +2830,40 @@ docker Hands-on
 </div>
 <h2 id="배치-프로그램-실행">배치 프로그램 실행</h2>
 <h3 id="rstudio-이용한-실행">RStudio 이용한 실행</h3>
-<p>RStudio의 “Tools &gt; Jobs &gt; Start Local Job…” 메뉴를 선택합니다.</p>
+<p>RStudio의 “Tools &gt; Jobs &gt; Start Local Job…” 메뉴를
+선택합니다.</p>
 <figure>
-<img src="img/start_job.png" alt="Jobs 실행 메뉴" /><figcaption aria-hidden="true">Jobs 실행 메뉴</figcaption>
+<img src="img/start_job.png" alt="Jobs 실행 메뉴" />
+<figcaption aria-hidden="true">Jobs 실행 메뉴</figcaption>
 </figure>
-<p>다음과 같은 메뉴 다이얼로그에서 <strong>“R Script”</strong>와 <strong>“Working Directory”</strong>를 선택한 다음, <strong>“Start”</strong> 버튼을 누르면 해당 스크립트인 02_import_trade_apt.R 파일이 실행됩니다.</p>
+<p>다음과 같은 메뉴 다이얼로그에서 <strong>“R Script”</strong>와
+<strong>“Working Directory”</strong>를 선택한 다음,
+<strong>“Start”</strong> 버튼을 누르면 해당 스크립트인
+02_import_trade_apt.R 파일이 실행됩니다.</p>
 <figure>
-<img src="img/excute_job.png" alt="실행 대상의 선택" /><figcaption aria-hidden="true">실행 대상의 선택</figcaption>
+<img src="img/excute_job.png" alt="실행 대상의 선택" />
+<figcaption aria-hidden="true">실행 대상의 선택</figcaption>
 </figure>
-<p>프로그램이 실행되는 과정에서는 우측 상단처럼 프로그레스 바에서 작업의 진행상태를 확인할 수 있습니다.</p>
+<p>프로그램이 실행되는 과정에서는 우측 상단처럼 프로그레스 바에서 작업의
+진행상태를 확인할 수 있습니다.</p>
 <figure>
-<img src="img/running_job.png" alt="Jobs 실행 상태" /><figcaption aria-hidden="true">Jobs 실행 상태</figcaption>
+<img src="img/running_job.png" alt="Jobs 실행 상태" />
+<figcaption aria-hidden="true">Jobs 실행 상태</figcaption>
 </figure>
-<p>프로그램의 실행이 종료되면 다음처럼 프로그레스 바 위치에 작업이 끝났음을 알려주는 정보가 표시됩니다.</p>
+<p>프로그램의 실행이 종료되면 다음처럼 프로그레스 바 위치에 작업이
+끝났음을 알려주는 정보가 표시됩니다.</p>
 <figure>
-<img src="img/finish_job.png" alt="Jobs 실행 종류" /><figcaption aria-hidden="true">Jobs 실행 종류</figcaption>
+<img src="img/finish_job.png" alt="Jobs 실행 종류" />
+<figcaption aria-hidden="true">Jobs 실행 종류</figcaption>
 </figure>
 <h3 id="shell-script를-이용한-실행">Shell Script를 이용한 실행</h3>
 <p>Linux나 Mac의 콘솔에서도 배치 작업을 실행할 수 있습니다.</p>
-<p>먼저 다음과 같은 <strong>“excute_trade_apt.sh”</strong>이라는 파일의 Shell Script를 작성합니다. 이 스크립트는 R 스크립트가 아닌 쉘 스크립트입니다.</p>
-<p>이 스크립트를 실행하기 앞서서 로그를 쌓을 디렉토리를 만들어야 합니다. “./collect_data”가 작업 경로로 가정한다면, “./collect_data/log” 디렉토리를 미리 생성해 놓습니다.</p>
+<p>먼저 다음과 같은 <strong>“excute_trade_apt.sh”</strong>이라는 파일의
+Shell Script를 작성합니다. 이 스크립트는 R 스크립트가 아닌 쉘
+스크립트입니다.</p>
+<p>이 스크립트를 실행하기 앞서서 로그를 쌓을 디렉토리를 만들어야 합니다.
+“./collect_data”가 작업 경로로 가정한다면, “./collect_data/log”
+디렉토리를 미리 생성해 놓습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2842,7 +2883,8 @@ docker Hands-on
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>chmod <span class="sc">+</span>x excute_trade_apt.sh</span></code></pre></div>
 </div>
-<p>콘솔에서 스크립트를 실행해 봅니다. 다음은 필자의 Mac 콘솔에서 실행한 결과입니다. 패키지가 로딩될 때, 메시지가 콘솔에 출력되었습다.</p>
+<p>콘솔에서 스크립트를 실행해 봅니다. 다음은 필자의 Mac 콘솔에서 실행한
+결과입니다. 패키지가 로딩될 때, 메시지가 콘솔에 출력되었습다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % .<span class="sc">/</span>excute_trade_apt.sh </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2860,7 +2902,9 @@ docker Hands-on
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    intersect, setdiff, setequal, union</span></code></pre></div>
 </div>
-<p>이 메시지는 작업에 영향을 주지 않습니다만, 보기 싫다면 다음처럼 배치파일을 수정해서 메시지의 출력을 없애줄 수도 있습니다. library() 함수에 warn.conflicts 인수를 사용해서 메시지 출력을 제거합니다.</p>
+<p>이 메시지는 작업에 영향을 주지 않습니다만, 보기 싫다면 다음처럼
+배치파일을 수정해서 메시지의 출력을 없애줄 수도 있습니다. library()
+함수에 warn.conflicts 인수를 사용해서 메시지 출력을 제거합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://dbplyr.tidyverse.org/'>"dbplyr"</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
@@ -2876,30 +2920,43 @@ docker Hands-on
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>Finsh Job <span class="sc">-</span> <span class="dv">2022-02-09</span> <span class="dv">08</span><span class="sc">:</span><span class="dv">05</span><span class="sc">:</span><span class="dv">38</span></span></code></pre></div>
 </div>
 <h2 id="배치작업-스케줄링하기">배치작업 스케줄링하기</h2>
-<p>배치작업의 스케줄링에서 가장 일반적인 것은 <strong>Unix-like 시스템의 cron</strong>일 것입이다. 여기서는 cron에 대해서 알아보려 합니다.</p>
+<p>배치작업의 스케줄링에서 가장 일반적인 것은 <strong>Unix-like 시스템의
+cron</strong>일 것입이다. 여기서는 cron에 대해서 알아보려 합니다.</p>
 <h3 id="스케줄-조회하기">스케줄 조회하기</h3>
-<p>cron 스케줄링은 cron table에 정의합니다. cron table에 정의된 스케줄 목록은 Unix-like 시스템의 터미널에서 <strong>crontab -l</strong> 명령어로 조회합니다. 필자는 MacOS에서 수행합니다. MacOS의 터미널도 Unix-like 시스템의 일종이므로 cron을 사용할 수 있습니다.</p>
-<p>아직 정의된 cron 스케줄링이 없기 때문에 스케줄이 없다는 메시지가 출력되었습니다.</p>
+<p>cron 스케줄링은 cron table에 정의합니다. cron table에 정의된 스케줄
+목록은 Unix-like 시스템의 터미널에서 <strong>crontab -l</strong>
+명령어로 조회합니다. 필자는 MacOS에서 수행합니다. MacOS의 터미널도
+Unix-like 시스템의 일종이므로 cron을 사용할 수 있습니다.</p>
+<p>아직 정의된 cron 스케줄링이 없기 때문에 스케줄이 없다는 메시지가
+출력되었습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % crontab <span class="sc">-</span>l</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>crontab<span class="sc">:</span> no crontab <span class="cf">for</span> choonghyunryu</span></code></pre></div>
 </div>
 <h3 id="스케줄-정의하기">스케줄 정의하기</h3>
-<p>이제 스케줄을 정의해 보겠습니다. <strong>crontab -e</strong> 명령어로 스케줄을 수정할 수 있습니다. 아직 정의된 스케줄이 없기 때문에 아무 내용도 없는 에디터(vi 에디터) 화면이 나타납니다. 에디터에 스케줄을 정의한 후 저장합니다.</p>
+<p>이제 스케줄을 정의해 보겠습니다. <strong>crontab -e</strong> 명령어로
+스케줄을 수정할 수 있습니다. 아직 정의된 스케줄이 없기 때문에 아무
+내용도 없는 에디터(vi 에디터) 화면이 나타납니다. 에디터에 스케줄을
+정의한 후 저장합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % crontab <span class="sc">-</span>e</span></code></pre></div>
 </div>
-<p>이번에는 cron table에 정의된 스케줄 목록이 출력됩니다. 방금 정의했던 스케줄입니다. 앞서 만들었던 아파트 실거래 상세정보의 쉘 스크립트를 수행하는 스케줄입니다. 매일 새벽 1:00에 excute_trade_apt.sh을 수행하라는 정의입니다.</p>
+<p>이번에는 cron table에 정의된 스케줄 목록이 출력됩니다. 방금 정의했던
+스케줄입니다. 앞서 만들었던 아파트 실거래 상세정보의 쉘 스크립트를
+수행하는 스케줄입니다. 매일 새벽 1:00에 excute_trade_apt.sh을 수행하라는
+정의입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % crontab <span class="sc">-</span>l</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dv">0</span> <span class="dv">1</span> <span class="sc">*</span> <span class="er">*</span> <span class="er">*</span> <span class="er">/</span>Users<span class="sc">/</span>choonghyunryu<span class="sc">/</span>Documents<span class="sc">/</span>01_Personal<span class="sc">/</span>00_bitr<span class="sc">/</span>02_documents<span class="sc">/</span>stats_public_data<span class="sc">/</span>collect_data<span class="sc">/</span>R<span class="sc">/</span>excute_trade_apt.sh</span></code></pre></div>
 </div>
 <h3 id="crontab-스케줄-정의-방법">crontab 스케줄 정의 방법</h3>
-<p>crontab의 작업 스케줄은 화이트스페이스로 분리된 6개의 컬럼으로 정의하합니다. 6개의 컬럼에 대한 의미는 다음과 같습니다.</p>
+<p>crontab의 작업 스케줄은 화이트스페이스로 분리된 6개의 컬럼으로
+정의하합니다. 6개의 컬럼에 대한 의미는 다음과 같습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>분  시간  일  월  요일 명령어</span></code></pre></div>
 </div>
-<p>분부터 요일까지의 5개 컬럼은 숫자로 정의하며 다음과 같은 범위에서 정의할 수 있습니다.</p>
+<p>분부터 요일까지의 5개 컬럼은 숫자로 정의하며 다음과 같은 범위에서
+정의할 수 있습니다.</p>
 <ul>
 <li>분: 0 ~ 59</li>
 <li>시간: 0 ~ 23</li>
@@ -2911,24 +2968,33 @@ docker Hands-on
 <li>0과 7은 일요일, 1부터 월요일이며 6은 토요일</li>
 </ul></li>
 </ul>
-<p>아스터리스크(*)는 해당하는 모든 주기를 의미합니다. 분 위치의 아스터리스크(*)는 매분을 의미합니다.</p>
-<p>그러므로 다음 정의는 매월 첫째날, 8시부터 9시 전까지 매분동안 /home/usr1/run.sh을 실행합니다.</p>
+<p>아스터리스크(*)는 해당하는 모든 주기를 의미합니다. 분 위치의
+아스터리스크(*)는 매분을 의미합니다.</p>
+<p>그러므로 다음 정의는 매월 첫째날, 8시부터 9시 전까지 매분동안
+/home/usr1/run.sh을 실행합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>  <span class="dv">8</span>  <span class="dv">1</span>  <span class="sc">*</span>  <span class="er">*</span> <span class="er">/</span>home<span class="sc">/</span>usr1<span class="sc">/</span>run.sh</span></code></pre></div>
 </div>
-<p>다음 정의는 매일 매시간 0분과 30분에, 즉 30분 주기로 /home/usr1/run.sh을 실행합니다.</p>
+<p>다음 정의는 매일 매시간 0분과 30분에, 즉 30분 주기로
+/home/usr1/run.sh을 실행합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dv">0</span>,<span class="dv">30</span>  <span class="sc">*</span>  <span class="er">*</span>  <span class="er">*</span>  <span class="er">*</span> <span class="er">/</span>home<span class="sc">/</span>usr1<span class="sc">/</span>run.sh</span></code></pre></div>
 </div>
-<p>다음 정의는 자정과 정오에 0분부터 30분까지 매분 /home/usr1/run.sh을 실행합니다.</p>
+<p>다음 정의는 자정과 정오에 0분부터 30분까지 매분 /home/usr1/run.sh을
+실행합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">0-30</span>  <span class="dv">0</span>,<span class="dv">12</span>  <span class="sc">*</span>  <span class="er">*</span>  <span class="er">*</span> <span class="er">/</span>home<span class="sc">/</span>usr1<span class="sc">/</span>run.sh</span></code></pre></div>
 </div>
 <h2 id="cron-스케줄-trouble-shooting">cron 스케줄 Trouble Shooting</h2>
-<p>cron 스케줄의 수행환경은 별도의 가상환경을 만들어 수행하는 것과 흡사합니다. 그래서 익숙하지 않으면 여러 에러가 발생할 수 있습니다. 여기서는 이런 예기치 못한 에러를 해결하는 방법을 다룹니다.</p>
+<p>cron 스케줄의 수행환경은 별도의 가상환경을 만들어 수행하는 것과
+흡사합니다. 그래서 익숙하지 않으면 여러 에러가 발생할 수 있습니다.
+여기서는 이런 예기치 못한 에러를 해결하는 방법을 다룹니다.</p>
 <h3 id="mac에서의-trouble-shooting">Mac에서의 Trouble Shooting</h3>
-<p>기대했던 cron 스케줄이 정상적으로 실행된 것 같지 않습니다. 혹시나 해서 mail 박스를 열어봅니다. 터미널에서 <strong>mail 명령어</strong>로 가능합니다.</p>
-<p>일반적으로 cron 스케줄 작업에 대한 로그는 메일로 받을 수 있습니다. 다음과 같은 메일이 와 있었습니다.</p>
+<p>기대했던 cron 스케줄이 정상적으로 실행된 것 같지 않습니다. 혹시나
+해서 mail 박스를 열어봅니다. 터미널에서 <strong>mail 명령어</strong>로
+가능합니다.</p>
+<p>일반적으로 cron 스케줄 작업에 대한 로그는 메일로 받을 수 있습니다.
+다음과 같은 메일이 와 있었습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % mail</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Mail version <span class="fl">8.1</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">6</span><span class="sc">/</span><span class="fl">93.</span>  Type ? <span class="cf">for</span> help.</span>
@@ -2952,31 +3018,51 @@ docker Hands-on
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>? </span></code></pre></div>
 </div>
-<p><strong>Operation not permitted</strong> 메시지에 주목해야 합니다. 구글링해보니, MacOS의 보안시스템에 관련된 이슈였습니다. 원인은 cron 프로세스가 MacOS 파일시스템의 전체 디렉토리의 접근 권한이 없기 때문입니다.</p>
+<p><strong>Operation not permitted</strong> 메시지에 주목해야 합니다.
+구글링해보니, MacOS의 보안시스템에 관련된 이슈였습니다. 원인은 cron
+프로세스가 MacOS 파일시스템의 전체 디렉토리의 접근 권한이 없기
+때문입니다.</p>
 <p>다음과 같은 과정으로 문제를 해결합니다.</p>
-<p>먼저 <strong>시스템 환경설정</strong>에서 <strong>보안 및 개인 정보 보호</strong> 메뉴를 선택합니다.</p>
+<p>먼저 <strong>시스템 환경설정</strong>에서 <strong>보안 및 개인 정보
+보호</strong> 메뉴를 선택합니다.</p>
 <figure>
-<img src="img/security.png" alt="보안 및 개인 정보 보호 메뉴실행" /><figcaption aria-hidden="true">보안 및 개인 정보 보호 메뉴실행</figcaption>
+<img src="img/security.png" alt="보안 및 개인 정보 보호 메뉴실행" />
+<figcaption aria-hidden="true">보안 및 개인 정보 보호
+메뉴실행</figcaption>
 </figure>
-<p><strong>보안 및 개인 정보 보호</strong> 메뉴에서 <strong>전체 디스크 접근 권한</strong>을 선택한 후, 자물쇠를 해제하고 <strong>“+”</strong> 버튼을 누릅니다.</p>
+<p><strong>보안 및 개인 정보 보호</strong> 메뉴에서 <strong>전체 디스크
+접근 권한</strong>을 선택한 후, 자물쇠를 해제하고 <strong>“+”</strong>
+버튼을 누릅니다.</p>
 <figure>
-<img src="img/access_disk.png" alt="전체 디스크 접근 권한 설정화면" /><figcaption aria-hidden="true">전체 디스크 접근 권한 설정화면</figcaption>
+<img src="img/access_disk.png" alt="전체 디스크 접근 권한 설정화면" />
+<figcaption aria-hidden="true">전체 디스크 접근 권한
+설정화면</figcaption>
 </figure>
-<p><strong>“⌘” + “⇧” + “G” 버튼</strong>을 동시에 누른 후, 나타난 메뉴에 <strong>/usr/sbin을 입력</strong> 후 이동 버튼을 누릅니다.</p>
+<p><strong>“⌘” + “⇧” + “G” 버튼</strong>을 동시에 누른 후, 나타난 메뉴에
+<strong>/usr/sbin을 입력</strong> 후 이동 버튼을 누릅니다.</p>
 <figure>
-<img src="img/hit_G.png" alt="/usr/sbin 폴더 이동" /><figcaption aria-hidden="true">/usr/sbin 폴더 이동</figcaption>
+<img src="img/hit_G.png" alt="/usr/sbin 폴더 이동" />
+<figcaption aria-hidden="true">/usr/sbin 폴더 이동</figcaption>
 </figure>
-<p><strong>/usr/sbin</strong> 경로의 파일에서 <strong>cron</strong>을 선택합니다.</p>
+<p><strong>/usr/sbin</strong> 경로의 파일에서 <strong>cron</strong>을
+선택합니다.</p>
 <figure>
-<img src="img/cron.png" alt="cron 파일 선택" /><figcaption aria-hidden="true">cron 파일 선택</figcaption>
+<img src="img/cron.png" alt="cron 파일 선택" />
+<figcaption aria-hidden="true">cron 파일 선택</figcaption>
 </figure>
-<p>이제 전체 디스크 접근 권한에서 cron이 선택된 것을 확인할 수 있습니다.</p>
+<p>이제 전체 디스크 접근 권한에서 cron이 선택된 것을 확인할 수
+있습니다.</p>
 <figure>
-<img src="img/reg_cron.png" alt="cron 파일 선택" /><figcaption aria-hidden="true">cron 파일 선택</figcaption>
+<img src="img/reg_cron.png" alt="cron 파일 선택" />
+<figcaption aria-hidden="true">cron 파일 선택</figcaption>
 </figure>
 <h3 id="작업경로-trouble-shooting">작업경로 Trouble Shooting</h3>
-<p>cron에 등록할 프로그램에서 파일의 경로는 상대경로가 아닌, 절대경로를 사용해야 합니다.</p>
-<p>excute_trade_apt.sh에서는 here 패키지를 이용해서 SQLite DBMS의 경로를 상대경로로 지정했습니다. 그래서 cron에서 다음과 같은 에러가 발생했습니다. 상대경로로 정의했던 DBMS 위치라서, DBMS에 접속하지 못했습니다.</p>
+<p>cron에 등록할 프로그램에서 파일의 경로는 상대경로가 아닌, 절대경로를
+사용해야 합니다.</p>
+<p>excute_trade_apt.sh에서는 here 패키지를 이용해서 SQLite DBMS의 경로를
+상대경로로 지정했습니다. 그래서 cron에서 다음과 같은 에러가
+발생했습니다. 상대경로로 정의했던 DBMS 위치라서, DBMS에 접속하지
+못했습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % mail</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>Mail version <span class="fl">8.1</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">6</span><span class="sc">/</span><span class="fl">93.</span>  Type ? <span class="cf">for</span> help.</span>
@@ -3002,7 +3088,9 @@ docker Hands-on
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>? </span></code></pre></div>
 </div>
-<p>그래서 DBMS에 접속하는 로직을 다음과 같이 수정했습니다. 주석으로 처리한 부분이 기존의 상대경로 정의입니다. 이 부분을 절대경로 위치로 바꿨습니다.</p>
+<p>그래서 DBMS에 접속하는 로직을 다음과 같이 수정했습니다. 주석으로
+처리한 부분이 기존의 상대경로 정의입니다. 이 부분을 절대경로 위치로
+바꿨습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>##==============================================================================</span>
@@ -3015,7 +3103,8 @@ docker Hands-on
 </div>
 </div>
 <h3 id="한글환경-trouble-shooting">한글환경 Trouble Shooting</h3>
-<p>절대경로로 변경하여, 해당 이슈는 해결되었습니다. 그런데 이번에는 한글과 관련된 에러가 발생했습니다.</p>
+<p>절대경로로 변경하여, 해당 이슈는 해결되었습니다. 그런데 이번에는
+한글과 관련된 에러가 발생했습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % mail  </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Mail version <span class="fl">8.1</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">6</span><span class="sc">/</span><span class="fl">93.</span>  Type ? <span class="cf">for</span> help.</span>
@@ -3070,7 +3159,8 @@ docker Hands-on
 <span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>There were <span class="dv">27</span> <span class="fu">warnings</span> (use <span class="fu">warnings</span>() to see them)</span>
 <span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>Execution halted</span></code></pre></div>
 </div>
-<p>cron에서 한글 이슈가 발생하면, shell script에 다음처럼 <strong>export LANG=ko_KR.UTF-8</strong>구문을 삽입합니다.</p>
+<p>cron에서 한글 이슈가 발생하면, shell script에 다음처럼 <strong>export
+LANG=ko_KR.UTF-8</strong>구문을 삽입합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3089,9 +3179,16 @@ docker Hands-on
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span>Rscript <span class="st">&quot;$work_dir&quot;</span><span class="sc">/</span>R<span class="sc">/</span>02_import_trade_apt.R <span class="sc">&gt;</span> <span class="st">&quot;$log_file&quot;</span></span></code></pre></div>
 </div>
-<h3 id="tidyverse-한글환경-trouble-shooting">tidyverse 한글환경 Trouble Shooting</h3>
-<p>한글 문제가 해결되었습니다. 그런데 이번에는 한글변수에서 에러가 발생했습니다. 애초 프로그램 언어에서의 사이드 이펙트(부작용, side effect)를 방지하기 위해서의 최선의 방법은 변수의 이름을 영문으로 정의하는 것이 암묵적인 룰인데, 국토교통부의 오픈 API는 변수 이름을 한글로 지정한 것이 안일한 결정이었습니다.</p>
-<p>R 환경이난 Shell 환경에는 분명 정상적으로 수행되던 코드가 cron에서 에러가 발생합니다. tidyverse 패키지군인 dplyr 패키지에서 한글변수를 찾지 못하는 에러가 발생한 것입니다.</p>
+<h3 id="tidyverse-한글환경-trouble-shooting">tidyverse 한글환경 Trouble
+Shooting</h3>
+<p>한글 문제가 해결되었습니다. 그런데 이번에는 한글변수에서 에러가
+발생했습니다. 애초 프로그램 언어에서의 사이드 이펙트(부작용, side
+effect)를 방지하기 위해서의 최선의 방법은 변수의 이름을 영문으로
+정의하는 것이 암묵적인 룰인데, 국토교통부의 오픈 API는 변수 이름을
+한글로 지정한 것이 안일한 결정이었습니다.</p>
+<p>R 환경이난 Shell 환경에는 분명 정상적으로 수행되던 코드가 cron에서
+에러가 발생합니다. tidyverse 패키지군인 dplyr 패키지에서 한글변수를 찾지
+못하는 에러가 발생한 것입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(base) choonghyunryu<span class="sc">@</span>myWorld R % mail</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>Mail version <span class="fl">8.1</span> <span class="dv">6</span><span class="sc">/</span><span class="dv">6</span><span class="sc">/</span><span class="fl">93.</span>  Type ? <span class="cf">for</span> help.</span>
@@ -3145,23 +3242,27 @@ docker Hands-on
 <span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a> <span class="fl">24.</span>     └─stringi<span class="sc">::</span><span class="fu">stri_replace_first_regex</span>(...)</span>
 <span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>실행이 정지되었습니다</span></code></pre></div>
 </div>
-<p>여러 방법을 시도해보았고, 구글링해보았지만 솔루션을 찾지 못했습니다. 그래서 다음처럼 아주 원초적인 방법으로 접근했습니다. 데이터 프레임을 만들고, 변수의 이름을 영문으로 고친 후 dplyr 구문을 사용하는 것으로 코드를 수정하였습니다.</p>
-<p>koscape 패키지의 trade_apt() 함수 내에서의 get_list() 함수를 다음과 같이 수정하였습니다.</p>
+<p>여러 방법을 시도해보았고, 구글링해보았지만 솔루션을 찾지 못했습니다.
+그래서 다음처럼 아주 원초적인 방법으로 접근했습니다. 데이터 프레임을
+만들고, 변수의 이름을 영문으로 고친 후 dplyr 구문을 사용하는 것으로
+코드를 수정하였습니다.</p>
+<p>koscape 패키지의 trade_apt() 함수 내에서의 get_list() 함수를 다음과
+같이 수정하였습니다.</p>
 <div class="panelset">
 <section id="이전-코드" class="panel-name panel">
 <h4 class="panel-name">이전 코드</h4>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>get_list</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>doc</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>거래금액 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>거래금액</span>, <span class='st'>","</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span>
-               <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+               <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{년}-{str_pad(월, width = 2, pad = '0')}-{str_pad(일, width = 2, pad = '0')}"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>층 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>층</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>건축년도 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>건축년도</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>년</span>, <span class='op'>-</span><span class='va'>월</span>, <span class='op'>-</span><span class='va'>일</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='st'>"LAWD_CD"</span>       <span class='op'>=</span> <span class='va'>지역코드</span>,
              <span class='va'>DEAL_DATE</span>,
              <span class='st'>"SERIAL"</span>        <span class='op'>=</span> <span class='va'>일련번호</span>,
@@ -3196,8 +3297,8 @@ docker Hands-on
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r">  <span class='va'>get_list</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>doc</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'>%&gt;%</span>
-      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='va'>doc</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/getNodeSet.html'>getNodeSet</a></span><span class='op'>(</span><span class='st'>"//item"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'>XML</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/XML/man/xmlToDataFrame.html'>xmlToDataFrame</a></span><span class='op'>(</span><span class='op'>)</span>
 
     <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3212,18 +3313,18 @@ docker Hands-on
                <span class='st'>"LAND_NO"</span>, <span class='st'>"LAWD_CD"</span>, <span class='st'>"FLOOR"</span>, <span class='st'>"CANCEL_DATE"</span>, <span class='st'>"CANCEL_DEAL"</span><span class='op'>)</span>
     <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>vname</span>
 
-    <span class='va'>dframe</span> <span class='op'>%&gt;%</span>
+    <span class='va'>dframe</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='st'>"LAWD_CD"</span>, <span class='st'>"YEAR"</span>, <span class='st'>"MONTH"</span>, <span class='st'>"DAY"</span>, <span class='st'>"SERIAL"</span>, <span class='st'>"DEAL_TYPE"</span>,
              <span class='st'>"BUILD_NM"</span>, <span class='st'>"FLOOR"</span>, <span class='st'>"BUILD_YEAR"</span>, <span class='st'>"AREA"</span>, <span class='st'>"AMOUNT"</span>, <span class='st'>"ROAD_CD"</span>,
              <span class='st'>"ROAD_NM"</span>, <span class='st'>"BUILD_MAJOR"</span>, <span class='st'>"BUILD_MINOR"</span>, <span class='st'>"ROAD_SEQ"</span>,
              <span class='st'>"BASEMENT_FLAG"</span>, <span class='st'>"LAND_NO"</span>, <span class='st'>"DONG_NM"</span>, <span class='st'>"DONG_MAJOR"</span>, <span class='st'>"DONG_MINOR"</span>,
              <span class='st'>"EUBMYNDONG_CD"</span>, <span class='st'>"DONG_LAND_NO"</span>, <span class='st'>"DEALER_ADDR"</span>, <span class='st'>"CANCEL_DEAL"</span>,
-             <span class='st'>"CANCEL_DATE"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+             <span class='st'>"CANCEL_DATE"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>DEAL_DATE <span class='op'>=</span> 
-               <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{YEAR}-{str_pad(MONTH, width = 2, pad = '0')}-{str_pad(DAY, width = 2, pad = '0')}"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>AMOUNT <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>AMOUNT</span>, <span class='st'>","</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>FLOOR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>FLOOR</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>BUILD_YEAR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>BUILD_YEAR</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+               <span class='fu'>glue</span><span class='fu'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='op'>(</span><span class='st'>"{YEAR}-{str_pad(MONTH, width = 2, pad = '0')}-{str_pad(DAY, width = 2, pad = '0')}"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>AMOUNT <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'>stringr</span><span class='fu'>::</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></span><span class='op'>(</span><span class='va'>AMOUNT</span>, <span class='st'>","</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>FLOOR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>FLOOR</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>BUILD_YEAR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>BUILD_YEAR</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
       <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>LAWD_CD</span>, <span class='va'>DEAL_DATE</span>, <span class='va'>SERIAL</span><span class='op'>:</span><span class='va'>CANCEL_DATE</span><span class='op'>)</span>
   <span class='op'>}</span>
 </code></pre>
@@ -3231,11 +3332,16 @@ docker Hands-on
 </div>
 </section>
 </div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<section class="footnotes" role="doc-endnotes">
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p><a href="https://ko.wikipedia.org/wiki/일괄_처리" class="uri">https://ko.wikipedia.org/wiki/일괄_처리</a> 발췌<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p><a
+href="https://ko.wikipedia.org/wiki/일괄_처리"
+class="uri">https://ko.wikipedia.org/wiki/일괄_처리</a> 발췌<a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

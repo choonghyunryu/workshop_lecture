@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: 반응 출력</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,7 +2495,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2510,7 +2515,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"반응 출력","description":"반응 출력을 이해합니다. **랜더링 함수**의 종류와 기능도 숙지해야 합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-05T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"반응 출력","description":"반응 출력을 이해합니다. **랜더링 함수**의 종류와 기능도 숙지해야 합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-05T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2605,11 +2610,13 @@ docker Hands-on
 <h1>반응 출력</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>반응 출력을 이해합니다. <strong>랜더링 함수</strong>의 종류와 기능도 숙지해야 합니다.</p></p>
+<p><p>반응 출력을 이해합니다. <strong>랜더링 함수</strong>의 종류와
+기능도 숙지해야 합니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-05
 </div>
@@ -2627,12 +2634,14 @@ docker Hands-on
 </ul></li>
 <li><a href="#렌더링-함수">렌더링 함수</a>
 <ul>
-<li><a href="#렌더링-함수로-결과-반환하기">렌더링 함수로 결과 반환하기</a></li>
+<li><a href="#렌더링-함수로-결과-반환하기">렌더링 함수로 결과
+반환하기</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#tutorial">tutorial</a>
 <ul>
-<li><a href="#반응-출력-완성하기-tutorial">반응 출력 완성하기 tutorial</a></li>
+<li><a href="#반응-출력-완성하기-tutorial">반응 출력 완성하기
+tutorial</a></li>
 <li><a href="#tutorial-페이지">tutorial 페이지</a></li>
 <li><a href="#추가-예제-실행해-보기">추가 예제 실행해 보기</a></li>
 </ul></li>
@@ -2652,9 +2661,15 @@ docker Hands-on
 </div>
 </div>
 <h1 id="반응형-출력을-아시나요">반응형 출력을 아시나요?</h1>
-<p><strong>“반응형 출력(reactive output)은 사용자가 입력 위젯의 값을 변경하면, 이에 반응, 응답하여 출력을 자동으로 만들어주는 것을 의미합니다.”</strong> 일반적인 웹 어플리케이션은 사용자가 입력 위젯의 값을 변경한 후, “확인”, “실행” 등의 버튼을 누를 때 출력이 발생하지만, Shiny는 기본적으로 반응형 출력으로 결과를 반환합니다.</p>
+<p><strong>“반응형 출력(reactive output)은 사용자가 입력 위젯의 값을
+변경하면, 이에 반응, 응답하여 출력을 자동으로 만들어주는 것을
+의미합니다.”</strong></p>
+<p>일반적인 웹 어플리케이션은 사용자가 입력 위젯의 값을 변경한 후,
+“확인”, “실행” 등의 버튼을 누를 때 출력이 발생하지만, Shiny는 기본적으로
+반응형 출력으로 결과를 반환합니다.</p>
 <h2 id="출력-위젯">출력 위젯</h2>
-<p>출력 위젯의 이름의 접미사는 “Output”로 계산된 결과나 시각화 결과를 사용자에게 보여주는 기능을 수행합니다.</p>
+<p>출력 위젯의 이름의 접미사는 “Output”로 계산된 결과나 시각화 결과를
+사용자에게 보여주는 기능을 수행합니다.</p>
 <p>shiny 패키지의 출력 위젯은 같습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2670,17 +2685,18 @@ docker Hands-on
 [9] &quot;verbatimTextOutput&quot;      </code></pre>
 </div>
 <h3 id="ui에-출력-위젯-추가하기">UI에 출력 위젯 추가하기</h3>
-<p>“selected_var”라는 아이디로 출력 위젯 textOutput을 UI에 추가합니다.</p>
+<p>“selected_var”라는 아이디로 출력 위젯 textOutput을 UI에
+추가합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/titlePanel.html'>titlePanel</a></span><span class='op'>(</span><span class='st'>"censusVis"</span><span class='op'>)</span>,
-  
+
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarLayout</a></span><span class='op'>(</span>
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/helpText.html'>helpText</a></span><span class='op'>(</span><span class='st'>"Create demographic maps with 
                information from the 2010 US Census."</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"var"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Choose a variable to display"</span>,
                   choices <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Percent White"</span>, 
@@ -2688,12 +2704,12 @@ docker Hands-on
                               <span class='st'>"Percent Hispanic"</span>, 
                               <span class='st'>"Percent Asian"</span><span class='op'>)</span>,
                   selected <span class='op'>=</span> <span class='st'>"Percent White"</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sliderInput.html'>sliderInput</a></span><span class='op'>(</span><span class='st'>"range"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Range of interest:"</span>,
                   min <span class='op'>=</span> <span class='fl'>0</span>, max <span class='op'>=</span> <span class='fl'>100</span>, value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
     <span class='op'>)</span>,
-    
+
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>mainPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/textOutput.html'>textOutput</a></span><span class='op'>(</span><span class='st'>"selected_var"</span><span class='op'>)</span>
     <span class='op'>)</span>
@@ -2703,7 +2719,8 @@ docker Hands-on
 </div>
 </div>
 <h2 id="렌더링-함수">렌더링 함수</h2>
-<p>렌더링 함수 이름의 접두사는 “render”로 입력 위젯의 값이 변경되면 반응하여 계산 결과를 출력 위젯에 랜더링합니다.</p>
+<p>렌더링 함수 이름의 접두사는 “render”로 입력 위젯의 값이 변경되면
+반응하여 계산 결과를 출력 위젯에 랜더링합니다.</p>
 <p>shiny 패키지의 렌더링 함수는 다음과 같습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2766,7 +2783,9 @@ docker Hands-on
 </tbody>
 </table>
 <h3 id="렌더링-함수로-결과-반환하기">렌더링 함수로 결과 반환하기</h3>
-<p>다음 예제는 렌더링 함수인 renderText로 아이디가 “selected_var”인 출력 위젯에 “You have selected this”라는 텍스트를 렌더링(출력)합니다. 그러나 이것은 반응 출력이 아닙니다.</p>
+<p>다음 예제는 렌더링 함수인 renderText로 아이디가 “selected_var”인 출력
+위젯에 “You have selected this”라는 텍스트를 렌더링(출력)합니다.</p>
+<p>그러나 이것은 반응 출력이 아닙니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>server</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2777,9 +2796,15 @@ docker Hands-on
 </code></pre>
 </div>
 </div>
-<p>다음 예제는 렌더링 함수인 renderText로 아이디가 “selected_var”인 출력 위젯에 “You have selected this”라는 텍스트와 아이디가 “var”인 입력 위젯의 값을 붙여서 렌더링(출력)합니다.</p>
-<p>이것은 반응 출력이 입니다. 렌더링 함수에 포함된 입력 위젯인 “var”의 값이 변경될 때마다 renderText 함수가 반응하여 계산된 결과를 출력 위젯인 “selected_var”에 렌더링합니다.</p>
-<p>input$var는 아이디가 “var”인 입력 위젯을 의미하고, output$selected_var는 아이디가 “selected_var”인 출력 위젯을 의미합니다.</p>
+<p>다음 예제는 렌더링 함수인 renderText로 아이디가 “selected_var”인 출력
+위젯에 “You have selected this”라는 텍스트와 아이디가 “var”인 입력
+위젯의 값을 붙여서 렌더링(출력)합니다.</p>
+<p>이것은 반응 출력이 입니다. 렌더링 함수에 포함된 입력 위젯인 “var”의
+값이 변경될 때마다 renderText 함수가 반응하여 계산된 결과를 출력 위젯인
+“selected_var”에 렌더링합니다.</p>
+<p>input$var는 아이디가 “var”인 입력 위젯을 의미하고,
+output$selected_var는 아이디가 “selected_var”인 출력 위젯을
+의미합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>server</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2792,19 +2817,21 @@ docker Hands-on
 </div>
 <h1 id="tutorial">tutorial</h1>
 <h2 id="반응-출력-완성하기-tutorial">반응 출력 완성하기 tutorial</h2>
-<p>다음 코드를 입력한 후, app.R이라는 이름의 파일로 저장하고 실행해 보세요. 완성된 반응 출력의 기능을 확인할 수 있습니다. 여러분은 server 파트를 완성하였습니다.</p>
+<p>다음 코드를 입력한 후, app.R이라는 이름의 파일로 저장하고 실행해
+보세요. 완성된 반응 출력의 기능을 확인할 수 있습니다.</p>
+<p>여러분은 server 파트를 완성하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://shiny.rstudio.com/'>shiny</a></span><span class='op'>)</span>
 
 <span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/titlePanel.html'>titlePanel</a></span><span class='op'>(</span><span class='st'>"censusVis"</span><span class='op'>)</span>,
-  
+
   <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarLayout</a></span><span class='op'>(</span>
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/helpText.html'>helpText</a></span><span class='op'>(</span><span class='st'>"Create demographic maps with 
                information from the 2010 US Census."</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"var"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Choose a variable to display"</span>,
                   choices <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Percent White"</span>, 
@@ -2812,12 +2839,12 @@ docker Hands-on
                               <span class='st'>"Percent Hispanic"</span>, 
                               <span class='st'>"Percent Asian"</span><span class='op'>)</span>,
                   selected <span class='op'>=</span> <span class='st'>"Percent White"</span><span class='op'>)</span>,
-      
+
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sliderInput.html'>sliderInput</a></span><span class='op'>(</span><span class='st'>"range"</span>, 
                   label <span class='op'>=</span> <span class='st'>"Range of interest:"</span>,
                   min <span class='op'>=</span> <span class='fl'>0</span>, max <span class='op'>=</span> <span class='fl'>100</span>, value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
     <span class='op'>)</span>,
-    
+
     <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>mainPanel</a></span><span class='op'>(</span>
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/textOutput.html'>textOutput</a></span><span class='op'>(</span><span class='st'>"selected_var"</span><span class='op'>)</span>,
       <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/textOutput.html'>textOutput</a></span><span class='op'>(</span><span class='st'>"min_max"</span><span class='op'>)</span>
@@ -2826,16 +2853,16 @@ docker Hands-on
 <span class='op'>)</span>
 
 <span class='va'>server</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>input</span>, <span class='va'>output</span><span class='op'>)</span> <span class='op'>{</span>
-  
+
   <span class='va'>output</span><span class='op'>$</span><span class='va'>selected_var</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/renderPrint.html'>renderText</a></span><span class='op'>(</span><span class='op'>{</span> 
     <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"You have selected"</span>, <span class='va'>input</span><span class='op'>$</span><span class='va'>var</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
-  
+
   <span class='va'>output</span><span class='op'>$</span><span class='va'>min_max</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/renderPrint.html'>renderText</a></span><span class='op'>(</span><span class='op'>{</span> 
     <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"You have chosen a range that goes from"</span>,
           <span class='va'>input</span><span class='op'>$</span><span class='va'>range</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, <span class='st'>"to"</span>, <span class='va'>input</span><span class='op'>$</span><span class='va'>range</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
-  
+
 <span class='op'>}</span>
 
 <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/shinyApp.html'>shinyApp</a></span><span class='op'>(</span><span class='va'>ui</span>, <span class='va'>server</span><span class='op'>)</span>
@@ -2844,7 +2871,9 @@ docker Hands-on
 </div>
 <h2 id="tutorial-페이지">tutorial 페이지</h2>
 <p>Shiny 공식 tutorial 페이지를 살펴보고, 반응 출력을 이해하세요.</p>
-<p><a href="https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/" target="_blank">https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/</a></p>
+<p><a
+href="https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/"
+target="_blank">https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/</a></p>
 <h2 id="추가-예제-실행해-보기">추가 예제 실행해 보기</h2>
 <p>예제를 실행시켜 보고, 또다른 반응 출력을 경험해 보세요.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2853,7 +2882,8 @@ docker Hands-on
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

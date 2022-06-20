@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: docker 이미지 만들기</title>
@@ -91,8 +93,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2022-01-22"/>
-  <meta property="article:created" itemprop="dateCreated" content="2022-01-22"/>
+  <meta property="article:published" itemprop="datePublished" content="2022-06-19"/>
+  <meta property="article:created" itemprop="dateCreated" content="2022-06-19"/>
   <meta name="article:author" content="유충현"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
@@ -111,7 +113,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site","output","author","date"]}},"value":[{"type":"character","attributes":{},"value":["docker 이미지 만들기"]},{"type":"character","attributes":{},"value":["Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운 docker 이미지를 생성합니다.\n"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[3]}]}]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["유충현"]},{"type":"character","attributes":{},"value":["https://choonghyunryu.github.io/"]},{"type":"character","attributes":{},"value":["Tidyverse Korea"]}]}]},{"type":"character","attributes":{},"value":["2022-01-22"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site","output","author","date"]}},"value":[{"type":"character","attributes":{},"value":["docker 이미지 만들기"]},{"type":"character","attributes":{},"value":["Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운 docker 이미지를 생성합니다.\n"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[3]}]}]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["유충현"]},{"type":"character","attributes":{},"value":["https://choonghyunryu.github.io/"]},{"type":"character","attributes":{},"value":["Tidyverse Korea"]}]}]},{"type":"character","attributes":{},"value":["2022-06-19"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -458,7 +460,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1865,7 +1867,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2483,11 +2488,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
-  <link href="site_libs/font-awesome-5.13.0/css/all.min.css" rel="stylesheet" />
-  <link href="site_libs/font-awesome-5.13.0/css/v4-shims.min.css" rel="stylesheet" />
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
+  <link href="site_libs/font-awesome-5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="site_libs/font-awesome-5.15.3/css/v4-shims.min.css" rel="stylesheet" />
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2507,7 +2512,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"docker 이미지 만들기","description":"Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운 docker 이미지를 생성합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"Tidyverse Korea","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-01-22T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"docker 이미지 만들기","description":"Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운 docker 이미지를 생성합니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io/","affiliation":"Tidyverse Korea","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-06-19T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2602,13 +2607,15 @@ docker Hands-on
 <h1>docker 이미지 만들기</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운 docker 이미지를 생성합니다.</p></p>
+<p><p>Shiny 애플리케이션에 필요로 하는 R 패키지를 추가로 설치하여 새로운
+docker 이미지를 생성합니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io/" class="uri">https://choonghyunryu.github.io/</a> (Tidyverse Korea)
+  유충현 <a href="https://choonghyunryu.github.io/"
+class="uri">https://choonghyunryu.github.io/</a> (Tidyverse Korea)
   
-<br/>2022-01-22
+<br/>2022-06-19
 </div>
 
 <div class="d-article">
@@ -2616,12 +2623,16 @@ docker Hands-on
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
+<li><a href="#수정내역">수정내역</a></li>
 <li><a href="#dockerfile-만들기">Dockerfile 만들기</a>
 <ul>
 <li><a href="#명령어의-이해">명령어의 이해</a></li>
-<li><a href="#bitstat를-운영하기-위한-dockerfile-파일">BitStat를 운영하기 위한 Dockerfile 파일</a></li>
+<li><a href="#bitstat를-운영하기-위한-dockerfile-파일">BitStat를
+운영하기 위한 Dockerfile 파일</a></li>
 <li><a href="#베이스-이미지-가져오기">베이스 이미지 가져오기</a></li>
-<li><a href="#개발-라이브러리-설치하기">개발 라이브러리 설치하기</a></li>
+<li><a href="#개발-라이브러리-설치하기">개발 라이브러리
+설치하기</a></li>
+<li><a href="#한글-폰트-설치하기">한글 폰트 설치하기</a></li>
 <li><a href="#r-패키지-설치하기">R 패키지 설치하기</a></li>
 <li><a href="#포트지정">포트지정</a></li>
 <li><a href="#사용자-전환">사용자 전환</a></li>
@@ -2633,10 +2644,12 @@ docker Hands-on
 </ul></li>
 <li><a href="#컨테이너-생성-및-실행">컨테이너 생성 및 실행</a>
 <ul>
-<li><a href="#기존-컨테이너와-이미지-삭제">기존 컨테이너와 이미지 삭제</a></li>
+<li><a href="#기존-컨테이너와-이미지-삭제">기존 컨테이너와 이미지
+삭제</a></li>
 <li><a href="#컨테이너-생성-및-실행-1">컨테이너 생성 및 실행</a></li>
 </ul></li>
-<li><a href="#bitstat-애플리케이션-실행">BitStat 애플리케이션 실행</a></li>
+<li><a href="#bitstat-애플리케이션-실행">BitStat 애플리케이션
+실행</a></li>
 <li><a href="#결언">결언</a></li>
 </ul>
 </nav>
@@ -2644,7 +2657,9 @@ docker Hands-on
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/Dockerfile.png" width="90%" style="display: block; margin: auto;" /></p>
 </div>
-<p>삽화출처: <a href="https://community.arm.com/arm-community-blogs/b/tools-software-ides-blog/posts/implementing-embedded-continuous-integration-with-jenkins-and-docker-part-1">Implementing Embedded Continuous Integration with Jenkins and Docker: Part1</a></p>
+<p>삽화출처: <a
+href="https://community.arm.com/arm-community-blogs/b/tools-software-ides-blog/posts/implementing-embedded-continuous-integration-with-jenkins-and-docker-part-1">Implementing
+Embedded Continuous Integration with Jenkins and Docker: Part1</a></p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="preface">
 <h4>들어가기</h4>
@@ -2656,9 +2671,23 @@ docker 꽃이 활짝 피겠군요.
 </div>
 </div>
 <p><br></p>
+<h2 id="수정내역">수정내역</h2>
+<ul>
+<li>한글 폰트 설치 부분을 추가했습니다.
+<ul>
+<li>2022-06-29</li>
+<li>나눔계열 폰트를 설치합니다.</li>
+</ul></li>
+</ul>
 <h2 id="dockerfile-만들기">Dockerfile 만들기</h2>
-<p>이제 완전하게 Shiny 애플리케이션이 운용될 docker 컨테이너를 만들고 실행할 차례입니다.</p>
-<p>Makefile이 C/C++로 개발된 소스를 컴파일하고 배포하는 make의 룰을 정의한 파일이라면, Dockerfile은 docker 이미지를 생성하는 방법을 정의한 파일입니다. Dockerfile을 이용하면, 컨테이너 내부에 유틸리티, 개발 라이브러리나 R 패키지를 설치할 수 있습니다. 즉 rocker/shiny-verse 이미지에서 지원하지 못했던, 애플리케이션을 실행시키는데 필요한 패키지를 설치할 수 있습니다.</p>
+<p>이제 완전하게 Shiny 애플리케이션이 운용될 docker 컨테이너를 만들고
+실행할 차례입니다.</p>
+<p>Makefile이 C/C++로 개발된 소스를 컴파일하고 배포하는 make의 룰을
+정의한 파일이라면, Dockerfile은 docker 이미지를 생성하는 방법을 정의한
+파일입니다. Dockerfile을 이용하면, 컨테이너 내부에 유틸리티, 개발
+라이브러리나 R 패키지를 설치할 수 있습니다. 즉 rocker/shiny-verse
+이미지에서 지원하지 못했던, 애플리케이션을 실행시키는데 필요한 패키지를
+설치할 수 있습니다.</p>
 <h3 id="명령어의-이해">명령어의 이해</h3>
 <p>Dockerfile에 사용하는 대표적인 명령어는 다음과 같습니다.</p>
 <ul>
@@ -2668,15 +2697,18 @@ docker 꽃이 활짝 피겠군요.
 </ul></li>
 <li>RUN
 <ul>
-<li>설치된 베이스 이미지 파일시스템의 운영체제에서 쉘 스크립트(shell script)를 실행합니다.</li>
+<li>설치된 베이스 이미지 파일시스템의 운영체제에서 쉘 스크립트(shell
+script)를 실행합니다.</li>
 </ul></li>
 <li>COPY
 <ul>
-<li>호스트에 있는 디렉토리나 파일을 docker 이미지 파일 시스템으로 복사합니다.</li>
+<li>호스트에 있는 디렉토리나 파일을 docker 이미지 파일 시스템으로
+복사합니다.</li>
 </ul></li>
 <li>EXPOSE
 <ul>
-<li>컨테이너로 들어오는 트래픽을 리스닝할 프로토콜과 포트를 설정합니다.</li>
+<li>컨테이너로 들어오는 트래픽을 리스닝할 프로토콜과 포트를
+설정합니다.</li>
 </ul></li>
 <li>USER
 <ul>
@@ -2684,8 +2716,11 @@ docker 꽃이 활짝 피겠군요.
 <li>USER 명령어 이후부터 적용되며, 이미 생성된 계정이어야 합니다.</li>
 </ul></li>
 </ul>
-<h3 id="bitstat를-운영하기-위한-dockerfile-파일">BitStat를 운영하기 위한 Dockerfile 파일</h3>
-<p>다음과 같은 내용의 Dockerfile 파일을 작성합니다. 의외로 설치하는 R 패키지가 많은 이유는, BitStat뿐만 아니라 개인적으로 만든 여러 개의 Shiny 애플리케이션을 이 환경에서 구동하기 위함입니다.</p>
+<h3 id="bitstat를-운영하기-위한-dockerfile-파일">BitStat를 운영하기 위한
+Dockerfile 파일</h3>
+<p>다음과 같은 내용의 Dockerfile 파일을 작성합니다. 의외로 설치하는 R
+패키지가 많은 이유는, BitStat뿐만 아니라 개인적으로 만든 여러 개의 Shiny
+애플리케이션을 이 환경에서 구동하기 위함입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>FROM rocker<span class="sc">/</span>shiny<span class="sc">:</span>latest</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2700,61 +2735,78 @@ docker 꽃이 활짝 피겠군요.
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    libssl<span class="sc">-</span>dev \</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    curl</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>RUN curl <span class="sc">-</span>L http<span class="sc">:</span><span class="er">//</span>bit.ly<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable <span class="sc">-</span>o google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    apt<span class="sc">-</span>get <span class="sc">-</span>y install .<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    rm google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Korean fonts</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>RUN apt<span class="sc">-</span>get install <span class="sc">-</span>y fonts<span class="sc">-</span>nanum<span class="sc">*</span> <span class="er">&amp;&amp;</span> \</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    fc<span class="sc">-</span>cache <span class="sc">-</span>fv</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># install R packages required</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;rJava&#39;,              repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;dlookr&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinyjs&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinydashboard&#39;,     repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinydashboardPlus&#39;, repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinyWidgets&#39;,       repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinybusy&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinythemes&#39;,        repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinycssloaders&#39;,    repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;colourpicker&#39;,       repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;htmltools&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;htmltools&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;reactable&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;glue&#39;,               repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;xlsx&#39;,               repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;flextable&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;googleVis&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;readr&#39;,              repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;forcats&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;plotly&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;DBI&#39;,                repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;waffle&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;RSQLite&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;remotes&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;dbplyr&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;ggthemes&#39;,           repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;treemapify&#39;,         repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;sparkline&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;formattable&#39;,        repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;DT&#39;,                 repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;tidyverse&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;remotes::install_github(&#39;dreamRs/shinytreeview&#39;)&quot;</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>COPY google<span class="sc">-</span>chrome <span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>USER shiny  </span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>COPY Renviron <span class="sc">/</span>.Renviron</span></code></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>RUN curl <span class="sc">-</span>L http<span class="sc">:</span><span class="er">//</span>bit.ly<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable <span class="sc">-</span>o google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    apt<span class="sc">-</span>get <span class="sc">-</span>y install .<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    rm google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># install R packages required</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;rJava&#39;,              repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;dlookr&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinyjs&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinydashboard&#39;,     repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinydashboardPlus&#39;, repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinyWidgets&#39;,       repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinybusy&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinythemes&#39;,        repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;shinycssloaders&#39;,    repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;colourpicker&#39;,       repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;htmltools&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;htmltools&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;reactable&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;glue&#39;,               repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;xlsx&#39;,               repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;flextable&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;googleVis&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;readr&#39;,              repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;forcats&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;plotly&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;DBI&#39;,                repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;waffle&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;RSQLite&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;remotes&#39;,            repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;dbplyr&#39;,             repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;ggthemes&#39;,           repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;treemapify&#39;,         repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;sparkline&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;formattable&#39;,        repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;DT&#39;,                 repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;tidyverse&#39;,          repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;remotes::install_github(&#39;dreamRs/shinytreeview&#39;)&quot;</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>COPY google<span class="sc">-</span>chrome <span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>USER shiny  </span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>COPY Renviron <span class="sc">/</span>.Renviron</span></code></pre></div>
 </div>
 <h3 id="베이스-이미지-가져오기">베이스 이미지 가져오기</h3>
-<p>다음 <strong>FROM 명령어</strong>는 docker hub에서 ‘rocker/shiny’ 이미지의 최신 버전(lasett)을 가져오라는 의미입니디. 이 이미지를 베이스 이미지로 사용할 것입니다. 이미 앞에서 사용했던 이미지입니다.</p>
+<p>다음 <strong>FROM 명령어</strong>는 docker hub에서 ‘rocker/shiny’
+이미지의 최신 버전(lasett)을 가져오라는 의미입니디. 이 이미지를 베이스
+이미지로 사용할 것입니다. 이미 앞에서 사용했던 이미지입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>FROM rocker<span class="sc">/</span>shiny<span class="sc">:</span>latest</span></code></pre></div>
 </div>
 <h3 id="개발-라이브러리-설치하기">개발 라이브러리 설치하기</h3>
-<p>다음 <strong>RUN 명령어</strong>는 컨테이너 안의 파일시스템에서 Shell 명령어를 수행하라는 의미입니다.</p>
-<p>apt-get(Advanced Packaging Tool)은 우분투(Ubuntu)를 포함한 데이안(Debian) 계열의 리눅스 배포본에서의 시스템 패키지 관리 유틸리티입니다. 이 유틸리티로 개발 라이브러리나 시스템 유틸리티를 설치합니다.</p>
-<p>다수의 R 패키지는 시스템 유틸리티나 동적 라이브러리를 인터페이스하여 구현합니다. 예를 들면 RSQLite라는 R 패키지는 sqlite3의 동적 라이브러리를 사용합니다. 그래서 R 환경에서 sqlite를 사용하는 RSQLite 패키지는 개발 라이브러이인 libsqlite3-dev을 설치해야 합니다.</p>
-<p>R 패키지에서 설치하기 까다로운 <strong>rJava 패키지</strong>는 JVM(Java Virtual Machine)을 인터페이스하기 위해서 JDK를 설치해야 합니다. 이를 위해서 JDK 11 버전인 openjdk-11-jdk를 설치합니다.</p>
-<p>그리고 인터넷을 통해 공유하는 파일을 가져오기 위해서는 curl이 필요할지도 모릅니다.</p>
-<p>이를 위해서 ‘apt-get update &amp;&amp; apt-get install -y’ 명령어 구문으로 개발 라이브러리와 시스템 유틸리티를 설치합니다.</p>
+<p>다음 <strong>RUN 명령어</strong>는 컨테이너 안의 파일시스템에서 Shell
+명령어를 수행하라는 의미입니다.</p>
+<p>apt-get(Advanced Packaging Tool)은 우분투(Ubuntu)를 포함한
+데이안(Debian) 계열의 리눅스 배포본에서의 시스템 패키지 관리
+유틸리티입니다. 이 유틸리티로 개발 라이브러리나 시스템 유틸리티를
+설치합니다.</p>
+<p>다수의 R 패키지는 시스템 유틸리티나 동적 라이브러리를 인터페이스하여
+구현합니다. 예를 들면 RSQLite라는 R 패키지는 sqlite3의 동적 라이브러리를
+사용합니다. 그래서 R 환경에서 sqlite를 사용하는 RSQLite 패키지는 개발
+라이브러이인 libsqlite3-dev을 설치해야 합니다.</p>
+<p>R 패키지에서 설치하기 까다로운 <strong>rJava 패키지</strong>는
+JVM(Java Virtual Machine)을 인터페이스하기 위해서 JDK를 설치해야 합니다.
+이를 위해서 JDK 11 버전인 openjdk-11-jdk를 설치합니다.</p>
+<p>그리고 인터넷을 통해 공유하는 파일을 가져오기 위해서는 curl이
+필요할지도 모릅니다.</p>
+<p>이를 위해서 ‘apt-get update &amp;&amp; apt-get install -y’ 명령어
+구문으로 개발 라이브러리와 시스템 유틸리티를 설치합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># system libraries of general use</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>RUN apt<span class="sc">-</span>get update <span class="sc">&amp;&amp;</span> apt<span class="sc">-</span>get install <span class="sc">-</span>y \</span>
@@ -2779,40 +2831,72 @@ BitStat는 pdf 보고서를 생성하기 위해서 pagedown 패키지를 사용�
 </div>
 </div>
 <p><br></p>
-<p>다음처럼 curl을 이용해서 크롬을 다운로드한 후 설치하고 삭제합니다. 이를 위해서 앞에서 apt-get로 curl을 설치한 것입니다.</p>
+<p>다음처럼 curl을 이용해서 크롬을 다운로드한 후 설치하고 삭제합니다.
+이를 위해서 앞에서 apt-get로 curl을 설치한 것입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>RUN curl <span class="sc">-</span>L http<span class="sc">:</span><span class="er">//</span>bit.ly<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable <span class="sc">-</span>o google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    apt<span class="sc">-</span>get <span class="sc">-</span>y install .<span class="sc">/</span>google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb <span class="sc">&amp;&amp;</span> \</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    rm google<span class="sc">-</span>chrome<span class="sc">-</span>stable.deb</span></code></pre></div>
 </div>
-<h3 id="r-패키지-설치하기">R 패키지 설치하기</h3>
-<p>다음 <strong>RUN 명령어</strong>는 <strong>R 유틸리티</strong>로 R 패키지를 설치합니다. -e 옵션은 R이 수행할 R 스크립트를 지정하는 옵션입니다. 따옴표 안의 R 스크립트로 패키지를 설치하게 됩니다.</p>
+<h3 id="한글-폰트-설치하기">한글 폰트 설치하기</h3>
+<p>rocker/shiny 이미지에는 한글 폰트가 포함되어 있지 않습니다. 그래서
+다음 <strong>RUN 명령어</strong>로 <strong>한글 폰트를
+설치</strong>합니다. 나눔고딕, 나눔명조 등의 나눔계열 폰트를 설치합니다.
+그리고 <code>fc-cache</code> 명령어를 통해서 <strong>폰트 캐시를
+재설정</strong>해야 합니다. 이것은 설치한 한글 폰트를 시스템에
+인식시키는 작업입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;rJava&#39;, repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Korean fonts</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>RUN apt<span class="sc">-</span>get install <span class="sc">-</span>y fonts<span class="sc">-</span>nanum<span class="sc">*</span> <span class="er">&amp;&amp;</span> \</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    fc<span class="sc">-</span>cache <span class="sc">-</span>fv</span></code></pre></div>
+</div>
+<h3 id="r-패키지-설치하기">R 패키지 설치하기</h3>
+<p>다음 <strong>RUN 명령어</strong>는 <strong>R 유틸리티</strong>로 R
+패키지를 설치합니다. -e 옵션은 R이 수행할 R 스크립트를 지정하는
+옵션입니다. 따옴표 안의 R 스크립트로 패키지를 설치하게 됩니다.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>RUN R <span class="sc">-</span>e <span class="st">&quot;install.packages(&#39;rJava&#39;, repos = &#39;http://cran.rstudio.com/&#39;)&quot;</span></span></code></pre></div>
 </div>
 <h3 id="포트지정">포트지정</h3>
-<p>컨테이너가 사용할 포트를 지정하기 위해서 <strong>EXPOSE</strong> 명령어를 사용하지 않아도 됩니다. 베이스 이미지로 ’rocker/shiny’를 사용했기 때문입니다. 이 베이스 이미지에 이미 <strong>EXPOSE</strong> 명령어로 3838 포트를 컨테이너가 사용할 수 있도록 설정되어 있기 때문입니다.</p>
+<p>컨테이너가 사용할 포트를 지정하기 위해서 <strong>EXPOSE</strong>
+명령어를 사용하지 않아도 됩니다. 베이스 이미지로 ’rocker/shiny’를
+사용했기 때문입니다. 이 베이스 이미지에 이미 <strong>EXPOSE</strong>
+명령어로 3838 포트를 컨테이너가 사용할 수 있도록 설정되어 있기
+때문입니다.</p>
 <h3 id="사용자-전환">사용자 전환</h3>
-<p>root 권한으로 컨테이너를 실행하면, 무제한의 권한이 부여되므로, 보안 측면에서 취약할 수 있습니다. 그래서 다음처럼 일반 사용자인 shiny 사용자 계정으로 컨테이너를 실행하도록 설정합니다.</p>
-<p>이지 베이스 이미지인 rocker/shiny-verse에서 shiny라는 그룹과 사용자를 만들어 놓았기 때문에 해당 사용자 계정을 만들 필요는 없습니다.</p>
+<p>root 권한으로 컨테이너를 실행하면, 무제한의 권한이 부여되므로, 보안
+측면에서 취약할 수 있습니다. 그래서 다음처럼 일반 사용자인 shiny 사용자
+계정으로 컨테이너를 실행하도록 설정합니다.</p>
+<p>이지 베이스 이미지인 rocker/shiny-verse에서 shiny라는 그룹과 사용자를
+만들어 놓았기 때문에 해당 사용자 계정을 만들 필요는 없습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>USER shiny</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>USER shiny</span></code></pre></div>
 </div>
 <h2 id="docker-이미지-생성">docker 이미지 생성</h2>
 <h3 id="크롬을-위한-설정">크롬을 위한 설정</h3>
-<p>pagedown 패키지가 크롬을 사용한다는 것을 앞에서 언급했습니다. 그런데 pagedown::chrome_print()가 크롬을 호출할 때, 다음처럼 “Error in is_remote_protocol_ok: Cannot find headless Chrome after 20 attempts”라는 에러가 발생합니다.</p>
+<p>pagedown 패키지가 크롬을 사용한다는 것을 앞에서 언급했습니다. 그런데
+pagedown::chrome_print()가 크롬을 호출할 때, 다음처럼 “Error in
+is_remote_protocol_ok: Cannot find headless Chrome after 20
+attempts”라는 에러가 발생합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>output file<span class="sc">:</span> diagnosis_paged_temp.knit.md</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Output created<span class="sc">:</span> diagnosis_paged_temp.html</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>Warning<span class="sc">:</span> Error <span class="cf">in</span> is_remote_protocol_ok<span class="sc">:</span> Cannot find headless Chrome after <span class="dv">20</span> attempts</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">:</span> runApp</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>Execution halted</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>output file<span class="sc">:</span> diagnosis_paged_temp.knit.md</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Output created<span class="sc">:</span> diagnosis_paged_temp.html</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Warning<span class="sc">:</span> Error <span class="cf">in</span> is_remote_protocol_ok<span class="sc">:</span> Cannot find headless Chrome after <span class="dv">20</span> attempts</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">:</span> runApp</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>Execution halted</span></code></pre></div>
 </div>
-<p>크롬은 <strong>‘샌드박스(sandbox)’</strong>라는 보안 개념을 적용합니다. 크롬은 브라우저에서 여러 개의 독립된 탭을 띄우고, 별도의 웹 페이지가 실행됩니다. 별도로 독립된 프로세스가 가동하는 것으로 이들 프로세스는 샌드박스처럼 격리되어서 서로 관여하지 못합니다. 즉, 어느 탭의 웹 페이지에서 악성코드가 침투하거나, 버그 또는 장애로 해당 탭의 페이지가 먹통되어도 다른 탭의 웹 페이지는 정상적으로 동작합니다.</p>
-<p>앞에서의 에러는 크롬의 샌드박스 기능에 기인합니다. 이 에러는 해결하기 위해서는 컨테이너에서 pagedown::chrome_print()가 크롬을 호출할 때, 샌드박스의 기능을 비활성해야 합니다.</p>
+<p>크롬은 <strong>‘샌드박스(sandbox)’</strong>라는 보안 개념을
+적용합니다. 크롬은 브라우저에서 여러 개의 독립된 탭을 띄우고, 별도의 웹
+페이지가 실행됩니다. 별도로 독립된 프로세스가 가동하는 것으로 이들
+프로세스는 샌드박스처럼 격리되어서 서로 관여하지 못합니다. 즉, 어느 탭의
+웹 페이지에서 악성코드가 침투하거나, 버그 또는 장애로 해당 탭의 페이지가
+먹통되어도 다른 탭의 웹 페이지는 정상적으로 동작합니다.</p>
+<p>앞에서의 에러는 크롬의 샌드박스 기능에 기인합니다. 이 에러는 해결하기
+위해서는 컨테이너에서 pagedown::chrome_print()가 크롬을 호출할 때,
+샌드박스의 기능을 비활성해야 합니다.</p>
 <p>이를 위한 몇 가지 솔루션이 있습니다.</p>
 <p><br></p>
 <ol type="1">
@@ -2830,17 +2914,20 @@ BitStat는 pdf 보고서를 생성하기 위해서 pagedown 패키지를 사용�
 </ul>
 <p><br></p>
 <p>여기서는 2번 솔루션을 적용합니다.</p>
-<p>다음과 같은 스크립트를 담은 google-chrome 파일을 ./shiny-docker 경로에 생성합니다.</p>
+<p>다음과 같은 스크립트를 담은 google-chrome 파일을 ./shiny-docker
+경로에 생성합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>usr<span class="sc">/</span>bin<span class="sc">/</span>google<span class="sc">-</span>chrome <span class="sc">--</span>no<span class="sc">-</span>sandbox <span class="sc">$</span><span class="er">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>usr<span class="sc">/</span>bin<span class="sc">/</span>google<span class="sc">-</span>chrome <span class="sc">--</span>no<span class="sc">-</span>sandbox <span class="sc">$</span><span class="er">*</span></span></code></pre></div>
 </div>
-<p>그리고 호스트에서 이 파일의 권한을 설정합니다. shiny 계정으로 컨테이너를 실행하기 때문에 755 권한을 부여해야 합니다.</p>
+<p>그리고 호스트에서 이 파일의 권한을 설정합니다. shiny 계정으로
+컨테이너를 실행하기 때문에 755 권한을 부여해야 합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>chmod <span class="dv">755</span> google<span class="sc">-</span>chrome</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>chmod <span class="dv">755</span> google<span class="sc">-</span>chrome</span></code></pre></div>
 </div>
-<p>다음으로 다음과 같은 스크립트를 담은 Renviron 파일을 ./shiny-docker 경로에 생성합니다.</p>
+<p>다음으로 다음과 같은 스크립트를 담은 Renviron 파일을 ./shiny-docker
+경로에 생성합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>PATH</span><span class='op'>=</span><span class='st'>"/:${PATH}"</span>
@@ -2849,24 +2936,30 @@ BitStat는 pdf 보고서를 생성하기 위해서 pagedown 패키지를 사용�
 </div>
 <p>그리고 Dockerfile 파일에서 이들을 다음처럼 컨테이너에 복사합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>COPY google<span class="sc">-</span>chrome <span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>COPY Renviron <span class="sc">/</span>.Renviron</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>COPY google<span class="sc">-</span>chrome <span class="sc">/</span>usr<span class="sc">/</span>local<span class="sc">/</span>bin<span class="sc">/</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>COPY Renviron <span class="sc">/</span>.Renviron</span></code></pre></div>
 </div>
 <h3 id="docker-이미지-생성-1">docker 이미지 생성</h3>
-<p>앞에서 만든 Dockerfile는 ./shiny-docker 경로에 저장했습니다. 이 Dockerfile을 빌드해서 docker 이미지를 생성합니다.</p>
-<p>build 명령어로 이미지를 생성합니다. -t 옵션은 생성할 이미지의 이름을 지정합니다. 이미지 이름을 ’shiny’로 지정했습니다.</p>
+<p>앞에서 만든 Dockerfile는 ./shiny-docker 경로에 저장했습니다. 이
+Dockerfile을 빌드해서 docker 이미지를 생성합니다.</p>
+<p>build 명령어로 이미지를 생성합니다. -t 옵션은 생성할 이미지의 이름을
+지정합니다. 이미지 이름을 ’shiny’로 지정했습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>docker build <span class="sc">-</span>t shiny<span class="sc">:</span>first .<span class="sc">/</span>shiny<span class="sc">-</span>docker</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>docker build <span class="sc">-</span>t shiny<span class="sc">:</span>first .<span class="sc">/</span>shiny<span class="sc">-</span>docker</span></code></pre></div>
 </div>
 <h2 id="컨테이너-생성-및-실행">컨테이너 생성 및 실행</h2>
 <h3 id="기존-컨테이너와-이미지-삭제">기존 컨테이너와 이미지 삭제</h3>
-<p>이제 앞에서 만들었던 ‘rocker/shiny-verse’ 이미지와 ‘shiny-server’ 컨테이너는 필요가 없어졌습니다. 그래서 다음처럼 컨테이너와 이미지를 차례대로 삭제합니다.</p>
+<p>이제 앞에서 만들었던 ‘rocker/shiny-verse’ 이미지와 ‘shiny-server’
+컨테이너는 필요가 없어졌습니다. 그래서 다음처럼 컨테이너와 이미지를
+차례대로 삭제합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>docker rm <span class="sc">-</span>f shiny<span class="sc">-</span>server</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>docker rmi rocker<span class="sc">/</span>shiny<span class="sc">-</span>verse</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>docker rm <span class="sc">-</span>f shiny<span class="sc">-</span>server</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>docker rmi rocker<span class="sc">/</span>shiny<span class="sc">-</span>verse</span></code></pre></div>
 </div>
 <h3 id="컨테이너-생성-및-실행-1">컨테이너 생성 및 실행</h3>
-<p>이번에는 Docker Desktop를 이용해서 컨테이너를 생성하고 실행합니다. 다음은 <strong>Optional Settings 다이얼로그 창</strong>에서의 환경설정 내용입니다.</p>
+<p>이번에는 Docker Desktop를 이용해서 컨테이너를 생성하고 실행합니다.
+다음은 <strong>Optional Settings 다이얼로그 창</strong>에서의 환경설정
+내용입니다.</p>
 <ul>
 <li>Container Name: shiny-server</li>
 <li>Ports:
@@ -2886,30 +2979,48 @@ BitStat는 pdf 보고서를 생성하기 위해서 pagedown 패키지를 사용�
 </ul></li>
 </ul>
 <figure>
-<img src="img/options-2.png" alt="Optional Settings 다이얼로그 창" /><figcaption aria-hidden="true">Optional Settings 다이얼로그 창</figcaption>
+<img src="img/options-2.png" alt="Optional Settings 다이얼로그 창" />
+<figcaption aria-hidden="true">Optional Settings 다이얼로그
+창</figcaption>
 </figure>
-<p>다음 명령도로 동일한 기능을 수행합니다. –name 옵션은 컨테이너의 이름을 지정합니다. -p, -v는 각각 포트와 볼륨을 정의합니다.</p>
+<p>다음 명령도로 동일한 기능을 수행합니다. –name 옵션은 컨테이너의
+이름을 지정합니다. -p, -v는 각각 포트와 볼륨을 정의합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>docker run <span class="sc">-</span>d <span class="sc">-</span>p <span class="dv">3838</span><span class="sc">:</span><span class="dv">3838</span> <span class="sc">--</span>name shiny<span class="sc">-</span>server \</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>v <span class="sc">/</span>Users<span class="sc">/</span>choonghyunryu<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span><span class="er">:/</span>srv<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span> \</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>v <span class="sc">/</span>Users<span class="sc">/</span>choonghyunryu<span class="sc">/</span>Documents<span class="sc">/</span>99_logs<span class="sc">/</span>shiny<span class="sc">/</span><span class="er">:/</span>var<span class="sc">/</span>log<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span> \</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    shiny<span class="sc">:</span>first</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>docker run <span class="sc">-</span>d <span class="sc">-</span>p <span class="dv">3838</span><span class="sc">:</span><span class="dv">3838</span> <span class="sc">--</span>name shiny<span class="sc">-</span>server \</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>v <span class="sc">/</span>Users<span class="sc">/</span>choonghyunryu<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span><span class="er">:/</span>srv<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span> \</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>v <span class="sc">/</span>Users<span class="sc">/</span>choonghyunryu<span class="sc">/</span>Documents<span class="sc">/</span>99_logs<span class="sc">/</span>shiny<span class="sc">/</span><span class="er">:/</span>var<span class="sc">/</span>log<span class="sc">/</span>shiny<span class="sc">-</span>server<span class="sc">/</span> \</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    shiny<span class="sc">:</span>first</span></code></pre></div>
 </div>
-<p>컨테이너를 실행한 후 콘솔로 들어가서 프로세스를 확인하면, 다음처럼 shiny 계정으로 shiny 서버 프로세스가 실행되었음을 확인할 수 있습니다.</p>
+<p>컨테이너를 실행한 후 콘솔로 들어가서 프로세스를 확인하면, 다음처럼
+shiny 계정으로 shiny 서버 프로세스가 실행되었음을 확인할 수
+있습니다.</p>
 <figure>
-<img src="img/process.png" alt="프로세스 현황" /><figcaption aria-hidden="true">프로세스 현황</figcaption>
+<img src="img/process.png" alt="프로세스 현황" />
+<figcaption aria-hidden="true">프로세스 현황</figcaption>
 </figure>
 <h2 id="bitstat-애플리케이션-실행">BitStat 애플리케이션 실행</h2>
-<p>이제는 <a href="http://localhost:3838/BitStat/" class="uri">http://localhost:3838/BitStat/</a> URL로 BitStat 애플리케이션을 실행할 수 있습니다.</p>
+<p>이제는 <a href="http://localhost:3838/BitStat/"
+class="uri">http://localhost:3838/BitStat/</a> URL로 BitStat
+애플리케이션을 실행할 수 있습니다.</p>
 <p>실행된 BitStat 애플리케이션 화면은 다음과 같습니다.</p>
 <figure>
-<img src="img/bitstat.png" alt="BiStat 애플리케이션" /><figcaption aria-hidden="true">BiStat 애플리케이션</figcaption>
+<img src="img/bitstat.png" alt="BiStat 애플리케이션" />
+<figcaption aria-hidden="true">BiStat 애플리케이션</figcaption>
 </figure>
 <h2 id="결언">결언</h2>
-<p>이제 docker 환경에서 BitStat 애플리케이션을 실행할 수 있습니다. 추가로 개발하는 Shiny 애플리케이션은 앞에서 정의한 로컬 호스트의 /Users/choonghyunryu/shiny-server/ 디렉토리에 배포하면 됩니다.</p>
-<p>어느 정도 목적하는 환경의 Shiny 서버를 구동하려면, 결국은 docker 이미지를 만들어야할 수 밖에 없습니다. 개인적으로 Shiny 애플리케이션의 데모 환경을 만들려는 목적으로 시도한 작업입니다만, docker의 매력을 느끼기에 충분했습니다.</p>
-<p>R과 Shiny를 사용하기에는 MS-Windows 환경이 부족함이 없지 않습니다. 여러 사람들과 협업을 하기 위해서는 동일한 환경에서의 작업이 중요합니다. 이런 대안으로 docker 환경에서 R과 Shiny를 사용하는 것이 유용한 대안이 될 것 같습니다.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>이제 docker 환경에서 BitStat 애플리케이션을 실행할 수 있습니다.
+추가로 개발하는 Shiny 애플리케이션은 앞에서 정의한 로컬 호스트의
+/Users/choonghyunryu/shiny-server/ 디렉토리에 배포하면 됩니다.</p>
+<p>어느 정도 목적하는 환경의 Shiny 서버를 구동하려면, 결국은 docker
+이미지를 만들어야할 수 밖에 없습니다. 개인적으로 Shiny 애플리케이션의
+데모 환경을 만들려는 목적으로 시도한 작업입니다만, docker의 매력을
+느끼기에 충분했습니다.</p>
+<p>R과 Shiny를 사용하기에는 MS-Windows 환경이 부족함이 없지 않습니다.
+여러 사람들과 협업을 하기 위해서는 동일한 환경에서의 작업이 중요합니다.
+이런 대안으로 docker 환경에서 R과 Shiny를 사용하는 것이 유용한 대안이 될
+것 같습니다.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

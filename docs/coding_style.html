@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -55,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -76,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>애플리케이션 서버 구축을 위한 R 워크샾: R 코딩 스타일 가이드</title>
@@ -465,7 +467,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1872,7 +1874,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2490,9 +2495,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
-  <link href="site_libs/panelset-0.2.5.9000/panelset.css" rel="stylesheet" />
-  <script src="site_libs/panelset-0.2.5.9000/panelset.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2512,7 +2517,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"R 코딩 스타일 가이드","description":"패키지 개발에 앞서서, 중요하지만 간과하는 R 코딩 스타일을 살펴봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-03T00:00:00.000+00:00","citationText":"유충현, 2022"}
+{"title":"R 코딩 스타일 가이드","description":"패키지 개발에 앞서서, 중요하지만 간과하는 R 코딩 스타일을 살펴봅니다.","authors":[{"author":"유충현","authorURL":"https://choonghyunryu.github.io","affiliation":"한화생명","affiliationURL":"#","orcidID":""}],"publishedDate":"2022-02-03T00:00:00.000+09:00","citationText":"유충현, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2607,11 +2612,13 @@ docker Hands-on
 <h1>R 코딩 스타일 가이드</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>패키지 개발에 앞서서, 중요하지만 간과하는 R 코딩 스타일을 살펴봅니다.</p></p>
+<p><p>패키지 개발에 앞서서, 중요하지만 간과하는 R 코딩 스타일을
+살펴봅니다.</p></p>
 </div>
 
 <div class="d-byline">
-  유충현 <a href="https://choonghyunryu.github.io" class="uri">https://choonghyunryu.github.io</a> (한화생명)
+  유충현 <a href="https://choonghyunryu.github.io"
+class="uri">https://choonghyunryu.github.io</a> (한화생명)
   
 <br/>2022-02-03
 </div>
@@ -2626,9 +2633,13 @@ docker Hands-on
 <li><a href="#기타-중요한-규약">기타 중요한 규약</a>
 <ul>
 <li><a href="#객체-이름">객체 이름</a></li>
-<li><a href="#중괄호-내에서는-항상-들여-쓰기">중괄호 내에서는 항상 들여 쓰기</a></li>
-<li><a href="#코드의-라인-길이는-80자-이내">코드의 라인 길이는 80자 이내</a></li>
-<li><a href="#코드-들여쓰기indentation은-공백-2자로-탭을-사용하지-않는다.">코드 들여쓰기(indentation)은 공백 2자로, 탭을 사용하지 않는다.</a></li>
+<li><a href="#중괄호-내에서는-항상-들여-쓰기">중괄호 내에서는 항상 들여
+쓰기</a></li>
+<li><a href="#코드의-라인-길이는-80자-이내">코드의 라인 길이는 80자
+이내</a></li>
+<li><a
+href="#코드-들여쓰기indentation은-공백-2자로-탭을-사용하지-않는다.">코드
+들여쓰기(indentation)은 공백 2자로, 탭을 사용하지 않는다.</a></li>
 <li><a href="#할당-연산자의-선택">할당 연산자의 선택</a></li>
 <li><a href="#주석의-생활화">주석의 생활화</a></li>
 </ul></li>
@@ -2654,14 +2665,31 @@ docker Hands-on
 </div>
 </div>
 <h2 id="r-코딩-스타일">R 코딩 스타일</h2>
-<p>혼자서 패키지를 개발할 경우에는 문제가 덜하지만, 여럿이 협업해서 패키지를 개발할 경우에는 R 코딩 스타일이 이슈가 될 수 있습니다. 사람마다 서로 다른 코딩 스타일을 사용할 경우에는 코드의 일관성이 결여되고 협업에 어려움이 따르게 됩니다. 이 경우에는 서로 합일한 R 코딩 스타일 규칙을 따르는 것이 필요합니다. 굳이 협업이 아니더라도 잘 정의된 코딩 스타일을 고수할 필요 있습니다.</p>
+<p>혼자서 패키지를 개발할 경우에는 문제가 덜하지만, 여럿이 협업해서
+패키지를 개발할 경우에는 R 코딩 스타일이 이슈가 될 수 있습니다. 사람마다
+서로 다른 코딩 스타일을 사용할 경우에는 코드의 일관성이 결여되고 협업에
+어려움이 따르게 됩니다. 이 경우에는 서로 합일한 R 코딩 스타일 규칙을
+따르는 것이 필요합니다. 굳이 협업이 아니더라도 잘 정의된 코딩 스타일을
+고수할 필요 있습니다.</p>
 <blockquote>
-<p>Good coding style is like using correct punctuation. You can manage without it, but it sure makes things easier to read. – Hadley Wickham</p>
+<p>Good coding style is like using correct punctuation. You can manage
+without it, but it sure makes things easier to read. – Hadley
+Wickham</p>
 </blockquote>
-<p>R 코딩 스타일은, 아주 오랜 전에 나온 <a href="https://google.github.io/styleguide/Rguide.xml" target="_blank">Google의 R 스타일</a>도 있지만, <a href="https://style.tidyverse.org/" target="_blank"><strong>The tidyverse style guide</strong></a>를 준수하는 것을 권장합니다.</p>
+<p>R 코딩 스타일은, 아주 오랜 전에 나온 <a
+href="https://google.github.io/styleguide/Rguide.xml"
+target="_blank">Google의 R 스타일</a>도 있지만, <a
+href="https://style.tidyverse.org/" target="_blank"><strong>The
+tidyverse style guide</strong></a>를 준수하는 것을 권장합니다.</p>
 <h2 id="중요한-r-코딩-스타일">중요한 R 코딩 스타일</h2>
 <p>The tidyverse style guide에 기술된 대표적인 코딩 스타일 컨벤션</p>
 <table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 35%" />
+<col style="width: 29%" />
+<col style="width: 23%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">구분</th>
@@ -2715,7 +2743,8 @@ docker Hands-on
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><strong>연산자 앞 뒤에 공백문자</strong></td>
+<td style="text-align: left;"><strong>연산자 앞 뒤에
+공백문자</strong></td>
 <td style="text-align: left;">height &lt;- (feet * 12) + inches</td>
 <td style="text-align: left;">height&lt;-feet*12+inches</td>
 </tr>
@@ -2727,7 +2756,8 @@ docker Hands-on
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
-<td style="text-align: left;"><strong>연산자 앞 뒤에 공백문자 불가</strong></td>
+<td style="text-align: left;"><strong>연산자 앞 뒤에 공백문자
+불가</strong></td>
 <td style="text-align: left;">sqrt(x^2 + y^2)</td>
 <td style="text-align: left;">sqrt(x ^ 2 + y ^ 2)</td>
 </tr>
@@ -2747,7 +2777,8 @@ docker Hands-on
 </table>
 <h2 id="기타-중요한-규약">기타 중요한 규약</h2>
 <h3 id="객체-이름">객체 이름</h3>
-<p>객체의 이름은 영문과 숫자, 그리고 문자 "_"으로 정의합니다. 그리고, <strong>간결하지만, 의미를 충분히 전달해야 합니다</strong>.</p>
+<p>객체의 이름은 영문과 숫자, 그리고 문자 “_“으로 정의합니다. 그리고,
+<strong>간결하지만, 의미를 충분히 전달해야 합니다</strong>.</p>
 <ul>
 <li>변수는 명사를 사용하고,
 <ul>
@@ -2758,7 +2789,8 @@ docker Hands-on
 <li>예) edit_table, print</li>
 </ul></li>
 </ul>
-<h3 id="중괄호-내에서는-항상-들여-쓰기">중괄호 내에서는 항상 들여 쓰기</h3>
+<h3 id="중괄호-내에서는-항상-들여-쓰기">중괄호 내에서는 항상 들여
+쓰기</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Good</span>
@@ -2774,12 +2806,19 @@ docker Hands-on
 </div>
 </div>
 <h3 id="코드의-라인-길이는-80자-이내">코드의 라인 길이는 80자 이내</h3>
-<p>코드의 라인 길이는 80자 이내로 관리합니다. Rstudio의 Global Options… &gt; Code &gt; Display 메뉴에서 <code>Show margin</code>을 체크하면, 에디터에 기준선이 80자를 표현해서 80자 이내로 관리하는데 유용합니다.</p>
+<p>코드의 라인 길이는 80자 이내로 관리합니다. Rstudio의 Global Options…
+&gt; Code &gt; Display 메뉴에서 <code>Show margin</code>을 체크하면,
+에디터에 기준선이 80자를 표현해서 80자 이내로 관리하는데 유용합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/margin.png" width="70%" style="display: block; margin: auto;" /></p>
 </div>
-<h3 id="코드-들여쓰기indentation은-공백-2자로-탭을-사용하지-않는다.">코드 들여쓰기(indentation)은 공백 2자로, 탭을 사용하지 않는다.</h3>
-<p>코드의 들여쓰기는 공백 2로 설정합니다. Rstudio의 Global Options… &gt; Code &gt; Edit 메뉴에서 <code>Insert spaces for tab</code>을 체크한 후, 탭을 공백 2개로 설정하면 유용합니다. 공백의 개수는 2개, 4개 등 호불호가 있기는 합니다만 개인적으로 2개를 추천합니다.</p>
+<h3
+id="코드-들여쓰기indentation은-공백-2자로-탭을-사용하지-않는다.">코드
+들여쓰기(indentation)은 공백 2자로, 탭을 사용하지 않는다.</h3>
+<p>코드의 들여쓰기는 공백 2로 설정합니다. Rstudio의 Global Options… &gt;
+Code &gt; Edit 메뉴에서 <code>Insert spaces for tab</code>을 체크한 후,
+탭을 공백 2개로 설정하면 유용합니다. 공백의 개수는 2개, 4개 등 호불호가
+있기는 합니다만 개인적으로 2개를 추천합니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/tab.png" width="70%" style="display: block; margin: auto;" /></p>
 </div>
@@ -2795,16 +2834,26 @@ docker Hands-on
 </ul></li>
 </ul>
 <h3 id="주석의-생활화">주석의 생활화</h3>
-<p>주요 로직이나, 공유해야할 사항, 남겨야할 정보 등을 반드시 주석으로 남겨야 합니다.</p>
+<p>주요 로직이나, 공유해야할 사항, 남겨야할 정보 등을 반드시 주석으로
+남겨야 합니다.</p>
 <h2 id="코딩-스타일-지원-패키지">코딩 스타일 지원 패키지</h2>
-<p>이 장에서는 tidyverse R 코딩 스타일 가이드에 어느 정도 부합하는 몇 가지 R 패키지를 소개합니다. 그리고 이들 패키지로 사용자가 작성한 소스가 R 코딩 스타일에 부합하는지의 여부를 점검하거나, 패키지에서 추천하는 코딩 스타일로 소스를 변경해주는 방법을 알아봅니다.</p>
+<p>이 장에서는 tidyverse R 코딩 스타일 가이드에 어느 정도 부합하는 몇
+가지 R 패키지를 소개합니다. 그리고 이들 패키지로 사용자가 작성한 소스가
+R 코딩 스타일에 부합하는지의 여부를 점검하거나, 패키지에서 추천하는 코딩
+스타일로 소스를 변경해주는 방법을 알아봅니다.</p>
 <blockquote>
-<p>이들 패키지가 100% 완전한 코딩 스타일을 준수하는 코드로 바꿔주거나 제언해주지 않음을 염두에 두어야 합니다.</p>
+<p>이들 패키지가 100% 완전한 코딩 스타일을 준수하는 코드로 바꿔주거나
+제언해주지 않음을 염두에 두어야 합니다.</p>
 </blockquote>
 <h3 id="formatr">formatR</h3>
-<p>formatR 패키지는 R 코드의 포맷을 자동으로 바꿔주는 기능을 수행하는 패키지입니다. 이 패키지를 사용하여 작성한 R 코드를 스타일 가이드에 의거하여 적절하게 바꿔주는 방법을 살펴봅니다.</p>
-<p>예제는 패키지의 R 소스 코드를 담고 있는 “R” 디렉토리 내의 misc.R 파일에 <code>getMonthLenth()</code> 함수 정의 코드가 들어 있음을 가정합니다.</p>
-<p>R/misc.R 파일의 getMonthLenth() 함수를 정의하는 코드는 다음과 같습니다.</p>
+<p>formatR 패키지는 R 코드의 포맷을 자동으로 바꿔주는 기능을 수행하는
+패키지입니다. 이 패키지를 사용하여 작성한 R 코드를 스타일 가이드에
+의거하여 적절하게 바꿔주는 방법을 살펴봅니다.</p>
+<p>예제는 패키지의 R 소스 코드를 담고 있는 “R” 디렉토리 내의 misc.R
+파일에 <code>getMonthLenth()</code> 함수 정의 코드가 들어 있음을
+가정합니다.</p>
+<p>R/misc.R 파일의 getMonthLenth() 함수를 정의하는 코드는 다음과
+같습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>getMonthLenth</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>startYear</span>, <span class='va'>startMonth</span>, <span class='va'>endYear</span>, <span class='va'>endMonth</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2815,13 +2864,21 @@ docker Hands-on
 </code></pre>
 </div>
 </div>
-<p><code>formatR</code> 패키지의 <code>tidy_file()</code> 함수는 지정한 파일에 대해서 R 코드의 포맷을 자동으로 바꿔주고, <code>tidy_dir()</code> 함수는 지정한 디렉토리에 포함된 R 파일에 대해서 코드 포맷을 보정해 줍니다.</p>
-<p>다음은 패키지의 R 소스 코드에 대해서 포맷을 보정해 주는 명령어입니다.</p>
+<p><code>formatR</code> 패키지의 <code>tidy_file()</code> 함수는 지정한
+파일에 대해서 R 코드의 포맷을 자동으로 바꿔주고, <code>tidy_dir()</code>
+함수는 지정한 디렉토리에 포함된 R 파일에 대해서 코드 포맷을 보정해
+줍니다.</p>
+<p>다음은 패키지의 R 소스 코드에 대해서 포맷을 보정해 주는
+명령어입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> formatR<span class="sc">::</span><span class="fu">tidy_dir</span>(<span class="st">&quot;R&quot;</span>, <span class="at">indent =</span> <span class="dv">2</span>, <span class="at">width.cutoff =</span> <span class="dv">60</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>tidying R<span class="sc">/</span>misc.R</span></code></pre></div>
 </div>
-<p>상기 코드가 실행되면 R/misc.R 파일의 getMonthLenth() 함수를 정의하는 코드는 다음과 같이 보정됩니다. <code>indent</code> 인수의 값이 2인것은 들여쓰기를 스페이스 2개로 지정한 것이고, <code>width.cutoff</code> 인수는 할 줄에 표현하는 코드의 길이를 60 character로 지정한다는 의미입니다.</p>
+<p>상기 코드가 실행되면 R/misc.R 파일의 getMonthLenth() 함수를 정의하는
+코드는 다음과 같이 보정됩니다. <code>indent</code> 인수의 값이 2인것은
+들여쓰기를 스페이스 2개로 지정한 것이고, <code>width.cutoff</code>
+인수는 할 줄에 표현하는 코드의 길이를 60 character로 지정한다는
+의미입니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>getMonthLenth</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>startyear</span>, <span class='va'>startmonth</span>, <span class='va'>endyear</span>, <span class='va'>endmonth</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2833,17 +2890,30 @@ docker Hands-on
 </div>
 </div>
 <h3 id="lintr">lintr</h3>
-<p><code>lintr</code> 패키지는 R 코딩 스타일 부합 여부를 점검해줍니다. R 코드를 변경하지 않고 점검만 해주는 점이 <code>formatR</code> 패키지와의 차이점입니다. 그러나 <code>lintr</code> 패키지의 점검 내용은 포맷보다는 코딩 스타일에 가깝습니다. 예를 들면 변수의 이름은 소문자로 사용하는 것, 할당 연산자를 <code>=</code> 대신에 <code>&lt;-</code>를 사용하는 것 등의 암묵적인 R 코딩 스타일의 준수 여부를 체크합니다.</p>
-<p><code>lint_file()</code> 함수는 지정하는 R 파일에 대해서 R 코딩 스타일의 준수 여부를 체크하고, <code>lint_package()</code> 함수는 패키지 내의 R 파일에 대해서 R 코딩 스타일의 준수 여부를 체크합니다.</p>
-<p>다음은 패키지의 R 소스 코드에 대해서 R 코딩 스타일의 준수 여부를 체크합니다. RStudio 상에서의 결과는 아래의 그림처럼 Markers 탭에 표현되며, 체크에서 미준수 항목으로 출력된 개별 라인을 클릭하면, 소스 파일의 해당 위치로 커서가 옮겨집니다.</p>
+<p><code>lintr</code> 패키지는 R 코딩 스타일 부합 여부를 점검해줍니다. R
+코드를 변경하지 않고 점검만 해주는 점이 <code>formatR</code> 패키지와의
+차이점입니다. 그러나 <code>lintr</code> 패키지의 점검 내용은 포맷보다는
+코딩 스타일에 가깝습니다. 예를 들면 변수의 이름은 소문자로 사용하는 것,
+할당 연산자를 <code>=</code> 대신에 <code>&lt;-</code>를 사용하는 것
+등의 암묵적인 R 코딩 스타일의 준수 여부를 체크합니다.</p>
+<p><code>lint_file()</code> 함수는 지정하는 R 파일에 대해서 R 코딩
+스타일의 준수 여부를 체크하고, <code>lint_package()</code> 함수는 패키지
+내의 R 파일에 대해서 R 코딩 스타일의 준수 여부를 체크합니다.</p>
+<p>다음은 패키지의 R 소스 코드에 대해서 R 코딩 스타일의 준수 여부를
+체크합니다. RStudio 상에서의 결과는 아래의 그림처럼 Markers 탭에
+표현되며, 체크에서 미준수 항목으로 출력된 개별 라인을 클릭하면, 소스
+파일의 해당 위치로 커서가 옮겨집니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> lintr<span class="sc">::</span><span class="fu">lint_package</span>()</span></code></pre></div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/lint.png" width="100%" style="display: block; margin: auto;" /></p>
 </div>
-<p>체크에서 미준수 항목으로 출력된 개별 라인을 수정한 후 <code>lint_package()</code> 함수를 재 실행하면서 코드를 수정하면 R 코딩 스타일에 부합하는 코드를 작성할 수 있습니다.</p>
-<p>미준수 항목으로 출력된 개별 라인을 수정하여, <code>getMonthLenth()</code> 함수를 다음과 같이 재작성하였습니다.</p>
+<p>체크에서 미준수 항목으로 출력된 개별 라인을 수정한 후
+<code>lint_package()</code> 함수를 재 실행하면서 코드를 수정하면 R 코딩
+스타일에 부합하는 코드를 작성할 수 있습니다.</p>
+<p>미준수 항목으로 출력된 개별 라인을 수정하여,
+<code>getMonthLenth()</code> 함수를 다음과 같이 재작성하였습니다.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>get_month_length</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>startyear</span>, <span class='va'>startmonth</span>, <span class='va'>endyear</span>, <span class='va'>endmonth</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2854,7 +2924,8 @@ docker Hands-on
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
